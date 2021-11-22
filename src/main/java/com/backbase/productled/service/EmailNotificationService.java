@@ -63,8 +63,6 @@ public class EmailNotificationService {
         log.debug("Content data: '{}'", content);
         log.debug("Delivering Email from: '{}' to targets: '{}'", recipient.getFrom(), recipient.getTo());
 
-        final var contentId = recipient.getContentId();
-        final var recipientRef = recipient.getRef();
         final var emailPostRequestBody = emailRequestMapper.toEmailPostRequestBody(recipient, content);
         log.debug("EmailPostRequestBody: '{}'", emailPostRequestBody.toString());
 
