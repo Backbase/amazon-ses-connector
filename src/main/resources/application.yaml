@@ -1,5 +1,21 @@
 server:
-  port: 9915
+  port: 8080
+
+spring:
+  mail:
+    port:
+    host:
+    username:
+    password:
+    properties:
+      mail:
+        debug: true
+        transport:
+          protocol: smtp
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 # API Registry client configuration
 eureka:
@@ -10,6 +26,7 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:8080/registry/eureka/
+    enabled: false
 
 # Configure Internal JWT handler
 sso:
@@ -25,3 +42,6 @@ management:
   health:
     jms:
      enabled: false
+backbase:
+  email:
+    worker-count: 2

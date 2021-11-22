@@ -12,7 +12,7 @@
 
     <groupId>com.backbase.productled</groupId>
     <artifactId>ses-email-connector</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>0.1.0-0.0-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>Backbase :: ses-email-connector</name>
 
@@ -36,6 +36,11 @@
         <sonar.projectKey>${SONAR_PROJECT_KEY}</sonar.projectKey>
         <sonar.organization>${SONAR_ORGANIZATION}</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+
+        <open-api-specs-dir>${project.build.directory}/specs</open-api-specs-dir>
+        <action-service-api.directory>${open-api-specs-dir}/action</action-service-api.directory>
+        <communications-outbound-integration-api.directory>${open-api-specs-dir}/identity</communications-outbound-integration-api.directory>
+        <communications-outbound-integration-api.base-package>com.backbase.outbound.integration.communications.rest.spec.v1</communications-outbound-integration-api.base-package>
 
         <SIG_SECRET_KEY>JWTSecretKeyDontUseInProduction!</SIG_SECRET_KEY>
     </properties>
@@ -84,6 +89,14 @@
             <groupId>org.openapitools</groupId>
             <artifactId>jackson-databind-nullable</artifactId>
         </dependency>
+        <dependency>
+            <groupId>commons-validator</groupId>
+            <artifactId>commons-validator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
         <!-- Test dependencies -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -122,16 +135,6 @@
             <artifactId>junit-vintage-engine</artifactId>
             <scope>test</scope>
         </dependency>
-
-        <!-- Add dependencies for your services, e.g. API Specs, integration clients -->
-
-        <!-- Uncomment the following dependency if DBS inter-service communication is needed -->
-        <!--
-          <dependency>
-             <groupId>com.backbase.buildingblocks</groupId>
-             <artifactId>communication</artifactId>
-          </dependency>
-        -->
     </dependencies>
 
     <build>
@@ -156,6 +159,123 @@
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack-communications-outbound-integration-api</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <includes>**/*.yaml, **/*.json</includes>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.backbase.dbs.actions</groupId>
+                                    <artifactId>action-service</artifactId>
+                                    <classifier>api</classifier>
+                                    <type>zip</type>
+                                    <outputDirectory>${open-api-specs-dir}</outputDirectory>
+                                    <overWrite>true</overWrite>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>com.backbase.identity</groupId>
+                                    <artifactId>communications-outbound-integration-api</artifactId>
+                                    <classifier>api</classifier>
+                                    <type>zip</type>
+                                    <outputDirectory>${open-api-specs-dir}</outputDirectory>
+                                    <overWrite>true</overWrite>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>com.backbase.oss</groupId>
+                <artifactId>boat-maven-plugin</artifactId>
+                <version>${boat-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>generate-code-from-action-integration-api-client-v2</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>
+                                ${action-service-api.directory}/action-integration-email-outbound-api-v*.yaml
+                            </inputSpec>
+                            <output>${project.build.directory}/generated-sources</output>
+                            <generateSupportingFiles>true</generateSupportingFiles>
+                            <generatorName>spring</generatorName>
+                            <strictSpec>true</strictSpec>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <configOptions>
+                                <library>spring-boot</library>
+                                <dateLibrary>java8</dateLibrary>
+                                <interfaceOnly>true</interfaceOnly>
+                                <addServletRequest>true</addServletRequest>
+                                <skipDefaultInterface>true</skipDefaultInterface>
+                                <useBeanValidation>true</useBeanValidation>
+                                <generateAliasAsModel>true</generateAliasAsModel>
+                                <useClassLevelBeanValidation>true</useClassLevelBeanValidation>
+                                <useTags>true</useTags>
+                                <java8>true</java8>
+                                <bigDecimalAsString>true</bigDecimalAsString>
+                                <useOptional>false</useOptional>
+                                <apiPackage>com.backbase.email.integration.rest.spec.serviceapi.v2.email</apiPackage>
+                                <modelPackage>com.backbase.email.integration.rest.spec.v2.email</modelPackage>
+                                <sourceFolder>/</sourceFolder>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-code-from-communications-outbound-integration-api</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>
+                                ${communications-outbound-integration-api.directory}/communications-outbound-integration-api-v*.yaml
+                            </inputSpec>
+                            <output>${project.build.directory}/generated-sources/openapi/identity</output>
+                            <generateSupportingFiles>true</generateSupportingFiles>
+                            <generatorName>spring</generatorName>
+                            <strictSpec>true</strictSpec>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <configOptions>
+                                <library>spring-boot</library>
+                                <dateLibrary>java8</dateLibrary>
+                                <interfaceOnly>true</interfaceOnly>
+                                <addServletRequest>true</addServletRequest>
+                                <skipDefaultInterface>true</skipDefaultInterface>
+                                <useBeanValidation>true</useBeanValidation>
+                                <generateAliasAsModel>true</generateAliasAsModel>
+                                <useClassLevelBeanValidation>true</useClassLevelBeanValidation>
+                                <useTags>true</useTags>
+                                <java8>true</java8>
+                                <bigDecimalAsString>true</bigDecimalAsString>
+                                <useOptional>false</useOptional>
+                                <apiPackage>
+                                    ${communications-outbound-integration-api.base-package}.api
+                                </apiPackage>
+                                <modelPackage>
+                                    ${communications-outbound-integration-api.base-package}.model
+                                </modelPackage>
+                                <sourceFolder>/</sourceFolder>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
@@ -192,7 +312,11 @@
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <configuration combine.self="override">
                     <excludes>
+                        <exclude>**/DefaultMailSenderProperties.*</exclude>
+                        <exclude>**/DeliveryCodes.*</exclude>
                         <exclude>**/ErrorCodes.*</exclude>
+                        <exclude>**/AbstractEmailRequestValidator.*</exclude>
+                        <exclude>**/EmailsConsumer.*</exclude>
                     </excludes>
                 </configuration>
             </plugin>

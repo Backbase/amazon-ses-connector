@@ -1,45 +1,203 @@
-# ses-email-connector
+## Repository Overview
 
-_Fill out this file with some information about your Service._
+- This project is a development of a small set of [Backbase Service SDK](https://community.backbase.com/documentation/ServiceSDK/latest/index) (**Spring Boot** and **Cloud**) based Microservices projects that implement cloud-native intuitive, Microservices design patterns, and coding best practices.
+- The project follows [**CloudNative**](https://www.cncf.io/) recommendations and the [**twelve-factor app**](https://12factor.net/) methodology for building *software-as-a-service apps* to show how μServices should be developed and deployed.
+- This project uses technologies broadly used in Backbase.Like Docker, Kubernetes, Java SE 11, Spring Boot, Spring Cloud
+- 'ses-email-connector' has been generated using `core-service-archetype` - [Community guide](https://community.backbase.com/documentation/ServiceSDK/latest/create_a_core_service)
+- This service implements `actions-spec` library. It listens to Email notification event placed in ActiveMQ by the `Message Delivery - Communication service` and routes the message to the recipient through Amazon Simple Email Service (SES).
+- Refer to [workflow guide](../../../docs/tree/master/backend) for Backend CI Workflow documentation
 
-#Getting Started
-* [Extend and build](https://community.backbase.com/documentation/ServiceSDK/latest/extend_and_build)
+---
+## Repository Description
+### Project Structure
+The project structure for each custom integration service follows the pattern as described below :
 
-## Dependencies
+```
+.
+├── .github                      # All GitHub Actions files
+│   ├── ISSUE_TEMPLATE           # Templates for 'major','minor','patch' releases
+│   └── workflows                # GitHub Actions workflows for CI
+├── src                          # Source and Unit Test files
+    ├── main                     # Application container projects
+    │   ├── java/com/backbase/productled
+    |   |   ├── client
+    |   |   |   └── ...          # Api client classes and helpers
+    │   │   ├── communication    # Messaging classes
+    │   │   │   └── ...
+    │   │   ├── config           # Configuration classes
+    │   │   │   └── ...
+    │   │   ├── mapper           # Mapper classes
+    │   │   │   └── ...
+    │   │   ├── service          # Service classes
+    │   │   │   └── ...
+    │   │   └── util             # Utility classes
+    │   │   |    └── ...
+    |   │   ├── validator        # Validator classes
+    │   │   │    └── ...
+    │   └── resources            # All resource files except core classes
+    │       └── ...
+    └── test                     # JUnit test file
+        └── ...
+```
 
-Requires a running Eureka registry, by default on port 8080.
+To view individual classes for this repository, select relevant branch from the GitHub UI and then press ‘.'
+This will open the GitHub Web Editor.Alternatively, you can also access the Web Editor by changing .com to .dev in the URL.
 
-## Configuration
+Expand each file in the Web Editor for explanation and purpose.
 
-Service configuration is under `src/main/resources/application.yaml`.
+### Project Dependencies
 
-## Running
+---
+## Repository Configurations
+### DSC (basic-installation.yml) configuration
 
-To run the service in development mode, use:
-- `mvn spring-boot:run`
+```yaml
+custom:
+  enabled: true
+  services:
+    ses-email-connector:
+      enabled: true
+      app:
+        metadata:
+          public: "'true'"
+        image:
+          tag: "x.y.z-SNAPSHOT"
+          repository: ses-email-connector
+      database: false
+      activemq: true
+      env:
+        "spring.autoconfigure.exclude": "org.springframework.cloud.netflix.eureka.loadbalancer.LoadBalancerEurekaAutoConfiguration,org.springframework.cloud.function.context.config.ContextFunctionCatalogAutoConfiguration"
+        "backbase.email.worker-count": "2"
+        "spring.cloud.stream.bindings.commLowPriority-in-0.destination": "email-low-priority"
+        "spring.cloud.stream.bindings.commMediumPriority-in-0.destination": "email-medium-priority"
+        "spring.cloud.stream.bindings.commHighPriority-in-0.destination": "email-high-priority"
+        "spring.cloud.stream.bindings.commTracking-out-0.destination": "Backbase.communication.messages-tracking"
+        spring.mail.username:
+          valueFrom:
+            secretKeyRef:
+              name: ref-dev-eu-central-1-email-sender-account
+              key: username
+        spring.mail.password:
+          valueFrom:
+            secretKeyRef:
+              name: ref-dev-eu-central-1-email-sender-account
+              key: password
+        spring.mail.host:
+          valueFrom:
+            configMapKeyRef:
+              name: email-env
+              key: host
+        spring.mail.port:
+          valueFrom:
+            configMapKeyRef:
+              name: email-env
+              key: port
+        spring.mail.properties.mail.transport.protocol:
+          valueFrom:
+            configMapKeyRef:
+              name: email-env
+              key: protocol
+        spring.mail.properties.mail.smtp.auth:
+          valueFrom:
+            configMapKeyRef:
+              name: email-env
+              key: smtpAuth
+        spring.mail.properties.mail.smtp.starttls.enable:
+          valueFrom:
+            configMapKeyRef:
+              name: email-env
+              key: starttlsEnable
+        backbase.mail.from-address:
+          valueFrom:
+            configMapKeyRef:
+              name: email-env
+              key: fromAddress
+        backbase.mail.from-name:
+          valueFrom:
+            configMapKeyRef:
+              name: email-env
+              key: fromName
+      livenessProbe:
+        enabled: false
+      readinessProbe:
+        enabled: false
+    
+```
+`Where x = major version, y = minor version and z = incremental version.`
 
-To run the service from the built binaries, use:
-- `java -jar target/ses-email-connector-1.0.0-SNAPSHOT.jar`
+### Mambu config (if applicable)
+Not applicable for `ses-email-service`
 
-## Authorization
+#### Application configuration
+The following properties **must** be set as they have no default:
 
-Requests to this service are authorized with a Backbase Internal JWT, therefore you must access this service via the 
-Backbase Gateway after authenticating with the authentication service.
+Property | Description
+--- | ---
+**spring.mail.username** | sender email username
+**spring.mail.password** | sender email password
+**spring.mail.host** | email server host
+**spring.mail.port** | email server port
+**spring.mail.properties.mail.transport.protocol** | protocol used
+**spring.mail.properties.mail.smtp.auth** | authorization type
+**spring.mail.properties.mail.smtp.starttls.enable** | encryption enabled
+**backbase.mail.from-address** | senders email address
+**backbase.mail.from-name** | senders name
 
-For local development, an internal JWT can be created from http://jwt.io, entering `JWTSecretKeyDontUseInProduction!` 
-as the secret in the signature to generate a valid signed JWT.
+## Customisation in project
+### Configuration changes
+All configuration properties for using email-integration-service are project specific and should be replaced.
 
-## Community Documentation
+### Stream config (if applicable)
+Not applicable for 'ses-email-connector'.
 
-Add links to documentation including setup, config, etc.
+---
+## Customisation in project
+All configuration properties for using email-integration-service are project specific and should be replaced.
 
-## Jira Project
+---
 
-Add link to Jira project.
+### Component changes
 
-## Confluence Links
-Links to relevant confluence pages (design etc).
+---
+## Getting Started
+### BaaS setup
 
-## Support
+- [ ] Step 1: Modify https://github.com/baas-devops-reference/ref-self-service/blob/main/self-service.tfvars by adding to `ecr` list name of new repository: 'ses-email-connector'
+- [ ] Step 2: Checkout the following repository: https://github.com/baas-devops-reference/ref-applications-live/blob/main/runtimes/dev/basic-installation.yaml apply your deployment configurations example see _DSC (basic-installation.yml) configuration_ above.
+- [ ] Step 3: Run the pre-commit to validate the configurations => ` pre-commit run --all-files --show-diff-on-failure --color=always`
+- [ ] Step 4: Commit and Push your changes; wait for the template rendering and lint jobs to complete
+- [ ] Step 5: Merge into `master` to trigger deployment.
 
-The official ses-email-connector support room is [#s-ses-email-connector](https://todo).
+### Local setup
+
+- [ ] Step 1: Ensure to check the prerequisites for [local developer environment](https://community.backbase.com/documentation/ServiceSDK/latest/create_developer_environment)
+- [ ] Step 2: Create `src/main/resources/application-local.yaml` file, then add and modify:
+
+```yaml 
+spring:
+  mail:
+    port: 587
+    host: <AWS_SES_HOST>
+    username: <AWS_SES_ACCOUNT_NAME>
+    password: <AWS_SES_ACCOUNT_PASSWORD>
+    properties:
+      mail:
+        debug: true
+        transport:
+          protocol: smtp
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+backbase:
+  mail:
+    from-address: <SENDER_ADDRESS>
+    from-name: <SENDER_NAME>
+```
+
+- [ ] Step 3: Run command => `mvn spring-boot:run -Dspring.profiles.active=local`
+- [ ] Step 4: To run the service from the built binaries, use => `java -jar target/ses-email-service-x.y.z-SNAPSHOT.jar -Dspring.profiles.active=local`
+---
+## Contributions
+Please create a branch and a PR with your contributions. Commit messages should follow [semantic commit messages](https://seesparkbox.com/foundry/semantic_commit_messages)
