@@ -312,8 +312,8 @@
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <configuration combine.self="override">
                     <excludes>
-                        <exclude>com.backbase.productled.util.*Codes*</exclude>
-                        <exclude>**/*EmailsConsumer.class</exclude>
+                        <exclude>com.backbase.productled.util.DeliveryCodes</exclude>
+                        <exclude>com.backbase.productled.util.ErrorCodes</exclude>
                     </excludes>
                 </configuration>
             </plugin>
