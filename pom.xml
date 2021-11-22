@@ -310,19 +310,10 @@
                 <!-- Override parent plugin and exclude model classes and spring boot centric classes -->
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <executions combine.self="override">
-                    <execution>
-                        <id>default-prepare-agent</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                </executions>
                 <configuration combine.self="override">
                     <excludes>
-                        <exclude>**/*DeliveryCodes.class</exclude>
-                        <exclude>**/*ErrorCodes.class</exclude>
-                        <exclude>**/*EmailsConsumer.class</exclude>
+                        <exclude>com.backbase.productled.util.*Codes*</exclude>
+                        <exclude>**/*EmailsConsumer.class</exclude> excludes=”com.foo.test.*, com.foo.*Test*” />
                     </excludes>
                 </configuration>
             </plugin>
