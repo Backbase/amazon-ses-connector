@@ -1,5 +1,6 @@
 package com.backbase.productled.service;
 
+import com.backbase.email.integration.rest.spec.v2.email.EmailPostRequestBody;
 import com.backbase.outbound.integration.communications.rest.spec.v1.model.Content;
 import com.backbase.outbound.integration.communications.rest.spec.v1.model.Recipient;
 import com.backbase.productled.config.DefaultMailSenderProperties;
@@ -40,6 +41,20 @@ public class EmailNotificationServiceTest {
         final Recipient recipient = BatchResponseFactory.batchResponse().getRecipients().get(0);
         final Content content = BatchResponseFactory.batchResponse().getContent().get(0);
         when(emailRequestMapper.toEmailPostRequestBody(recipient, content)).thenReturn(EmailRequestFactory.createRandomEmailRequest());
+        emailNotificationService.processRecipient(recipient,
+                content);
+        verify(emailRequestMapper, times(1)).toEmailPostRequestBody(recipient, content);
+    }
+
+    @Test
+    public void processRecipient_withEncoded_body(){
+        final Recipient recipient = BatchResponseFactory.batchResponse().getRecipients().get(0);
+        final Content content = BatchResponseFactory.batchResponse().getContent().get(0);
+
+        final EmailPostRequestBody emailRequest = EmailRequestFactory.createRandomEmailRequest();
+        emailRequest.setBody("This is your otp: 123456");
+        emailRequest.setFrom(null);
+        when(emailRequestMapper.toEmailPostRequestBody(recipient, content)).thenReturn(emailRequest);
         emailNotificationService.processRecipient(recipient,
                 content);
         verify(emailRequestMapper, times(1)).toEmailPostRequestBody(recipient, content);
