@@ -69,8 +69,8 @@ custom:
         "spring.autoconfigure.exclude": "org.springframework.cloud.netflix.eureka.loadbalancer.LoadBalancerEurekaAutoConfiguration,org.springframework.cloud.function.context.config.ContextFunctionCatalogAutoConfiguration"
         "backbase.email.worker-count": "2"
         "spring.cloud.stream.bindings.commLowPriority-in-0.destination": "email-low-priority"
-        "spring.cloud.stream.bindings.commMediumPriority-in-0.destination": "email-medium-priority"
         "spring.cloud.stream.bindings.commHighPriority-in-0.destination": "email-high-priority"
+        "spring.cloud.stream.bindings.commHighestPriority-in-0.destination": "email-highest-priority"
         "spring.cloud.stream.bindings.commTracking-out-0.destination": "Backbase.communication.messages-tracking"
         spring.mail.username:
           valueFrom:
