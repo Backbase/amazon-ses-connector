@@ -1,0 +1,184 @@
+openapi: 3.0.3
+info:
+  title: Actions email integration
+  description: Send an email message about a business event to a bank user.
+  version: 2.0.6
+  x-icon: settings
+  license:
+    name: Copyright Backbase
+    url: 'https://www.backbase.com/legal'
+servers:
+  - description: Prism mock server
+    url: 'http://localhost:4010'
+tags:
+  - name: email-integration
+paths:
+  /service-api/v2/email:
+    summary: Email
+    description: Send email
+    post:
+      tags:
+        - email
+      summary: Endpoint for sending email message.
+      description: Endpoint for sending email message
+      operationId: postEmail
+      requestBody:
+        description: Endpoint for sending email message
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmailPostRequestBody'
+            example:
+              $ref: '#/components/examples/EmailPostRequestBody'
+      responses:
+        '201':
+          description: Created
+          content: {}
+        '400':
+          description: BadRequest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+              example:
+                $ref: '#/components/examples/BadRequestError'
+        '500':
+          description: InternalServerError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+              example:
+                $ref: '#/components/examples/InternalServerError'
+components:
+  schemas:
+    Attachment:
+      required:
+        - content
+      type: object
+      properties:
+        fileName:
+          type: string
+          description: Name of attached file
+        content:
+          type: string
+          description: Base64 encoded attachment
+        additions:
+          description: Additional properties
+          type: object
+          additionalProperties:
+            type: string
+      description: Email attachment
+    EmailPostRequestBody:
+      required:
+        - body
+        - to
+      type: object
+      properties:
+        to:
+          type: array
+          description: List of recipients that should be im 'copy'
+          items:
+            type: string
+        cc:
+          type: array
+          description: List of recipients that should be im 'copy'
+          items:
+            type: string
+        bcc:
+          type: array
+          description: List of recipients that should be im 'blind copy'
+          items:
+            type: string
+        from:
+          type: string
+          description: Email address of email sender
+        body:
+          type: string
+          description: Base64 encoded email body
+        subject:
+          type: string
+          description: Email subject
+        important:
+          type: boolean
+          default: false
+          description: Email importance flag
+        attachments:
+          type: array
+          description: List of email attachments
+          items:
+            $ref: '#/components/schemas/Attachment'
+        additions:
+          description: Additional properties
+          type: object
+          additionalProperties:
+            type: string
+    ErrorItem:
+      title: ErrorItem
+      type: object
+      properties:
+        message:
+          description: Any further information.
+          type: string
+        key:
+          description: '{capability-name}.api.{api-key-name}. For generated validation errors this is the path in the document the error resolves to. e.g. object name + ''.'' + field'
+          type: string
+        context:
+          description: Context can be anything used to construct localised messages.
+          type: object
+          additionalProperties:
+            type: string
+    BadRequestError:
+      title: BadRequestError
+      type: object
+      properties:
+        message:
+          description: Any further information
+          type: string
+        errors:
+          description: Detailed error information
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorItem'
+      required:
+        - message
+    InternalServerError:
+      title: InternalServerError
+      type: object
+      description: Represents HTTP 500 Internal Server Error
+      properties:
+        message:
+          description: Further Information
+          type: string
+  examples:
+    EmailPostRequestBody:
+      value:
+        to:
+          - henry@backbase.com
+          - gaben@gmail.com
+        cc:
+          - jim@yahoo.com
+          - steve@apple.com
+        bcc:
+          - mike@ymicrosoft.com
+        from: noreply@backbase.com
+        body: U0ltcGxlIGVtYWlsIGJvZHk=
+        subject: New DBS rumors
+        important: true
+        attachments:
+          - fileName: dbs_X_prerelease.pdf
+            content: QXR0YWNobWVudCBleGFtcGxl
+          - fileName: dbs_X_specs.pdf
+            content: QXR0YWNobWVudCBleGFtcGxl
+    BadRequestError:
+      value:
+        message: Bad Request
+        errors:
+          - message: 'Value Exceeded. Must be between {min} and {max}.'
+            key: common.api.shoesize
+            context:
+              max: '50'
+              min: '1'
+    InternalServerError:
+      value:
+        message: Description of error

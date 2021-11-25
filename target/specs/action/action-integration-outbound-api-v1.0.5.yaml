@@ -1,0 +1,171 @@
+openapi: 3.0.3
+info:
+  title: Actions user info integration
+  description: Retrive filtered user information.
+  version: 1.0.5
+  x-icon: settings
+  license:
+    name: Copyright Backbase
+    url: 'https://www.backbase.com/legal'
+servers:
+  - description: Prism mock server
+    url: 'http://localhost:4010'
+tags:
+  - name: action-integration
+paths:
+  '/service-api/v1/user-info/{userId}':
+    summary: UserInfo
+    description: User information
+    get:
+      tags:
+        - user-info
+      summary: Returns user info filtered by several criteria.
+      description: Returns user info filtered by several criteria
+      operationId: getUserInfo
+      parameters:
+        - name: eventType
+          in: query
+          description: Event FQN (optional filter)
+          required: false
+          schema:
+            type: string
+          example: com.backbase.dbs.actions.reactive.event.spec.v2.AccountBalanceChangedEvent
+        - name: recipeId
+          in: query
+          description: Action Recipe ID (UUID) (optional filter)
+          required: false
+          schema:
+            type: string
+          example: 4ed2bbfc-dcb3-4b19-ae99-c1c7ea58b794
+        - name: channel
+          in: query
+          description: Delivery Channel Code (optional filter)
+          required: false
+          schema:
+            type: string
+          example: email
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInfoGetResponseBody'
+              example:
+                $ref: '#/components/examples/UserInfoGetResponseBody'
+        '400':
+          description: BadRequest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+              example:
+                $ref: '#/components/examples/BadRequestError'
+        '500':
+          description: InternalServerError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+              example:
+                $ref: '#/components/examples/InternalServerError'
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+components:
+  schemas:
+    UserInfoGetResponseBody:
+      type: object
+      properties:
+        userId:
+          type: string
+          description: User's external id
+        firstName:
+          type: string
+          description: User's first name
+        lastName:
+          type: string
+          description: User's last name
+        emails:
+          type: array
+          items:
+            type: string
+        phoneNumbers:
+          type: array
+          items:
+            type: string
+        locale:
+          type: string
+          description: Preferred user's locale
+        additions:
+          description: Additional properties
+          type: object
+          additionalProperties:
+            type: string
+    ErrorItem:
+      title: ErrorItem
+      type: object
+      properties:
+        message:
+          description: Any further information.
+          type: string
+        key:
+          description: '{capability-name}.api.{api-key-name}. For generated validation errors this is the path in the document the error resolves to. e.g. object name + ''.'' + field'
+          type: string
+        context:
+          description: Context can be anything used to construct localised messages.
+          type: object
+          additionalProperties:
+            type: string
+    BadRequestError:
+      title: BadRequestError
+      type: object
+      properties:
+        message:
+          description: Any further information
+          type: string
+        errors:
+          description: Detailed error information
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorItem'
+      required:
+        - message
+    InternalServerError:
+      title: InternalServerError
+      type: object
+      description: Represents HTTP 500 Internal Server Error
+      properties:
+        message:
+          description: Further Information
+          type: string
+  examples:
+    UserInfoGetResponseBody:
+      value:
+        userId: externalUserId
+        firstName: Timmy
+        lastName: Tester
+        emails:
+          - vasya@ukr.net
+          - petya@gmail.com
+          - vasyl@mail.ru
+        phoneNumbers:
+          - '+380671234567'
+          - '+390987456122'
+          - '+360682456628'
+        locale: en_US
+    BadRequestError:
+      value:
+        message: Bad Request
+        errors:
+          - message: 'Value Exceeded. Must be between {min} and {max}.'
+            key: common.api.shoesize
+            context:
+              max: '50'
+              min: '1'
+    InternalServerError:
+      value:
+        message: Description of error

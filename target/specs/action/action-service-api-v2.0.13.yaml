@@ -1,0 +1,1820 @@
+openapi: 3.0.3
+info:
+  title: Actions service
+  description: Retrieve action recipe specifications. Retrieve and manage action recipes and templates.
+  version: 2.0.13
+  x-icon: settings
+  license:
+    name: Copyright Backbase
+    url: 'https://www.backbase.com/legal'
+servers:
+  - description: Prism mock server
+    url: 'http://localhost:4010'
+tags:
+  - name: action
+paths:
+  /service-api/v2/action-recipe-specifications:
+    summary: Action Recipe Specifications
+    description: Action Recipe Specifications
+    get:
+      tags:
+        - action-recipe-specifications
+      description: Retrieves action recipe specifications.
+      operationId: getActionRecipeSpecifications
+      parameters:
+        - name: offset
+          in: query
+          description: Represents a number of page
+          required: false
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+            default: 0
+          example:
+            $ref: '#/components/examples/Offset'
+        - name: limit
+          in: query
+          description: Represents a page size
+          required: false
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+            default: 10
+          example:
+            $ref: '#/components/examples/Limit'
+        - name: orderBy
+          in: query
+          description: 'Order by field: name, type, category'
+          required: false
+          schema:
+            type: string
+        - name: direction
+          in: query
+          description: Direction
+          required: false
+          schema:
+            type: string
+            enum:
+              - ASC
+              - DESC
+            default: DESC
+      responses:
+        '200':
+          description: |-
+            # Returns a list of actions recipe specifications
+
+            This API returns action recipe specifications which have isUserDefinable property set to true.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActionRecipeSpecificationsGetResponseBody'
+        '400':
+          description: BadRequest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+              example:
+                $ref: '#/components/examples/BadRequestError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+              example:
+                $ref: '#/components/examples/UnauthorizedError'
+  /service-api/v2/action-recipe-specifications/templates:
+    summary: ActionRecipeSpecificationsTemplates
+    description: Templates API
+    get:
+      tags:
+        - action-recipe-specifications
+      description: 'Retrieves templates for action recipe specifications by locale if it is specified,  otherwise the endpoint retrieves all templates.'
+      operationId: getActionRecipeSpecificationsTemplates
+      parameters:
+        - name: locale
+          in: query
+          description: Locale Selector
+          required: false
+          schema:
+            type: string
+        - name: offset
+          in: query
+          description: Represents a number of page
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+          example:
+            $ref: '#/components/examples/Offset'
+        - name: limit
+          in: query
+          description: Represents a page size
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+          example:
+            $ref: '#/components/examples/Limit'
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetActionRecipeSpecificationsTemplates'
+              example:
+                - uuid: 1231231-12312-31-231-23-123
+                  specificationId: '1'
+                  actionId: '123'
+                  locale: en-GB
+                  title: Transactions Notification Template
+                  body: '<div>Content here ${place-holder-here}</div>'
+                  type: REGULAR
+        '400':
+          description: |-
+            Either:
+
+            * Request does not honor the contract, check the example in the Request tab.
+            * There was one of the following logic errors resulting from the spec generation:
+
+            | Message | key | context |
+            --- | --- | ---
+            | Invalid locale | actions.api.invalid.locale | locale: < invalidLocale > |
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+              example:
+                $ref: '#/components/examples/BadRequestError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+              example:
+                $ref: '#/components/examples/UnauthorizedError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+              example:
+                $ref: '#/components/examples/ForbiddenError'
+        '404':
+          description: NotFound
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+              example:
+                $ref: '#/components/examples/NotFoundError'
+  '/service-api/v2/action-recipe-specifications/{specificationId}/actions/{actionId}/templates':
+    summary: Template
+    put:
+      tags:
+        - action-recipe-specifications
+      description: 'Creates or updates a template for an action recipe specification.  The following validation takes place: if the body or the locale (or both)  of a template is blank, a `BadRequestException` is thrown.'
+      operationId: putTemplate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TemplatePutRequestBody'
+            examples:
+              regularTemplate:
+                summary: regularTemplate
+                value:
+                  locale: en-GB
+                  title: Transactions Notification Template
+                  body: '<div>Content here ${place-holder-here}</div>'
+                  type: REGULAR
+              digestTemplate:
+                summary: digestTemplate
+                value:
+                  locale: en-GB
+                  title: New transactions report
+                  body: You have %transactions.count% transactions for %digest.period% on account %account.number%
+                  type: DIGEST
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TemplatePutResponseBody'
+              example:
+                uuid: 12312-0123123-12314123-412345
+        '400':
+          description: |-
+            Either:
+
+            * Request does not honor the contract, check the example in the Request tab.
+            * There was one of the following logic errors resulting from the spec generation:
+
+            | Message | key | context |
+            --- | --- | ---
+            | Template `body` field required | api.NotNull.body | none |
+            | Template `locale` field required | api.NotNull.locale | none |
+            | Template `body` must be present| actions.api.template.body.missing | none |
+            | Template `locale` must be present| actions.api.template.locale.missing | none |
+            | Template `locale` must be valid locale| actions.api.template.locale.invalid | locale: < invalidLocale > |
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+              example:
+                $ref: '#/components/examples/BadRequestError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+              example:
+                $ref: '#/components/examples/UnauthorizedError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+              example:
+                $ref: '#/components/examples/ForbiddenError'
+        '404':
+          description: NotFound
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+              example:
+                $ref: '#/components/examples/NotFoundError'
+    parameters:
+      - name: actionId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: specificationId
+        in: path
+        required: true
+        schema:
+          type: string
+  /service-api/v2/action-recipes:
+    summary: ActionRecipes
+    description: Endpoint to manipulate action recipes
+    get:
+      tags:
+        - action-recipes
+      description: Retrieves a list of action recipes.
+      operationId: getActionRecipes
+      parameters:
+        - name: userId
+          in: query
+          description: Specifies a user for whom action recipies will be retrieved.
+          required: true
+          schema:
+            type: string
+        - name: specificationId
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: active
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: offset
+          in: query
+          description: Represents a number of page
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+          example:
+            $ref: '#/components/examples/Offset'
+        - name: limit
+          in: query
+          description: Represents a page size
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+          example:
+            $ref: '#/components/examples/Limit'
+        - name: orderBy
+          in: query
+          description: 'Order by field: name, active, specificationId, amount, createdOn'
+          required: false
+          schema:
+            type: string
+        - name: direction
+          in: query
+          description: Direction
+          required: false
+          schema:
+            type: string
+            enum:
+              - ASC
+              - DESC
+            default: DESC
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActionRecipesGetResponseBody'
+        '400':
+          description: BadRequest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+              example:
+                $ref: '#/components/examples/BadRequestError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+              example:
+                $ref: '#/components/examples/UnauthorizedError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+              example:
+                $ref: '#/components/examples/ForbiddenError'
+    post:
+      tags:
+        - action-recipes
+      description: |-
+        Creates a new action recipe.  Additionally, arrangement validation takes place in two cases:
+
+         - If the action recipe belongs to an action recipe specification with the category `arrangementBased` 
+         - Deprecated. If the action recipe belongs to an action recipe specification with an ID `1` or `4` if there is no category specified.
+      operationId: postActionRecipes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActionRecipesPostRequestBody'
+      responses:
+        '202':
+          description: Returns id of newly created action recipe
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActionRecipesPostResponseBody'
+        '400':
+          description: |-
+            Either:
+
+            * Request does not honor the contract, check the example in the Request tab.
+            * There was one of the following logic errors resulting from the spec generation:
+
+            | Message | key | context |
+            --- | --- | ---
+            | Action recipe `specificationId` field required | api.NotNull.specificationId | none |
+            | Action recipe `active` field required | api.NotNull.active |  none |
+            | Action recipe `actions` field required | api.NotNull.actions | none |
+            | Action recipe `actions[*].type` field required | api.NotNull.actions[*].type | none |
+            | Action recipe `userId` field has invalid size | api.Size.userId | none |
+            | Action recipe `specificationId` field has invalid size | api.Size.specificationId | none |
+            | Action recipe `actions` field has invalid size | api.Size.actions | none |
+            | Action recipe `arrangementId` field has invalid size | api.Size.arrangementId |  none |
+            | Action recipe `name` field has invalid size | api.Size.name | none |
+            | Action recipe `actions[*].type` field has invalid size | api.Size.actions[*].type | none |
+            | Unrecognized specification: 123 |actions.api.specification.missing|  specificationId:123 |
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+              example:
+                $ref: '#/components/examples/BadRequestError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+              example:
+                $ref: '#/components/examples/UnauthorizedError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+              example:
+                $ref: '#/components/examples/ForbiddenError'
+  '/service-api/v2/action-recipes/{recipeId}':
+    summary: ActionRecipe
+    description: Endpoint to manipulate a specific recipe
+    get:
+      tags:
+        - action-recipes
+      description: Retrieves the specified action recipe.
+      operationId: getActionRecipe
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActionRecipeGetResponseBody'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+              example:
+                $ref: '#/components/examples/UnauthorizedError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+              example:
+                $ref: '#/components/examples/ForbiddenError'
+        '404':
+          description: NotFound
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+              example:
+                $ref: '#/components/examples/NotFoundError'
+    put:
+      tags:
+        - action-recipes
+      description: |-
+        Updates the specified action recipe.  Additionally, arrangement validation takes place in two cases:
+
+         - If the action recipe belongs to an action recipe specification with the category `arrangementBased` 
+         - Deprecated. If the action recipe belongs to an action recipe specification with an ID `1` or `4` if there is no category specified.
+      operationId: putActionRecipe
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActionRecipePutRequestBody'
+      responses:
+        '202':
+          description: Accepted
+          content: {}
+        '400':
+          description: |
+            Either:
+
+            * Request does not honor the contract, check the example in the Request tab.
+            * There was one of the following logic errors resulting from the spec generation:
+
+            | Message | key | context |
+            --- | --- | ---
+            | Action recipe `active` field required | api.NotNull.active |  none |
+            | Action recipe `actions` field required | api.NotNull.actions |  none |
+            | Action recipe `actions[*].type` field required | api.NotNull.actions[*].type | none |
+            | Action recipe `arrangementId` field has invalid size | api.Size.arrangementId |  none |
+            | Action recipe `name` field has invalid size | api.Size.name |  none |
+            | Action recipe `actions[*].type` field has invalid size | api.Size.actions[*].type |  none |
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+              example:
+                $ref: '#/components/examples/BadRequestError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+              example:
+                $ref: '#/components/examples/UnauthorizedError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+              example:
+                $ref: '#/components/examples/ForbiddenError'
+        '404':
+          description: NotFound
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+              example:
+                $ref: '#/components/examples/NotFoundError'
+    delete:
+      tags:
+        - action-recipes
+      description: |-
+        Removes the specified action recipe.  Additionally, arrangement validation takes place in two cases:
+
+         - If the action recipe belongs to an action recipe specification with the category `arrangementBased` 
+         - Deprecated. If the action recipe belongs to an action recipe specification with an ID `1` or `4` if there is no category specified.
+      operationId: deleteActionRecipe
+      responses:
+        '202':
+          description: Accepted
+          content: {}
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+              example:
+                $ref: '#/components/examples/UnauthorizedError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+              example:
+                $ref: '#/components/examples/ForbiddenError'
+        '404':
+          description: NotFound
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+              example:
+                $ref: '#/components/examples/NotFoundError'
+    parameters:
+      - name: recipeId
+        in: path
+        required: true
+        schema:
+          type: string
+        examples:
+          newTransaction:
+            summary: newTransaction
+            value:
+              $ref: '#/components/examples/RecipeIdNewTransaction'
+          accountLowBalance:
+            summary: accountLowBalance
+            value:
+              $ref: '#/components/examples/RecipeIdAccountLowBalance'
+  '/service-api/v2/action-recipes/{recipeId}/activation-request':
+    summary: ActivationRequest
+    post:
+      tags:
+        - action-recipes
+      description: |-
+        Activates the specified action recipe.  Additionally, arrangement validation takes place in two cases:
+
+         - If the action recipe belongs to an action recipe specification with the category `arrangementBased` 
+         - Deprecated. If the action recipe belongs to an action recipe specification with an ID `1` or `4` if there is no category specified.
+      operationId: postActivationRequest
+      responses:
+        '202':
+          description: Accepted
+          content: {}
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+              example:
+                $ref: '#/components/examples/UnauthorizedError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+              example:
+                $ref: '#/components/examples/ForbiddenError'
+        '404':
+          description: NotFound
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+              example:
+                $ref: '#/components/examples/NotFoundError'
+    parameters:
+      - name: recipeId
+        in: path
+        required: true
+        schema:
+          type: string
+        examples:
+          newTransaction:
+            summary: newTransaction
+            value:
+              $ref: '#/components/examples/RecipeIdNewTransaction'
+          accountLowBalance:
+            summary: accountLowBalance
+            value:
+              $ref: '#/components/examples/RecipeIdAccountLowBalance'
+  '/service-api/v2/action-recipes/{recipeId}/deactivation-request':
+    summary: DeactivationRequest
+    post:
+      tags:
+        - action-recipes
+      description: |-
+        Deactivates the specified action recipe.  Additionally, arrangement validation takes place in two cases:
+
+         - If the action recipe belongs to an action recipe specification with the category `arrangementBased` 
+         - Deprecated. If the action recipe belongs to an action recipe specification with an ID `1` or `4` if there is no category specified.
+      operationId: postDeactivationRequest
+      responses:
+        '202':
+          description: Accepted
+          content: {}
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+              example:
+                $ref: '#/components/examples/UnauthorizedError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+              example:
+                $ref: '#/components/examples/ForbiddenError'
+        '404':
+          description: NotFound
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+              example:
+                $ref: '#/components/examples/NotFoundError'
+    parameters:
+      - name: recipeId
+        in: path
+        required: true
+        schema:
+          type: string
+        examples:
+          newTransaction:
+            summary: newTransaction
+            value:
+              $ref: '#/components/examples/RecipeIdNewTransaction'
+          accountLowBalance:
+            summary: accountLowBalance
+            value:
+              $ref: '#/components/examples/RecipeIdAccountLowBalance'
+components:
+  schemas:
+    ActionParent:
+      type: object
+      properties:
+        type:
+          maxLength: 64
+          minLength: 1
+          type: string
+        destination:
+          type: object
+          additionalProperties:
+            type: string
+        additions:
+          description: Additional properties
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - type
+      description: Action entity
+    Action:
+      properties:
+        enabled:
+          type: boolean
+      description: Action entity
+      allOf:
+        - $ref: '#/components/schemas/ActionParent'
+    ActionRecipe:
+      type: object
+      description: Action recipe entity
+      properties:
+        id:
+          maxLength: 64
+          minLength: 1
+          type: string
+        userId:
+          maxLength: 64
+          minLength: 1
+          type: string
+        specificationId:
+          maxLength: 64
+          minLength: 1
+          type: string
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Action'
+        amount:
+          type: string
+          minimum: -1000000000000000000
+          exclusiveMinimum: true
+          maximum: 1000000000000000000
+          exclusiveMaximum: true
+        arrangementId:
+          maxLength: 64
+          minLength: 1
+          type: string
+        createdOn:
+          type: string
+          format: date-time
+        recurrence:
+          $ref: '#/components/schemas/Recurrence'
+      required:
+        - actions
+        - id
+        - specificationId
+      allOf:
+        - $ref: '#/components/schemas/ActionRecipeItemParent'
+    ActionRecipeGetResponseBody:
+      properties:
+        id:
+          maxLength: 64
+          minLength: 1
+          type: string
+        userId:
+          maxLength: 64
+          minLength: 1
+          type: string
+        specificationId:
+          maxLength: 64
+          minLength: 1
+          type: string
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Action'
+        amount:
+          type: string
+          minimum: -1000000000000000000
+          exclusiveMinimum: true
+          maximum: 1000000000000000000
+          exclusiveMaximum: true
+        arrangementId:
+          maxLength: 64
+          minLength: 1
+          type: string
+        createdOn:
+          type: string
+          format: date-time
+        recurrence:
+          $ref: '#/components/schemas/Recurrence'
+      required:
+        - actions
+        - id
+        - specificationId
+      description: Action recipe entity
+      allOf:
+        - $ref: '#/components/schemas/ActionRecipeItemParent'
+      example:
+        id: '1'
+        name: Transaction > 100 EUR
+        active: true
+        specificationId: '1'
+        userId: kjordan
+        actions:
+          - type: notification
+            enabled: true
+          - type: email
+            enabled: false
+          - type: sms
+            enabled: false
+          - type: push
+            enabled: true
+        amount: '100'
+        arrangementId: '123'
+    ActionRecipeItemParent:
+      type: object
+      description: Action recipe parent entity containing common action recipe properties
+      properties:
+        name:
+          maxLength: 200
+          minLength: 1
+          type: string
+        active:
+          type: boolean
+        additions:
+          description: Additional properties
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - active
+    ActionRecipePutRequestBody:
+      required:
+        - actions
+      properties:
+        actions:
+          type: array
+          minItems: 1
+          maxItems: 10
+          items:
+            $ref: '#/components/schemas/ActionParent'
+        amount:
+          type: string
+          minimum: -1000000000000000000
+          exclusiveMinimum: true
+          maximum: 1000000000000000000
+          exclusiveMaximum: true
+        arrangementId:
+          maxLength: 64
+          minLength: 1
+          type: string
+        recurrence:
+          $ref: '#/components/schemas/Recurrence'
+      description: Action recipe entity
+      allOf:
+        - $ref: '#/components/schemas/ActionRecipeItemParent'
+      example:
+        newTransaction:
+          name: Transaction > 100 EUR
+          active: true
+          actions:
+            - type: notification
+          amount: '100'
+          arrangementId: '123'
+          recurrence:
+            daysOfWeek:
+              - MON
+              - THU
+            hoursOfDay:
+              - '8'
+              - '13'
+              - '17'
+        accountLowBalance:
+          name: Account Low Balance < 1000 EUR
+          active: true
+          actions:
+            - type: notification
+          amount: '1000'
+          arrangementId: '123'
+    ActionRecipesGetResponseBody:
+      type: object
+      properties:
+        totalCount:
+          type: integer
+          format: int64
+          description: Represents a total number of action recipes available across all pages
+        actionRecipes:
+          type: array
+          description: Represents a list of action recipes for a page
+          items:
+            $ref: '#/components/schemas/ActionRecipe'
+        additions:
+          description: Additional properties
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - actionRecipes
+        - totalCount
+      description: Represents a response to a 'GET action recipes' request
+      example:
+        totalCount: 20
+        actionRecipes:
+          - id: '1'
+            name: Transaction > 100 EUR
+            active: true
+            specificationId: '1'
+            userId: kjordan
+            actions:
+              - type: notification
+                enabled: true
+              - type: email
+                enabled: false
+              - type: sms
+                enabled: false
+              - type: push
+                enabled: true
+            amount: '100'
+            arrangementId: 1cdb2224-8926-4b4d-a99f-1c9dfbbb4691
+            createdOn: '2020-01-17T12:52:34.000+0000'
+          - id: '2'
+            name: Account Low Balance < 1000 EUR
+            active: true
+            specificationId: '4'
+            userId: kjordan
+            actions:
+              - type: notification
+                enabled: true
+              - type: email
+                enabled: false
+              - type: sms
+                enabled: false
+              - type: push
+                enabled: true
+            amount: '300'
+            arrangementId: 1cdb2224-8926-4b4d-a99f-1c9dfbbb4691
+            createdOn: '2020-01-17T12:52:34.000+0000'
+          - id: '3'
+            name: Transaction > 300 EUR
+            active: true
+            specificationId: '1'
+            userId: kjordan
+            actions:
+              - type: notification
+                enabled: true
+              - type: email
+                enabled: false
+              - type: sms
+                enabled: false
+              - type: push
+                enabled: true
+            amount: '300'
+            arrangementId: 3cdb2224-8926-4b4d-a99f-1c9dfbbb4600
+            createdOn: '2020-01-17T12:52:34.000+0000'
+          - id: '4'
+            name: Account Low Balance < 1000 EUR
+            active: true
+            specificationId: '4'
+            userId: kjordan
+            actions:
+              - type: notification
+                enabled: true
+              - type: email
+                enabled: false
+              - type: sms
+                enabled: false
+              - type: push
+                enabled: true
+            amount: '300'
+            arrangementId: 1cdb2224-8926-4b4d-a99f-1c9dfbbb4692
+            createdOn: '2020-01-17T12:52:34.000+0000'
+          - id: '5'
+            name: Transaction > 100 EUR
+            active: true
+            specificationId: '1'
+            userId: kjordan
+            actions:
+              - type: notification
+                enabled: true
+              - type: email
+                enabled: false
+              - type: sms
+                enabled: false
+              - type: push
+                enabled: true
+            amount: '100'
+            arrangementId: 3cdb2224-8926-4b4d-a99f-1c9dfbbb4600
+            createdOn: '2020-01-17T12:52:34.000+0000'
+          - id: '6'
+            name: Rounding rule
+            active: false
+            specificationId: '3'
+            userId: kjordan
+            actions:
+              - type: payment
+                enabled: true
+            arrangementId: 1cdb2224-8926-4b4d-a99f-1c9dfbbb4691
+            createdOn: '2020-01-17T12:52:34.000+0000'
+            additions:
+              targetArrangementId: 6cdb2224-8926-4b4d-a99f-1c9dfbbb4699
+          - id: '7'
+            name: Account Low Balance < 1000 EUR
+            active: true
+            specificationId: '4'
+            userId: kjordan
+            actions:
+              - type: notification
+                enabled: true
+              - type: email
+                enabled: false
+              - type: sms
+                enabled: false
+              - type: push
+                enabled: true
+            amount: '300'
+            arrangementId: 1cdb2224-8926-4b4d-a99f-1c9dfbbb4692
+            createdOn: '2020-01-17T12:52:34.000+0000'
+          - id: '8'
+            name: Transaction > 100 EUR
+            active: true
+            specificationId: '1'
+            userId: kjordan
+            actions:
+              - type: notification
+                enabled: true
+              - type: email
+                enabled: false
+              - type: sms
+                enabled: false
+              - type: push
+                enabled: true
+            amount: '100'
+            arrangementId: 1cdb2224-8926-4b4d-a99f-1c9dfbbb4699
+            createdOn: '2020-01-17T12:52:34.000+0000'
+          - id: '9'
+            name: Account Low Balance < 1000 EUR
+            active: true
+            specificationId: '4'
+            userId: kjordan
+            actions:
+              - type: notification
+                enabled: true
+              - type: email
+                enabled: false
+              - type: sms
+                enabled: false
+              - type: push
+                enabled: true
+            amount: '300'
+            arrangementId: 6cdb2224-8926-4b4d-a99f-1c9dfbbb4699
+            createdOn: '2020-01-17T12:52:34.000+0000'
+          - id: '10'
+            name: Transaction > 100 EUR
+            active: true
+            specificationId: '1'
+            userId: kjordan
+            actions:
+              - type: notification
+                enabled: true
+              - type: email
+                enabled: false
+              - type: sms
+                enabled: false
+              - type: push
+                enabled: true
+            amount: '100'
+            arrangementId: 3cdb2224-8926-4b4d-a99f-1c9dfbbb4699
+            createdOn: '2020-01-17T12:52:34.000+0000'
+          - id: '11'
+            name: Account Low Balance < 1000 EUR
+            active: true
+            specificationId: '4'
+            userId: kjordan
+            actions:
+              - type: notification
+                enabled: true
+              - type: email
+                enabled: false
+              - type: sms
+                enabled: false
+              - type: push
+                enabled: true
+            amount: '300'
+            arrangementId: 1cdb2224-8926-4b4d-a99f-1c9dfbbb4699
+            createdOn: '2020-01-16T12:52:34.000+0000'
+          - id: '12'
+            name: Transaction > 100 EUR
+            active: true
+            specificationId: '1'
+            userId: kjordan
+            actions:
+              - type: notification
+                enabled: true
+              - type: email
+                enabled: false
+              - type: sms
+                enabled: false
+              - type: push
+                enabled: true
+            amount: '100'
+            arrangementId: 6cdb2224-8926-4b4d-a99f-1c9dfbbb4699
+            createdOn: '2020-01-16T12:52:34.000+0000'
+          - id: '13'
+            name: Account Low Balance < 1000 EUR
+            active: true
+            specificationId: '4'
+            userId: kjordan
+            actions:
+              - type: notification
+                enabled: true
+              - type: email
+                enabled: false
+              - type: sms
+                enabled: false
+              - type: push
+                enabled: true
+            amount: '300'
+            arrangementId: 3cdb2224-8926-4b4d-a99f-1c9dfbbb4699
+            createdOn: '2020-01-16T12:52:34.000+0000'
+          - id: '14'
+            name: Transaction > 100 EUR
+            active: true
+            specificationId: '1'
+            userId: kjordan
+            actions:
+              - type: notification
+                enabled: true
+              - type: email
+                enabled: false
+              - type: sms
+                enabled: false
+              - type: push
+                enabled: true
+            amount: '100'
+            arrangementId: 1cdb2224-8926-4b4d-a99f-1c9dfbbb4699
+            createdOn: '2020-01-16T12:52:34.000+0000'
+          - id: '15'
+            name: Account Low Balance < 1000 EUR
+            active: true
+            specificationId: '4'
+            userId: kjordan
+            actions:
+              - type: notification
+                enabled: true
+              - type: email
+                enabled: false
+              - type: sms
+                enabled: false
+              - type: push
+                enabled: true
+            amount: '300'
+            arrangementId: 6cdb2224-8926-4b4d-a99f-1c9dfbbb4699
+            createdOn: '2020-01-16T12:52:34.000+0000'
+          - id: '16'
+            name: Rounding rule Example
+            active: true
+            specificationId: '3'
+            userId: kjordan
+            actions:
+              - type: payment
+                enabled: true
+            arrangementId: 3cdb2224-8926-4b4d-a99f-1c9dfbbb4600
+            createdOn: '2020-01-16T12:52:34.000+0000'
+            additions:
+              targetArrangementId: 1cdb2224-8926-4b4d-a99f-1c9dfbbb4699
+          - id: '17'
+            name: Payment Status Rejected
+            active: false
+            specificationId: '5'
+            userId: kjordan
+            actions:
+              - type: notification
+                enabled: true
+              - type: push
+                enabled: true
+            createdOn: '2020-01-16T12:52:34.000+0000'
+            additions:
+              paymentStatuses: rejected
+          - id: '18'
+            name: Payment Status Rejected
+            active: true
+            specificationId: '5'
+            userId: kjordan
+            actions:
+              - type: notification
+                enabled: true
+              - type: push
+                enabled: true
+            createdOn: '2020-01-16T12:52:34.000+0000'
+            additions:
+              paymentStatuses: rejected
+          - id: '19'
+            name: Contact Status Rejected
+            active: false
+            specificationId: '6'
+            userId: kjordan
+            actions:
+              - type: notification
+                enabled: false
+              - type: push
+                enabled: true
+            createdOn: '2020-01-16T12:52:34.000+0000'
+            additions:
+              partyStatuses: rejected
+          - id: '20'
+            name: Contact Status Rejected
+            active: true
+            specificationId: '6'
+            userId: kjordan
+            actions:
+              - type: notification
+                enabled: true
+              - type: push
+                enabled: true
+            createdOn: '2020-01-16T12:52:34.000+0000'
+            additions:
+              partyStatuses: rejected
+    ActionRecipeSpecification:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        category:
+          type: string
+        userDefinable:
+          type: boolean
+        origin:
+          type: string
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/SpecificationAction'
+        digestEnabled:
+          type: boolean
+        recipeDefaults:
+          $ref: '#/components/schemas/ActionRecipeSpecificationDefaults'
+        additions:
+          description: Additional properties
+          type: object
+          additionalProperties:
+            type: string
+      description: Action recipe specification entity
+    ActionRecipeSpecificationDefaults:
+      type: object
+      properties:
+        amount:
+          type: string
+          minimum: -1000000000000000000
+          exclusiveMinimum: true
+          maximum: 1000000000000000000
+          exclusiveMaximum: true
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/SpecificationAction'
+        additions:
+          description: Additional properties
+          type: object
+          additionalProperties:
+            type: string
+      description: Action recipe default entityces/schemas/specification-action-item.yaml
+    ActionRecipeSpecificationsGetResponseBody:
+      type: object
+      properties:
+        actionRecipeSpecifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActionRecipeSpecification'
+        additions:
+          description: Additional properties
+          type: object
+          additionalProperties:
+            type: string
+      description: Response to GET action recipe specifications request
+      example:
+        actionRecipeSpecifications:
+          - id: '1'
+            name: New Transaction
+            userDefinable: true
+            origin: Transaction
+            type: newTransaction
+            category: arrangementBased
+            actions:
+              - type: notification
+                severityLevel: INFO
+                route:
+                  whereTo: transaction-view
+                  dataTemplate: '{"id": "${transactions[0].id}", "arrangementId": "${transactions[0].arrangementId}"}'
+                templates:
+                  - locale: en-US
+                    kind: REGULAR
+                    path: /pathto/template
+                    repository: repository_id
+                  - locale: en-US
+                    kind: DIGEST
+                    path: /pathto/template
+                    repository: repository_id
+              - type: email
+                templates:
+                  - locale: en-US
+                    kind: REGULAR
+                    path: /pathto/template
+                    repository: repository_id
+                  - locale: en-US
+                    kind: DIGEST
+                    path: /pathto/template
+                    repository: repository_id
+              - type: sms
+                templates:
+                  - locale: en-US
+                    kind: REGULAR
+                    path: /pathto/template
+                    repository: repository_id
+                  - locale: en-US
+                    kind: DIGEST
+                    path: /pathto/template
+                    repository: repository_id
+              - type: push
+                severityLevel: INFO
+                route:
+                  whereTo: transaction-view
+                  dataTemplate: '{"id": "${transactions[0].id}", "arrangementId": "${transactions[0].arrangementId}"}'
+                templates:
+                  - locale: en-US
+                    kind: REGULAR
+                    path: /pathto/template
+                    repository: repository_id
+                  - locale: en-US
+                    kind: DIGEST
+                    path: /pathto/template
+                    repository: repository_id
+            digestEnabled: true
+            recipeDefaults:
+              amount: '0'
+              actions:
+                - type: notification
+                - type: push
+          - id: '4'
+            name: Account Low Balance
+            userDefinable: true
+            type: accountLowBalance
+            category: arrangementBased
+            actions:
+              - type: notification
+              - type: email
+              - type: sms
+              - type: push
+            digestEnabled: false
+            recipeDefaults:
+              amount: '200'
+              actions:
+                - type: notification
+                - type: push
+              additions:
+                type: Cash Withdraw
+          - id: '5'
+            name: Payment Status Updated
+            userDefinable: true
+            type: paymentStatusUpdated
+            category: paymentStatusBased
+            actions:
+              - type: notification
+              - type: push
+            digestEnabled: true
+            recipeDefaults:
+              actions:
+                - type: notification
+                - type: push
+          - id: '6'
+            name: Party Status Updated
+            userDefinable: true
+            type: partyStatusUpdated
+            category: partyStatusBased
+            actions:
+              - type: notification
+              - type: push
+            digestEnabled: false
+            recipeDefaults:
+              actions:
+                - type: notification
+                - type: push
+          - id: '8'
+            name: Saving goal
+            type: savingGoal
+            category: userBased
+            userDefinable: true
+            actions:
+              - type: notification
+              - type: push
+            digestEnabled: false
+          - id: '9'
+            name: Account statement is ready
+            type: accountStatementIsReady
+            category: arrangementBased
+            userDefinable: true
+            actions:
+              - type: email
+              - type: notification
+              - type: push
+            digestEnabled: false
+          - id: '10'
+            name: Account Low Balance Business
+            type: accountLowBalance
+            category: arrangementBased
+            userDefinable: true
+            actions:
+              - type: notification
+              - type: push
+            digestEnabled: false
+            recipeDefaults:
+              amount: '0'
+              actions:
+                - type: notification
+                - type: push
+          - id: '13'
+            name: Payment to approve
+            type: paymentToApprove
+            category: paymentResourceBased
+            digestEnabled: false
+            recipeDefaults:
+              actions:
+                - type: notification
+                - type: push
+              additions:
+                resource: Payments
+          - id: '14'
+            name: Contact to approve
+            type: contactToApprove
+            category: contactResourceBased
+            digestEnabled: false
+            recipeDefaults:
+              actions:
+                - type: notification
+                - type: push
+              additions:
+                resource: Contacts
+    ActionRecipesPostResponseBody:
+      type: object
+      properties:
+        id:
+          type: string
+        additions:
+          description: Additional properties
+          type: object
+          additionalProperties:
+            type: string
+      description: Response to POST action recipes request
+      example:
+        id: e92bbe7d-10cf-4d7c-b7b5-eadb7632812a
+    ActionRecipesPostRequestBody:
+      description: Expected body of POST action recipes request
+      required:
+        - actions
+        - specificationId
+      properties:
+        userId:
+          maxLength: 64
+          minLength: 1
+          type: string
+        specificationId:
+          maxLength: 64
+          minLength: 1
+          type: string
+        actions:
+          type: array
+          minItems: 1
+          maxItems: 10
+          items:
+            $ref: '#/components/schemas/ActionParent'
+        amount:
+          type: string
+          minimum: -1000000000000000000
+          exclusiveMinimum: true
+          maximum: 1000000000000000000
+          exclusiveMaximum: true
+        arrangementId:
+          maxLength: 64
+          minLength: 1
+          type: string
+        recurrence:
+          $ref: '#/components/schemas/Recurrence'
+      allOf:
+        - $ref: '#/components/schemas/ActionRecipeItemParent'
+      example:
+        newTransaction:
+          name: TransactionExecuted for 333
+          specificationId: '1'
+          active: true
+          actions:
+            - type: notification
+          amount: '100'
+          arrangementId: '123'
+          recurrence:
+            daysOfWeek:
+              - MON
+              - FRI
+            hoursOfDay:
+              - '9'
+              - '17'
+        newTransactionQuartzExpression:
+          name: TransactionExecuted for 777
+          specificationId: '1'
+          active: true
+          actions:
+            - type: push
+          amount: '200'
+          arrangementId: '321'
+          recurrence:
+            quartzExpression: '0 0 9,17 ? * MON,FRI *'
+        accountLowBalance:
+          name: Account Low Balance &lt; 1000
+          specificationId: '2'
+          active: true
+          actions:
+            - type: notification
+          amount: '1000'
+          arrangementId: '123'
+    Recurrence:
+      type: object
+      properties:
+        daysOfWeek:
+          type: array
+          description: List contains days of the week
+          items:
+            $ref: '#/components/schemas/DaysOfWeek'
+        hoursOfDay:
+          type: array
+          description: List contains hours of the day
+          items:
+            $ref: '#/components/schemas/HoursOfDay'
+        quartzExpression:
+          type: string
+          description: 'A Quartz expression conforming to the format described here: http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/crontrigger.html. This field has higher priority than daysOfWeek and hoursOfDay fields.'
+        additions:
+          description: Additional properties
+          type: object
+          additionalProperties:
+            type: string
+      description: 'If this section is present/set, the action recipe becomes recurrent (executable according to user-defined schedule)'
+    DaysOfWeek:
+      type: string
+      enum:
+        - MON
+        - TUE
+        - WED
+        - THU
+        - FRI
+        - SAT
+        - SUN
+    HoursOfDay:
+      type: string
+      enum:
+        - '0'
+        - '1'
+        - '2'
+        - '3'
+        - '4'
+        - '5'
+        - '6'
+        - '7'
+        - '8'
+        - '9'
+        - '10'
+        - '11'
+        - '12'
+        - '13'
+        - '14'
+        - '15'
+        - '16'
+        - '17'
+        - '18'
+        - '19'
+        - '20'
+        - '21'
+        - '22'
+        - '23'
+    TemplateType:
+      type: string
+      description: Template type
+      enum:
+        - REGULAR
+        - DIGEST
+      default: REGULAR
+    SpecificationAction:
+      required:
+        - type
+      type: object
+      properties:
+        type:
+          type: string
+        severityLevel:
+          type: string
+        route:
+          type: object
+          properties:
+            whereTo:
+              type: string
+            dataTemplate:
+              type: string
+          description: Route object fields.
+        templates:
+          type: array
+          description: List of templates
+          items:
+            required:
+              - locale
+              - kind
+              - path
+              - repository
+            type: object
+            properties:
+              locale:
+                type: string
+                description: Template locale
+                maxLength: 5
+              kind:
+                type: string
+                description: Kind of the template (regular or digest)
+                maxLength: 36
+              path:
+                type: string
+                description: Path to the template
+                maxLength: 1024
+              repository:
+                type: string
+                description: Repository identifier
+                maxLength: 128
+            description: Engagement journey template
+        additions:
+          description: Additional properties
+          type: object
+          additionalProperties:
+            type: string
+      description: Specification action entity
+    GetActionRecipeSpecificationsTemplates:
+      type: array
+      description: Template's List's Schema
+      items:
+        $ref: '#/components/schemas/ActionRecipeSpecificationsTemplatesGetResponseBody'
+    ActionRecipeSpecificationsTemplatesGetResponseBody:
+      required:
+        - actionId
+        - body
+        - locale
+        - specificationId
+        - uuid
+      type: object
+      properties:
+        uuid:
+          type: string
+          description: Template internal UUID
+        specificationId:
+          type: string
+          description: Template Specification ID
+        actionId:
+          type: string
+          description: Template Specification Action ID
+        locale:
+          type: string
+          description: Template locale
+        title:
+          type: string
+          description: Template title
+        body:
+          type: string
+          description: Template body
+        type:
+          $ref: '#/components/schemas/TemplateType'
+        additions:
+          description: Additional properties
+          type: object
+          additionalProperties:
+            type: string
+      description: Template Schema
+    TemplatePutResponseBody:
+      required:
+        - uuid
+      type: object
+      properties:
+        uuid:
+          type: string
+          description: Template's internal UUID
+        additions:
+          description: Additional properties
+          type: object
+          additionalProperties:
+            type: string
+      description: Template's Response Schema
+    TemplatePutRequestBody:
+      required:
+        - body
+        - locale
+      type: object
+      properties:
+        locale:
+          type: string
+          description: Template locale
+        title:
+          type: string
+          description: Template title
+        body:
+          type: string
+          description: Template body
+        type:
+          $ref: '#/components/schemas/TemplateType'
+        additions:
+          description: Additional properties
+          type: object
+          additionalProperties:
+            type: string
+      description: Template Schema
+    ErrorItem:
+      title: ErrorItem
+      type: object
+      properties:
+        message:
+          description: Any further information.
+          type: string
+        key:
+          description: '{capability-name}.api.{api-key-name}. For generated validation errors this is the path in the document the error resolves to. e.g. object name + ''.'' + field'
+          type: string
+        context:
+          description: Context can be anything used to construct localised messages.
+          type: object
+          additionalProperties:
+            type: string
+    BadRequestError:
+      title: BadRequestError
+      type: object
+      properties:
+        message:
+          description: Any further information
+          type: string
+        errors:
+          description: Detailed error information
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorItem'
+      required:
+        - message
+    NotFoundError:
+      title: NotFoundError
+      type: object
+      properties:
+        message:
+          description: Any further information
+          type: string
+        errors:
+          description: Detailed error information
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorItem'
+    ForbiddenError:
+      title: ForbiddenError
+      type: object
+      properties:
+        message:
+          description: Any further information
+          type: string
+        errors:
+          description: Detailed error information
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorItem'
+    UnauthorizedError:
+      title: UnauthorizedError
+      type: object
+      properties:
+        message:
+          type: string
+          description: Any further information
+        errors:
+          type: array
+          description: Detailed error information
+          items:
+            $ref: '#/components/schemas/ErrorItem'
+  examples:
+    Limit:
+      value: 20
+    Offset:
+      value: 3
+    RecipeIdNewTransaction:
+      value: 85c6cf5c-0bec-11e8-ba89-0ed5f89f718b
+    RecipeIdAccountLowBalance:
+      value: 85c6cb74-0bec-11e8-ba89-0ed5f89f718b
+    ForbiddenError:
+      value:
+        message: Access to requested resource denied.
+        errors:
+          - message: 'Resource access denied due to an insufficient user quota of {quota}.'
+            key: common.api.quota
+            context:
+              quota: someQuota
+    BadRequestError:
+      value:
+        message: Bad Request
+        errors:
+          - message: 'Value Exceeded. Must be between {min} and {max}.'
+            key: common.api.shoesize
+            context:
+              max: '50'
+              min: '1'
+    UnauthorizedError:
+      value:
+        message: Access to requested resource denied.
+        errors:
+          - message: Resource access denied due to invalid credentials.
+            key: common.api.token
+            context:
+              accessToken: expired
+    NotFoundError:
+      value:
+        message: Resource not found.
+        errors:
+          - message: 'Unable to find the resource requested resource: {resource}.'
+            key: common.api.resource
+            context:
+              resource: aResource
