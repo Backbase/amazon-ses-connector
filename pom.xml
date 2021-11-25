@@ -24,7 +24,7 @@
         <jib.to.image>${docker.image.name}:${project.version}</jib.to.image>
         <docker.distroless.war.latest.skip>true</docker.distroless.war.latest.skip>
         <!--	Dependency versions	-->
-        <backbase-bom.version>2021.09</backbase-bom.version>
+        <backbase-bom.version>2021.10</backbase-bom.version>
         <twilio.version>8.2.0</twilio.version>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
         <lombok.version>1.18.22</lombok.version>
