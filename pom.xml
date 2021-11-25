@@ -12,7 +12,7 @@
 
     <groupId>com.backbase.productled</groupId>
     <artifactId>ses-email-connector</artifactId>
-    <version>0.1.0-0.0-SNAPSHOT</version>
+    <version>0.1.0-0.0</version>
     <packaging>war</packaging>
     <name>Backbase :: ses-email-connector</name>
 
@@ -27,7 +27,6 @@
         <backbase-bom.version>2021.10</backbase-bom.version>
         <twilio.version>8.2.0</twilio.version>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
-        <lombok.version>1.18.22</lombok.version>
         <unitils-core.version>3.4.6</unitils-core.version>
         <!-- Plugin versions -->
         <gitflow-maven-plugin.version>1.15.1</gitflow-maven-plugin.version>
@@ -69,7 +68,6 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mapstruct</groupId>
