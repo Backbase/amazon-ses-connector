@@ -25,6 +25,7 @@ import javax.mail.internet.MimeMessage;
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import static java.util.Objects.nonNull;
@@ -74,8 +75,9 @@ public class EmailNotificationService {
         MimeMessage mimeMessage;
         try {
             mimeMessage = convertToMimeMessage(emailPostRequestBody);
+            log.debug("Mime message subject: '{}' ", mimeMessage.getSubject());
         } catch (MessagingException | UnsupportedEncodingException e) {
-            log.error("Failed to convert request body to email {}", emailPostRequestBody);
+            log.error("Failed to convert request body to email '{}'", emailPostRequestBody);
             throw new InternalServerErrorException(e);
         }
         javaMailSender.send(mimeMessage);
@@ -92,6 +94,7 @@ public class EmailNotificationService {
         setEmailAddresses(messageHelper::setBcc, emailPostRequestBody.getBcc());
 
         if (!Base64Utils.isNotBase64(emailPostRequestBody.getBody())) {
+            log.debug("Decoding email body...");
             messageHelper.setText(Base64Utils.decodeBase64(emailPostRequestBody.getBody()), HTML);
         } else {
             // Email body from Identity - BatchPostResponseBody is not in base64 like in actions hence skip base64 decoding
@@ -118,8 +121,13 @@ public class EmailNotificationService {
     }
 
     private void setEmailAddresses(EmailsConsumer emailsConsumer, List<String> emails) throws MessagingException {
-        if (!emails.isEmpty()) {
-            emailsConsumer.acceptEmails(emails.toArray(new String[0]));
+        //Resolve null for incoming message from web auth journey for eg where cc, bcc is null
+        if(Objects.isNull(emails)){
+            emailsConsumer.acceptEmails(List.of().toArray(new String[0]));
+        }else{
+            if (!emails.isEmpty()) {
+                emailsConsumer.acceptEmails(emails.toArray(new String[0]));
+            }
         }
     }
 
