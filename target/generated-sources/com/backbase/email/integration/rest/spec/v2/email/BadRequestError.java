@@ -27,7 +27,7 @@ import com.fasterxml.jackson.annotation.*;
 /**
  * BadRequestError
  */
-@javax.annotation.Generated(value = "com.backbase.oss.codegen.java.BoatSpringCodeGen", date = "2021-11-25T13:00:10.138157Z[Etc/UTC]")
+@javax.annotation.Generated(value = "com.backbase.oss.codegen.java.BoatSpringCodeGen", date = "2021-11-30T08:24:11.588171Z[Etc/UTC]")
 
 public class BadRequestError 
  {

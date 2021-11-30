@@ -39,7 +39,7 @@ import javax.validation.constraints.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-@javax.annotation.Generated(value = "com.backbase.oss.codegen.java.BoatSpringCodeGen", date = "2021-11-25T13:00:10.618502Z[Etc/UTC]")
+@javax.annotation.Generated(value = "com.backbase.oss.codegen.java.BoatSpringCodeGen", date = "2021-11-30T08:24:12.125199Z[Etc/UTC]")
 @Validated
 @Api(value = "CommunicationsOutboundIntegration", description = "the CommunicationsOutboundIntegration API")
 public interface CommunicationsOutboundIntegrationApi {
