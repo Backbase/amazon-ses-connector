@@ -28,7 +28,7 @@ import com.fasterxml.jackson.annotation.*;
  * Response object for batch send request, that contains info about status of message
  */
 @ApiModel(description = "Response object for batch send request, that contains info about status of message")
-@javax.annotation.Generated(value = "com.backbase.oss.codegen.java.BoatSpringCodeGen", date = "2021-11-30T08:24:12.125199Z[Etc/UTC]")
+@javax.annotation.Generated(value = "com.backbase.oss.codegen.java.BoatSpringCodeGen", date = "2021-11-30T10:29:11.075893Z[Etc/UTC]")
 
 public class BatchPostResponseBody 
  {

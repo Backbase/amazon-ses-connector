@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2021-11-30T08:24:14+0000",
+    date = "2021-11-30T10:29:13+0000",
     comments = "version: 1.4.2.Final, compiler: javac, environment: Java 11.0.13 (Azul Systems, Inc.)"
 )
 @Component
@@ -28,8 +28,8 @@ public class EmailPostRequestBodyMapperImpl implements EmailPostRequestBodyMappe
         }
         if ( content != null ) {
             emailPostRequestBody.setBody( content.getBody() );
+            emailPostRequestBody.setSubject( content.getTitle() );
         }
-        emailPostRequestBody.setSubject( "content.title" );
 
         return emailPostRequestBody;
     }

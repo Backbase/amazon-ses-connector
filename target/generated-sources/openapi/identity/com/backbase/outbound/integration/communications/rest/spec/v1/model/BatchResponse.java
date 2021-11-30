@@ -29,7 +29,7 @@ import com.fasterxml.jackson.annotation.*;
  * Batch of communications
  */
 @ApiModel(description = "Batch of communications")
-@javax.annotation.Generated(value = "com.backbase.oss.codegen.java.BoatSpringCodeGen", date = "2021-11-30T08:24:12.125199Z[Etc/UTC]")
+@javax.annotation.Generated(value = "com.backbase.oss.codegen.java.BoatSpringCodeGen", date = "2021-11-30T10:29:11.075893Z[Etc/UTC]")
 
 public class BatchResponse 
  {

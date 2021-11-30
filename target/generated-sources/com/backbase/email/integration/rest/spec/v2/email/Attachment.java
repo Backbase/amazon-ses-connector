@@ -28,7 +28,7 @@ import com.fasterxml.jackson.annotation.*;
  * Email attachment
  */
 @ApiModel(description = "Email attachment")
-@javax.annotation.Generated(value = "com.backbase.oss.codegen.java.BoatSpringCodeGen", date = "2021-11-30T08:24:11.588171Z[Etc/UTC]")
+@javax.annotation.Generated(value = "com.backbase.oss.codegen.java.BoatSpringCodeGen", date = "2021-11-30T10:29:10.600795Z[Etc/UTC]")
 
 public class Attachment 
  {
