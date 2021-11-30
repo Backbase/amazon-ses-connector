@@ -20,6 +20,7 @@ import com.backbase.outbound.integration.communications.rest.spec.v1.model.Statu
 import org.springframework.mail.javamail.MimeMailMessage;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import com.backbase.outbound.integration.communications.rest.spec.v1.model.Error;
+
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.ByteArrayInputStream;
@@ -93,14 +94,7 @@ public class EmailNotificationService {
         setEmailAddresses(messageHelper::setCc, emailPostRequestBody.getCc());
         setEmailAddresses(messageHelper::setBcc, emailPostRequestBody.getBcc());
 
-        if (!Base64Utils.isNotBase64(emailPostRequestBody.getBody())) {
-            log.debug("Decoding email body...");
-            messageHelper.setText(Base64Utils.decodeBase64(emailPostRequestBody.getBody()), HTML);
-        } else {
-            // Email body from Identity - BatchPostResponseBody is not in base64 like in actions hence skip base64 decoding
-            log.debug("Skipping email message body decoding.");
-            messageHelper.setText(emailPostRequestBody.getBody(), HTML);
-        }
+        messageHelper.setText(emailPostRequestBody.getBody(), HTML);
         messageHelper.setPriority(EmailPriority.getPriority(emailPostRequestBody.getImportant()));
         messageHelper.setSubject(emailPostRequestBody.getSubject());
         setFromAddress(emailPostRequestBody.getFrom(), messageHelper);
@@ -121,19 +115,24 @@ public class EmailNotificationService {
     }
 
     private void setEmailAddresses(EmailsConsumer emailsConsumer, List<String> emails) throws MessagingException {
-        //Resolve null for incoming message from web auth journey for eg where cc, bcc is null
-        if(Objects.isNull(emails)){
-            emailsConsumer.acceptEmails(List.of().toArray(new String[0]));
-        }else{
+        //Resolve null for incoming message from web auth journey for eg. where cc, bcc is null
+        if (nonNull(emails)) {
             if (!emails.isEmpty()) {
                 emailsConsumer.acceptEmails(emails.toArray(new String[0]));
             }
+        } else {
+            log.debug("emails is null");
         }
     }
 
     private void setAttachments(MimeMessageHelper mimeMessageHelper, List<Attachment> attachments) {
-        if (!attachments.isEmpty()) {
-            attachments.forEach(addAttachmentToEmail(mimeMessageHelper));
+        //Resolve null in attachments for incoming message from web auth journey
+        if (nonNull(attachments)) {
+            if (!attachments.isEmpty()) {
+                attachments.forEach(addAttachmentToEmail(mimeMessageHelper));
+            }
+        } else {
+            log.debug("Attachment is null.");
         }
     }
 
