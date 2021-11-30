@@ -16,7 +16,7 @@ public interface EmailPostRequestBodyMapper {
     @Mapping(target = "to", source = "recipient", qualifiedByName = "to")
     @Mapping(target = "body", source = "content.body")
     @Mapping(target = "from", source = "recipient.from")
-    @Mapping(target = "subject", constant = "Frank Bank: OTP")
+    @Mapping(target = "subject", constant = "content.title")
     EmailPostRequestBody toEmailPostRequestBody(Recipient recipient, Content content);
 
     @Named("to")
