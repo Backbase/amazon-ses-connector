@@ -1,0 +1,17 @@
+**/*.iml
+**/*.ipr
+**/*.iws
+**/*.log
+**/.classpath
+**/.idea/
+**/.project
+**/.settings
+**/target/
+**/*.class
+
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+
+
