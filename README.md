@@ -66,11 +66,23 @@ custom:
       database: false
       activemq: true
       env:
-        "spring.autoconfigure.exclude": "org.springframework.cloud.netflix.eureka.loadbalancer.LoadBalancerEurekaAutoConfiguration,org.springframework.cloud.function.context.config.ContextFunctionCatalogAutoConfiguration"
+        "spring.autoconfigure.exclude": "org.springframework.cloud.netflix.eureka.loadbalancer.LoadBalancerEurekaAutoConfiguration"
+        "spring.cloud.stream.default.content-type": "application/json"
+        "spring.cloud.stream.default.consumer.exchangeDurable": "true"
+        "spring.cloud.stream.default.consumer.concurrency": "1"
+        "spring.cloud.stream.default.consumer.prefetch": "1000"
+        "spring.cloud.stream.default.consumer.autoCommitOnError": "false"
+        "spring.cloud.stream.default.consumer.max-attempts": "5"
+        "spring.cloud.stream.default.consumer.backOffInitialInterval": "2000"
+        "spring.cloud.stream.default.consumer.backOffMaxInterval": "6000"
+        "spring.cloud.stream.default.consumer.backOffMultiplier": "2.0"
+        "spring.cloud.stream.default.consumer.default-retryable": "true"
+        "spring.cloud.stream.function.definition": "commLowPriority;commMediumPriority;commHighPriority;commTracking"
+        "spring.cloud.stream.default-binder": "activemq"
         "backbase.email.worker-count": "2"
-        "spring.cloud.stream.bindings.commLowPriority-in-0.destination": "email-low-priority"
-        "spring.cloud.stream.bindings.commHighPriority-in-0.destination": "email-high-priority"
-        "spring.cloud.stream.bindings.commHighestPriority-in-0.destination": "email-highest-priority"
+        "spring.cloud.stream.bindings.commLowPriority-in-0.destination": "Backbase.communication.email-low-priority"
+        "spring.cloud.stream.bindings.commMediumPriority-in-0.destination": "Backbase.communication.email-medium-priority"
+        "spring.cloud.stream.bindings.commHighPriority-in-0.destination": "Backbase.communication.email-high-priority"
         "spring.cloud.stream.bindings.commTracking-out-0.destination": "Backbase.communication.messages-tracking"
         spring.mail.username:
           valueFrom:
@@ -117,10 +129,6 @@ custom:
             configMapKeyRef:
               name: email-env
               key: fromName
-      livenessProbe:
-        enabled: false
-      readinessProbe:
-        enabled: false
     
 ```
 `Where x = major version, y = minor version and z = incremental version.`
