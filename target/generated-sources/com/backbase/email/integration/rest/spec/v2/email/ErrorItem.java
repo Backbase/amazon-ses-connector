@@ -27,7 +27,7 @@ import com.fasterxml.jackson.annotation.*;
 /**
  * ErrorItem
  */
-@javax.annotation.Generated(value = "com.backbase.oss.codegen.java.BoatSpringCodeGen", date = "2021-11-30T10:29:10.600795Z[Etc/UTC]")
+@javax.annotation.Generated(value = "com.backbase.oss.codegen.java.BoatSpringCodeGen", date = "2021-12-01T00:27:49.044203Z[Etc/UTC]")
 
 public class ErrorItem 
  {

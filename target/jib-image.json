@@ -1,1 +1,1 @@
-{"image":"318081258114.dkr.ecr.eu-central-1.amazonaws.com/ses-email-connector:0.1.0-3.0","imageId":"sha256:125c77c85565785d2a5d7187eb4b2a2d08b6783ad9ea2de6e049febd72c1fb39","imageDigest":"sha256:88bd67af0b0643f70b5ed960de3b49559afe6368d225570c98aca9610caa30e6","tags":["0.1.0-3.0"]}
+{"image":"318081258114.dkr.ecr.eu-central-1.amazonaws.com/ses-email-connector:0.1.0-4.0","imageId":"sha256:a92717aa4a2b35a8cb68107e2b02021dcc4a834a79abf6c39f55dd10da8af9d7","imageDigest":"sha256:93a36df0d5e17ca6e4c878fdca052a6220d453769a175a20e1235c8d6bcde84a","tags":["0.1.0-4.0"]}
