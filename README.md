@@ -2,9 +2,13 @@
 
 - This project is a development of a small set of [Backbase Service SDK](https://community.backbase.com/documentation/ServiceSDK/latest/index) (**Spring Boot** and **Cloud**) based Microservices projects that implement cloud-native intuitive, Microservices design patterns, and coding best practices.
 - The project follows [**CloudNative**](https://www.cncf.io/) recommendations and the [**twelve-factor app**](https://12factor.net/) methodology for building *software-as-a-service apps* to show how μServices should be developed and deployed.
-- This project uses technologies broadly used in Backbase.Like Docker, Kubernetes, Java SE 11, Spring Boot, Spring Cloud
+- This project uses technologies broadly used in Backbase like Docker, Kubernetes, Java SE 11, Spring Boot, Spring Cloud
 - 'ses-email-connector' has been generated using `core-service-archetype` - [Community guide](https://community.backbase.com/documentation/ServiceSDK/latest/create_a_core_service)
-- This service implements `actions-spec` library. It listens to Email notification event placed in ActiveMQ by the `Message Delivery - Communication service` and routes the message to the recipient through Amazon Simple Email Service (SES).
+- The service is implementation of [actions](https://repo.backbase.com/artifactory/specs/action/) `action-integration-email-outbound-api` and [communications](https://repo.backbase.com/artifactory/specs/identity/) `communications-outbound-integration-api`. The actions spec endpoint: `/service-api/v2/email` and communications spec endpoint: `/service-api/v1/communications/batches` was not implemented rather the spec provided the payload for parsing OTP messages pushed into the queue by the Communication service in the Message Delivery capability.
+- The Web Authentication Journey uses the Web Authentication service from Identity to generate the OTP for 2-factor verification.
+- The Web Authentication service uses the User Profile Manager to access the communication methods that it can use to send OTPs to customers.
+- The Web Authentication service uses the Communication service in the Message Delivery capability as the dispatcher for all OTP messages. For example - to send an OTP by Email, the Communication service adds the OTP message to a queue for the email channel, based on the message’s configured priority.
+- This service polls the email (priority based) queues and sends them to the provider over the configured communication channel. In this case Amazon SES.
 - Refer to [workflow guide](../../../docs/tree/master/backend) for Backend CI Workflow documentation
 
 ---
@@ -20,8 +24,6 @@ The project structure for each custom integration service follows the pattern as
 ├── src                          # Source and Unit Test files
     ├── main                     # Application container projects
     │   ├── java/com/backbase/productled
-    |   |   ├── client
-    |   |   |   └── ...          # Api client classes and helpers
     │   │   ├── communication    # Messaging classes
     │   │   │   └── ...
     │   │   ├── config           # Configuration classes
@@ -58,8 +60,6 @@ custom:
     ses-email-connector:
       enabled: true
       app:
-        metadata:
-          public: "'true'"
         image:
           tag: "x.y.z-SNAPSHOT"
           repository: ses-email-connector
