@@ -24,7 +24,7 @@
         <jib.to.image>${docker.image.name}:${project.version}</jib.to.image>
         <docker.distroless.war.latest.skip>true</docker.distroless.war.latest.skip>
         <!--	Dependency versions	-->
-        <backbase-bom.version>2021.12.1</backbase-bom.version>
+        <backbase-bom.version>2022.01-LTS</backbase-bom.version>
         <twilio.version>8.2.0</twilio.version>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
         <unitils-core.version>3.4.6</unitils-core.version>
