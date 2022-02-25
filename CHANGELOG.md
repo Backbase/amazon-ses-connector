@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.5] - 2022-02-25
+
+### New/Improved
+
+-   Added new workflow
+
 ## [0.4] - 2022-02-13
 
 ### What has Changed
@@ -44,7 +50,9 @@
 
 -
 
-[Unreleased]: https://github.com/baas-devops-reference/ses-email-connector/compare/0.4...HEAD
+[Unreleased]: https://github.com/baas-devops-reference/ses-email-connector/compare/0.5...HEAD
+
+[0.5]: https://github.com/baas-devops-reference/ses-email-connector/compare/0.4...0.5
 
 [0.4]: https://github.com/baas-devops-reference/ses-email-connector/compare/0.3...0.4
 
