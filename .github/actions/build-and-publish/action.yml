@@ -1,0 +1,87 @@
+name: "Build and publish artifact"
+description: "Github composite action to tag version on Github and then Build and publish artifact to ECR"
+##
+#
+# Action responsible for setting AWS credentials,
+# tagging the version on Github,
+# building docker image and pushing to ECR
+#
+##
+inputs:
+  token:
+    description: "Github Token"
+    required: true
+  accessKey:
+    description: "AWS access key id"
+    required: true
+  secretAccessKey:
+    description: "AWS secret access key"
+    required: true
+  region:
+    description: "AWS region"
+    required: true
+  enableBuildTagging:
+    description: "Enable build tagging"
+    required: false
+    default: 'false'
+runs:
+  using: "composite"
+  steps:
+    ##
+    #
+    # Configure AWS credentials
+    #
+    ##
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ inputs.accessKey }}
+        aws-secret-access-key: ${{ inputs.secretAccessKey }}
+        aws-region: ${{ inputs.region }}
+    ##
+    #
+    # Setting AWS login details in env variables
+    #
+    ##
+    - name: Get AWS ECR credentials
+      id: ecr-credentials
+      shell: bash
+      run: |
+        echo "::set-output name=username::AWS"
+        echo "::set-output name=password::`aws ecr get-login-password --region ${{ inputs.region }}`"
+    ##
+    #
+    # Extract an ECR version for tagging
+    #
+    ##
+    - name: Extract ECR version for tagging
+      id: ecr-version
+      uses: ./.github/actions/extract-version
+      with:
+        token: ${{ inputs.token }}
+    ##
+    #
+    # Push tag with ECR version on Github
+    #
+    ##
+    - name: Add tag
+      shell: bash
+      run: |
+        if [[ "${{inputs.enableBuildTagging}}" == "true" ]]; then
+          git tag -a ${{ steps.ecr-version.outputs.ecr-version }} -m "${{ steps.ecr-version.outputs.ecr-version }}"
+          git push origin ${{ steps.ecr-version.outputs.ecr-version }}
+        fi
+    ##
+    #
+    # Use ssdk's maven docker-image profile to build and push image to ECR
+    #
+    ##
+    - name: Build docker image
+      shell: bash
+      run: |
+        if [[ "${{inputs.enableBuildTagging}}" == "true" ]]; then
+          mvn clean package -Pdocker-image -Pno-scs -Dmaven.test.skip -Djib.to.tags=${{ steps.ecr-version.outputs.ecr-version }} -Djib.to.auth.username=${{ steps.ecr-credentials.outputs.username }}  -Djib.to.auth.password=${{ steps.ecr-credentials.outputs.password }} -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+        else
+          mvn clean package -Pdocker-image -Pno-scs -Dmaven.test.skip -Djib.to.auth.username=${{ steps.ecr-credentials.outputs.username }}  -Djib.to.auth.password=${{ steps.ecr-credentials.outputs.password }} -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+        fi
+
