@@ -1,24 +1,25 @@
-name: Pull Request Check
+name: Release version update
 
-#
-#   IMPORTANT TO KNOW
-#
-# - This workflow runs whenever new changes are pushed to an existing Pull Request
-# - Runs on 'master', 'develop', 'release/*' and 'hotfix/*', 'bugfix/*' branches
-#
-
-on: [pull_request]
-
+on:
+  pull_request:
+    branches:
+      - release/*
+    types:
+      - closed
 jobs:
   compile:
     runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
     strategy:
       matrix:
         java: [11]
-    name: Build project with Java ${{ matrix.java }} ensure quality and security gates
+    name: Build project with Java ${{ matrix.java }}
     timeout-minutes: 30
     env:
-      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      DEVOPS_CICD_ECR_BASE_URL: ${{ secrets.DEVOPS_CICD_ECR_BASE_URL }}
+
+      BB_USERNAME: ${{ secrets.BAAS_BB_ARTIFACTORY_MAVEN_USERNAME }}
+      BB_PASSWORD: ${{ secrets.BAAS_BB_ARTIFACTORY_MAVEN_PASSWORD }}
     steps:
       - name: Generate token
         id: generate_token
@@ -29,7 +30,6 @@ jobs:
 
       - uses: actions/checkout@v2
         with:
-          ref: ${{ github.head_ref }}
           token: ${{ steps.generate_token.outputs.token }}
 
       - name: Setup Cache and Maven
@@ -45,7 +45,13 @@ jobs:
         with:
           token: ${{ steps.generate_token.outputs.token }}
 
-      - name: Run tests and Sonar Cloud check
-        uses: ./.github/actions/build-test-and-sonar
+      - name: build and publish artifact
+        uses: ./.github/actions/build-and-publish
         with:
-          githubProject: ${{ github.event.repository.name }}
+          token: ${{ steps.generate_token.outputs.token }}
+          accessKey: ${{ secrets.DEVOPS_CICD_AWS_ACCESS_KEY_ID }}
+          secretAccessKey: ${{ secrets.DEVOPS_CICD_AWS_SECRET_ACCESS_KEY }}
+          region: ${{ secrets.DEVOPS_CICD_AWS_REGION }}
+
+      - name: delete-head-branch
+        uses: ./.github/actions/delete-head-branch

@@ -1,0 +1,21 @@
+name: "Run Test cases and sonar cloud check"
+description: "Github action to Run Test cases and sonar cloud check"
+##
+#
+# Action responsible to verify Maven build,
+# running test and sonar cloud quality check
+#
+# Dependency on ENV variables : GITHUB_PROJECT
+#
+##
+inputs:
+  githubProject:
+    description: "Github Project Name"
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Run tests and Sonar Cloud check
+      run: |
+        mvn verify sonar:sonar -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn -DSONAR_ORGANIZATION=${GITHUB_REPOSITORY_OWNER} -DSONAR_PROJECT_KEY=${GITHUB_REPOSITORY_OWNER}_${{ inputs.githubProject }}
+      shell: bash
