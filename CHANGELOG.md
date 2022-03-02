@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.6] - 2022-03-02
+
+### Bug Fixes
+
+-   PROMO-3317 : Version bug fix
+
 ## [0.5] - 2022-02-25
 
 ### New/Improved
@@ -50,7 +56,9 @@
 
 -
 
-[Unreleased]: https://github.com/baas-devops-reference/ses-email-connector/compare/0.5...HEAD
+[Unreleased]: https://github.com/baas-devops-reference/ses-email-connector/compare/0.6...HEAD
+
+[0.6]: https://github.com/baas-devops-reference/ses-email-connector/compare/0.5...0.6
 
 [0.5]: https://github.com/baas-devops-reference/ses-email-connector/compare/0.4...0.5
 
