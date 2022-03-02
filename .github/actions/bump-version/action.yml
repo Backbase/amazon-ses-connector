@@ -60,8 +60,8 @@ runs:
         IFS='-'
         read -ra versionParts <<< "$version"
         if [ ${#versionParts[@]} -ne 2 ]; then
-        	echo "Wrong versionParts array size: ${#versionParts[@]}";
-        	exit 1;
+        	echo "Wrong versionParts array size: ${#versionParts[@]}, setting metadataParts to 0.0";
+        	versionParts[1]=0.0
         fi
         echo "::endgroup::"
 
@@ -71,8 +71,9 @@ runs:
         IFS=oldIFS
 
         if [ ${#metadataParts[@]} -ne 2 ]; then
-        	echo "Wrong metadataParts array size: ${#metadataParts[@]}";
-        	exit 1;
+        	echo "Wrong metadataParts array size: ${#metadataParts[@]}, setting metadataParts to 0.0";
+        	metadataParts[0]=0
+            metadataParts[1]=0
         fi
         echo "::endgroup::"
 
