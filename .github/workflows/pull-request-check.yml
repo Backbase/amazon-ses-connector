@@ -6,12 +6,17 @@ name: Pull Request Check
 # - This workflow runs whenever new changes are pushed to an existing Pull Request
 # - Runs on 'master', 'develop', 'release/*' and 'hotfix/*', 'bugfix/*' branches
 #
+# Note : First two PRs will be ignored by this workflow. The reason for that in the first-time cloning,
+# there is possibility that project doesn't have integration with Sonar. To prevent failure for such case,
+# Pull Request Check workflow won't be triggered for 'initialising master' and 'initialising develop' branches.
+# But, of course, it will be triggered for later any PRs.
 
 on: [pull_request]
 
 jobs:
   compile:
     runs-on: ubuntu-latest
+    if: ( github.event_name == 'pull_request' && (github.event.pull_request.number != '1' || github.event.pull_request.number != '2') )
     strategy:
       matrix:
         java: [11]
