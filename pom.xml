@@ -12,7 +12,7 @@
 
     <groupId>com.backbase.productled</groupId>
     <artifactId>ses-email-connector</artifactId>
-    <version>0.7.0-RC</version>
+    <version>0.7.0</version>
     <packaging>war</packaging>
     <name>Backbase :: ses-email-connector</name>
 
