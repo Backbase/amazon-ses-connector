@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.7.1] - 2022-05-06
+
+### Bug Fixes
+
+-   Fixed pr workflow if condition.
+
 ## [0.7] - 2022-05-03
 
 ### What has Changed
@@ -62,7 +68,9 @@
 
 -
 
-[Unreleased]: https://github.com/baas-devops-reference/ses-email-connector/compare/0.7...HEAD
+[Unreleased]: https://github.com/baas-devops-reference/ses-email-connector/compare/0.7.1...HEAD
+
+[0.7.1]: https://github.com/baas-devops-reference/ses-email-connector/compare/0.7...0.7.1
 
 [0.7]: https://github.com/baas-devops-reference/ses-email-connector/compare/0.6...0.7
 
