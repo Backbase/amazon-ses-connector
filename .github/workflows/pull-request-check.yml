@@ -16,7 +16,7 @@ on: [pull_request]
 jobs:
   compile:
     runs-on: ubuntu-latest
-    if: ( github.event_name == 'pull_request' && (github.event.pull_request.number != '1' || github.event.pull_request.number != '2') )
+    if: ( github.event_name == 'pull_request' && (github.event.pull_request.number != '1' && github.event.pull_request.number != '2') )
     strategy:
       matrix:
         java: [11]
