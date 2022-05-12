@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+
+## [0.8] - 2022-05-12
+
+### What has Changed
+
+-   Upgraded BOM to 2022.04
+
 ## [0.7.1] - 2022-05-06
 
 ### Bug Fixes
@@ -68,7 +75,10 @@
 
 -
 
-[Unreleased]: https://github.com/baas-devops-reference/ses-email-connector/compare/0.7.1...HEAD
+
+[Unreleased]: https://github.com/baas-devops-reference/ses-email-connector/compare/0.8...HEAD
+
+[0.8]: https://github.com/baas-devops-reference/ses-email-connector/compare/0.7.1...0.8
 
 [0.7.1]: https://github.com/baas-devops-reference/ses-email-connector/compare/0.7...0.7.1
 
