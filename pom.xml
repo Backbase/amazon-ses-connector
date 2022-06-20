@@ -23,6 +23,7 @@
         <docker.image.name>${docker.repo.url}/${project.artifactId}</docker.image.name>
         <jib.to.image>${docker.image.name}:${project.version}</jib.to.image>
         <docker.distroless.war.latest.skip>true</docker.distroless.war.latest.skip>
+      
         <!--	Dependency versions	-->
         <backbase-bom.version>2022.05.6</backbase-bom.version>
         <twilio.version>8.31.0</twilio.version>
@@ -31,6 +32,7 @@
         <!-- Plugin versions -->
         <gitflow-maven-plugin.version>1.18.0</gitflow-maven-plugin.version>
         <boat-maven-plugin.version>0.15.8</boat-maven-plugin.version>
+  
         <!-- Sonar -->
         <sonar.projectKey>${SONAR_PROJECT_KEY}</sonar.projectKey>
         <sonar.organization>${SONAR_ORGANIZATION}</sonar.organization>
