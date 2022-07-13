@@ -68,6 +68,7 @@ runs:
       shell: bash
       run: |
         if [[ "${{inputs.enableBuildTagging}}" == "true" ]]; then
+          echo "Adding github tag ${{ steps.ecr-version.outputs.ecr-version }}"
           git tag -a ${{ steps.ecr-version.outputs.ecr-version }} -m "${{ steps.ecr-version.outputs.ecr-version }}"
           git push origin ${{ steps.ecr-version.outputs.ecr-version }}
         fi
@@ -79,9 +80,6 @@ runs:
     - name: Build docker image
       shell: bash
       run: |
-        if [[ "${{inputs.enableBuildTagging}}" == "true" ]]; then
-          mvn clean package -Pdocker-image -Pno-scs -Dmaven.test.skip -Djib.to.tags=${{ steps.ecr-version.outputs.ecr-version }} -Djib.to.auth.username=${{ steps.ecr-credentials.outputs.username }}  -Djib.to.auth.password=${{ steps.ecr-credentials.outputs.password }} -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
-        else
-          mvn clean package -Pdocker-image -Pno-scs -Dmaven.test.skip -Djib.to.auth.username=${{ steps.ecr-credentials.outputs.username }}  -Djib.to.auth.password=${{ steps.ecr-credentials.outputs.password }} -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
-        fi
+        echo "Docker build with tag ${{ steps.ecr-version.outputs.ecr-version }}"
+        mvn clean package -Pdocker-image -Pno-scs -Dmaven.test.skip -Djib.to.tags=${{ steps.ecr-version.outputs.ecr-version }} -Djib.to.auth.username=${{ steps.ecr-credentials.outputs.username }}  -Djib.to.auth.password=${{ steps.ecr-credentials.outputs.password }} -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 

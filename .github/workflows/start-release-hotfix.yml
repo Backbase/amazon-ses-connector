@@ -75,7 +75,7 @@ jobs:
           token: ${{ steps.generate_token.outputs.token }}
           baseBranch: develop
           newBranch: release/${{ steps.evaluate-release-version.outputs.next-release-version }}
-          newBranchVersion: ${{ steps.evaluate-release-version.outputs.next-release-version }}.0-RC
+          newBranchVersion: ${{ steps.evaluate-release-version.outputs.next-release-version }}.0-RC1
 
       - name: Create new Hotfix branch
         if: steps.flow-type.outputs.hotfix == 'true'
@@ -84,7 +84,7 @@ jobs:
           token: ${{ steps.generate_token.outputs.token }}
           baseBranch: master
           newBranch: hotfix/${{ steps.evaluate-release-version.outputs.next-release-version }}
-          newBranchVersion: ${{ steps.evaluate-release-version.outputs.next-release-version }}.0
+          newBranchVersion: ${{ steps.evaluate-release-version.outputs.next-release-version }}-0
 
       - name: Overwrite CHANGELOG.md
         uses: ./.github/actions/changelog

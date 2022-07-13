@@ -59,37 +59,35 @@ runs:
         oldIFS=IFS
         IFS='-'
         read -ra versionParts <<< "$version"
-        if [ ${#versionParts[@]} -ne 2 ]; then
-        	echo "Wrong versionParts array size: ${#versionParts[@]}, setting metadataParts to 0.0";
-        	versionParts[1]=0.0
+        if [ ${#versionParts[@]} -ne 3 ]; then
+        	echo "Wrong versionParts array size: ${#versionParts[@]}, setting metadataParts to SNAPSHOT-0";
+        	versionParts[1]=SNAPSHOT-0
         fi
         echo "::endgroup::"
 
-        echo "::group::Extracting version metadata"
-        IFS='.'
-        read -ra metadataParts <<< "${versionParts[1]}"
-        IFS=oldIFS
+        echo "::group::Updating build part version"
+        buildPart=${versionParts[1]}
 
-        if [ ${#metadataParts[@]} -ne 2 ]; then
-        	echo "Wrong metadataParts array size: ${#metadataParts[@]}, setting metadataParts to 0.0";
-        	metadataParts[0]=0
-            metadataParts[1]=0
-        fi
-        echo "::endgroup::"
-
-        echo "::group::Bumping proper metadata attribute"
-        if [[ "${{ github.event.pull_request.head.ref }}" == "feature/"* ]]; then
-          echo "Bumping feature attribute"
-          echo "::set-output name=metadataAttrName::feature"
-          (( metadataParts[0] = metadataParts[0] + 1 ))
+        if [[ "$buildPart" == *"SNAPSHOT"* ]]; then
+          echo "SNAPSHOT prefix found, build number will be incremented"
+          number=${versionParts[2]}
+          echo "current build number $number"
+          number=$((number+1))
+          echo "Bumped build number $number"
+          buildPart="SNAPSHOT-$number"
+        elif [[ "$buildPart" == *"."* ]]; then
+          echo "old metada found change it to SNAPSHOT-1"
+          buildPart="SNAPSHOT-1"
         else
-          echo "Bumping bugfix attribute"
-          echo "::set-output name=metadataAttrName::bugfix"
-          (( metadataParts[1] = metadataParts[1] + 1 ))
+          echo "metadata or build part not found, the job will be failed"
+          exit 1
         fi
+        echo "Complete build part $buildPart"
+
         echo "::endgroup::"
 
-        echo "::set-output name=newVersion::${versionParts[0]}-${metadataParts[0]}.${metadataParts[1]}"
+        echo "::set-output name=newVersion::${versionParts[0]}-${buildPart}"
+
 
     #Step 3 : Checkout head branch in order to push the version
     - name: Checkout head branch
@@ -121,9 +119,9 @@ runs:
       id: hotfix-version-bump
       shell: bash
       run: |
-        export qualifier=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout | cut -d'.' -f4)
+        export qualifier=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout |  sed 's/.*-//')
         export nextQualifier=$((qualifier+1))
-        mvn build-helper:parse-version versions:set -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.incrementalVersion}.${nextQualifier} versions:commit -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+        mvn build-helper:parse-version versions:set -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.incrementalVersion}-${nextQualifier} versions:commit -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
         git add --all
         git commit -m "New hotfix version"
         git push
@@ -139,7 +137,10 @@ runs:
       if: ${{ inputs.newVersion == null && github.event.pull_request.merged == true && startsWith(github.event.pull_request.base.ref, 'release/') }}
       shell: bash
       run: |
-        mvn build-helper:parse-version versions:set -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion}-RC versions:commit -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+        export rc=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout |  sed 's/.*-//')
+        export qualifier=$(echo "$rc" | sed 's/[^0-9]*//g')
+        export nextQualifier=$((qualifier+1))
+        mvn build-helper:parse-version versions:set -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.incrementalVersion}-RC${nextQualifier} versions:commit -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
         git add --all
         git commit -m "Update release version"
         git push

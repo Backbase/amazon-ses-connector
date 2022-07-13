@@ -17,9 +17,8 @@ public class CommunicationChannelListener extends CommnsAbstractMessagesStreamLi
     public CommunicationChannelListener(AbstractPriorityQueueService<BatchResponse> priorityQueueService,
                                         TrackingService trackingService,
                                         ObjectMapper objectMapper,
-                                        MessageSenderService messageSenderService,
                                         TenantProvider tenantProvider) {
-        super(priorityQueueService, trackingService, objectMapper, messageSenderService, tenantProvider);
+        super(priorityQueueService, trackingService, objectMapper, tenantProvider);
         log.info("Instantiated CommnsMessageListener");
     }
 }

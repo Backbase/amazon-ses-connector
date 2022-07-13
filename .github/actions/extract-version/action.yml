@@ -68,10 +68,12 @@ runs:
         oldIFS=IFS
         IFS='-'
         read -ra versionTokens <<< "$version"
-        if [ ${#versionTokens[@]} -ne 2 ]; then
+        if [ ${#versionTokens[@]} -ne 3 ]; then
         	echo "Wrong versionTokens array size: ${#versionTokens[@]}";
-            versionTokens[1]=0.0;
+            versionTokens[1]=SNAPSHOT;
+            versionTokens[2]=0;
         fi
-        echo "Extracted metadata part: ${versionTokens[1]}"
+        IFS=''
+        echo "Extracted metadata part: ${versionTokens[1]}-${versionTokens[2]}"
         echo ::set-output name=release::`echo ${versionTokens[0]}`
-        echo ::set-output name=metadata::`echo ${versionTokens[1]}`
+        echo ::set-output name=metadata::`echo ${versionTokens[1]}-${versionTokens[2]}`

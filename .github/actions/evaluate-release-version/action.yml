@@ -48,7 +48,7 @@ runs:
         else
           IFS='-'
           read -ra versionTokens <<< "$version"
-          if [ ${#versionTokens[@]} -ne 2 ]; then
+          if [ ${#versionTokens[@]} -ne 3 ]; then
             echo "Wrong versionTokens array size: ${#versionTokens[@]}";
             exit 1;
           fi

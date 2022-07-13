@@ -5,14 +5,14 @@
 
     <parent>
         <groupId>com.backbase.buildingblocks</groupId>
-        <version>14.1.1</version>
+        <version>14.2.0</version>
         <artifactId>service-sdk-starter-core</artifactId>
         <relativePath/>
     </parent>
 
     <groupId>com.backbase.productled</groupId>
     <artifactId>ses-email-connector</artifactId>
-    <version>0.9.0</version>
+    <version>0.10.0-RC</version>
     <packaging>war</packaging>
     <name>Backbase :: ses-email-connector</name>
 
@@ -21,17 +21,17 @@
         <!--	Jib properties	-->
         <docker.repo.url>${DEVOPS_CICD_ECR_BASE_URL}</docker.repo.url>
         <docker.image.name>${docker.repo.url}/${project.artifactId}</docker.image.name>
-        <jib.to.image>${docker.image.name}:${project.version}</jib.to.image>
+        <jib.to.image>${docker.image.name}:${backbase-bom.version}-${project.version}</jib.to.image>
         <docker.distroless.war.latest.skip>true</docker.distroless.war.latest.skip>
       
         <!--	Dependency versions	-->
-        <backbase-bom.version>2022.05.6</backbase-bom.version>
-        <twilio.version>8.31.0</twilio.version>
-        <mapstruct.version>1.5.1.Final</mapstruct.version>
+        <backbase-bom.version>2022.07</backbase-bom.version>
+        <twilio.version>8.32.0</twilio.version>
+        <mapstruct.version>1.5.2.Final</mapstruct.version>
         <unitils-core.version>3.4.6</unitils-core.version>
         <!-- Plugin versions -->
         <gitflow-maven-plugin.version>1.18.0</gitflow-maven-plugin.version>
-        <boat-maven-plugin.version>0.15.8</boat-maven-plugin.version>
+        <boat-maven-plugin.version>0.16.0</boat-maven-plugin.version>
   
         <!-- Sonar -->
         <sonar.projectKey>${SONAR_PROJECT_KEY}</sonar.projectKey>
