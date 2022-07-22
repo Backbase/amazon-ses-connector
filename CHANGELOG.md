@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.12] - 2022-07-22
+
+### What has Changed
+
+-   Azure workflow changes
+
 ## [0.11] - 2022-07-14
 
 ### What has Changed
@@ -92,7 +98,9 @@
 
 -
 
-[Unreleased]: https://github.com/baas-devops-reference/ses-email-connector/compare/0.11...HEAD
+[Unreleased]: https://github.com/baas-devops-reference/ses-email-connector/compare/0.12...HEAD
+
+[0.12]: https://github.com/baas-devops-reference/ses-email-connector/compare/0.11...0.12
 
 [0.11]: https://github.com/baas-devops-reference/ses-email-connector/compare/0.10...0.11
 

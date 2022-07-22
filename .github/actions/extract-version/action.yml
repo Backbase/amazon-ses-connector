@@ -15,9 +15,9 @@ inputs:
     description: "Github Token"
     required: true
 outputs:
-  ecr-version:
-    description: "ECR version"
-    value: ${{ steps.ecr-version.outputs.version }}
+  build-version:
+    description: "build version"
+    value: ${{ steps.build-version.outputs.version }}
   develop-release-version:
     description: "main version in develop branch"
     value: ${{ steps.develop-version.outputs.release }}
@@ -36,11 +36,11 @@ runs:
         token: ${{ inputs.token }}
     ##
     #
-    # Steps to extract an ECR version for tagging
+    # Steps to extract build version for tagging
     #
     ##
-    - name: Extract ECR version for tagging
-      id: ecr-version
+    - name: Extract build version for tagging
+      id: build-version
       shell: bash
       run: |
         bomVersion=$(mvn help:evaluate -Dexpression=backbase-bom.version -q -DforceStdout)

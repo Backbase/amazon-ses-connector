@@ -22,6 +22,7 @@ jobs:
     timeout-minutes: 30
     env:
       DEVOPS_CICD_ECR_BASE_URL: ${{ secrets.DEVOPS_CICD_ECR_BASE_URL }}
+      DEVOPS_CICD_ACR_BASE_URL: ${{ secrets.DEVOPS_CICD_ACR_BASE_URL }}
 
       ISSUE_NUMBER: ${{ github.event.issue.number }}
     steps:
@@ -105,6 +106,10 @@ jobs:
           accessKey: ${{ secrets.DEVOPS_CICD_AWS_ACCESS_KEY_ID }}
           secretAccessKey: ${{ secrets.DEVOPS_CICD_AWS_SECRET_ACCESS_KEY }}
           region: ${{ secrets.DEVOPS_CICD_AWS_REGION }}
+          azure-creds: ${{ secrets.DEVOPS_CICD_NPA_AZURE_CREDENTIALS }}
+          azure-base-url: ${{ secrets.DEVOPS_CICD_ACR_BASE_URL }}
+          awsEnabled: ${{ secrets.AWS_ENABLED }}
+          azureEnabled: ${{ secrets.AZURE_ENABLED }}
 
       - name: Create Pull Request - release
         if: steps.flow-type.outputs.release_major == 'true' || steps.flow-type.outputs.release_minor == 'true'

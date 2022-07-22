@@ -19,6 +19,7 @@ jobs:
       develop-exist: ${{ steps.check-develop-branch.outputs.exist }}
     env:
       DEVOPS_CICD_ECR_BASE_URL: ${{ secrets.DEVOPS_CICD_ECR_BASE_URL }}
+      DEVOPS_CICD_ACR_BASE_URL: ${{ secrets.DEVOPS_CICD_ACR_BASE_URL }}
 
     steps:
       - name: Generate token
@@ -47,6 +48,10 @@ jobs:
           accessKey: ${{ secrets.DEVOPS_CICD_AWS_ACCESS_KEY_ID }}
           secretAccessKey: ${{ secrets.DEVOPS_CICD_AWS_SECRET_ACCESS_KEY }}
           region: ${{ secrets.DEVOPS_CICD_AWS_REGION }}
+          azure-creds: ${{ secrets.DEVOPS_CICD_NPA_AZURE_CREDENTIALS }}
+          azure-base-url: ${{ secrets.DEVOPS_CICD_ACR_BASE_URL }}
+          awsEnabled: ${{ secrets.AWS_ENABLED }}
+          azureEnabled: ${{ secrets.AZURE_ENABLED }}
           enableBuildTagging: 'true'
 
       - name: delete-head-branch
@@ -74,6 +79,7 @@ jobs:
     timeout-minutes: 30
     env:
       DEVOPS_CICD_ECR_BASE_URL: ${{ secrets.DEVOPS_CICD_ECR_BASE_URL }}
+      DEVOPS_CICD_ACR_BASE_URL: ${{ secrets.DEVOPS_CICD_ACR_BASE_URL }}
 
     steps:
       - name: Generate token

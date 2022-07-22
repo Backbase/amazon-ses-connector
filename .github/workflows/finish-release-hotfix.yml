@@ -28,6 +28,7 @@ jobs:
       release-version: ${{ steps.bump-version.outputs.release-version }}
     env:
       DEVOPS_CICD_ECR_BASE_URL: ${{ secrets.DEVOPS_CICD_ECR_BASE_URL }}
+      DEVOPS_CICD_ACR_BASE_URL: ${{ secrets.DEVOPS_CICD_ACR_BASE_URL }}
 
       LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
     # Set flow type
@@ -93,6 +94,7 @@ jobs:
     timeout-minutes: 30
     env:
       DEVOPS_CICD_ECR_BASE_URL: ${{ secrets.DEVOPS_CICD_ECR_BASE_URL }}
+      DEVOPS_CICD_ACR_BASE_URL: ${{ secrets.DEVOPS_CICD_ACR_BASE_URL }}
 
     steps:
 
@@ -130,7 +132,7 @@ jobs:
           token: ${{ steps.generate_token.outputs.token }}
           baseBranch: master
           newBranch: post-release/${{ needs.release.outputs.release-version }}
-          newBranchVersion: ${{ needs.release.outputs.release-version }}-${{ steps.develop-version.outputs.develop-metadata-version }}
+          newBranchVersion: ${{ needs.release.outputs.release-version }}-SNAPSHOT-0
 
       - name: Create Pull Request - merge release/hotfix changes into develop
         uses: thomaseizinger/create-pull-request@master
@@ -138,6 +140,6 @@ jobs:
           GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
           head: post-release/${{ needs.release.outputs.release-version }}
           base: develop
-          title: 'Merge release/hotfix to develop - ${{ needs.release.outputs.release-version }}-${{ steps.develop-version.outputs.develop-metadata-version }}'
+          title: 'Merge release/hotfix to develop - ${{ needs.release.outputs.release-version }}-SNAPSHOT-0'
           body: Release pull request ${{ github.event.pull_request.number }} was merged into master branch and version ${{ needs.release.outputs.release-version }} was released. Please review changes to be merged to develop.
           reviewers:  ${{ join(github.event.pull_request.requested_reviewers.*.login, ',') }}

@@ -27,6 +27,7 @@ jobs:
     timeout-minutes: 30
     env:
       DEVOPS_CICD_ECR_BASE_URL: ${{ secrets.DEVOPS_CICD_ECR_BASE_URL }}
+      DEVOPS_CICD_ACR_BASE_URL: ${{ secrets.DEVOPS_CICD_ACR_BASE_URL }}
 
     steps:
       - name: Generate token
