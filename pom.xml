@@ -8,7 +8,7 @@
     </parent>
     <groupId>com.backbase.productled</groupId>
     <artifactId>ses-email-connector</artifactId>
-    <version>0.13.0-RC1</version>
+    <version>0.13.0</version>
     <packaging>war</packaging>
     <name>Backbase :: ses-email-connector</name>
     <properties>
