@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.13] - 2022-08-12
+
+### What has Changed
+
+-   Upgrade to 2022.08.3-LTS
+
 ## [0.12] - 2022-07-22
 
 ### What has Changed
@@ -98,7 +104,9 @@
 
 -
 
-[Unreleased]: https://github.com/baas-devops-reference/ses-email-connector/compare/0.12...HEAD
+[Unreleased]: https://github.com/baas-devops-reference/ses-email-connector/compare/0.13...HEAD
+
+[0.13]: https://github.com/baas-devops-reference/ses-email-connector/compare/0.12...0.13
 
 [0.12]: https://github.com/baas-devops-reference/ses-email-connector/compare/0.11...0.12
 

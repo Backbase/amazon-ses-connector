@@ -1,21 +1,16 @@
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <parent>
         <groupId>com.backbase.buildingblocks</groupId>
         <version>14.2.0</version>
         <artifactId>service-sdk-starter-core</artifactId>
         <relativePath/>
     </parent>
-
     <groupId>com.backbase.productled</groupId>
     <artifactId>ses-email-connector</artifactId>
-    <version>0.12.0</version>
+    <version>0.13.0-RC1</version>
     <packaging>war</packaging>
     <name>Backbase :: ses-email-connector</name>
-
     <properties>
         <java.version>11</java.version>
         <!--	Jib properties	-->
@@ -25,27 +20,24 @@
         <docker.distroless.war.latest.skip>true</docker.distroless.war.latest.skip>
       
         <!--	Dependency versions	-->
-        <backbase-bom.version>2022.07.1</backbase-bom.version>
-        <twilio.version>8.32.0</twilio.version>
+        <backbase-bom.version>2022.08.3-LTS</backbase-bom.version>
+        <twilio.version>8.34.0</twilio.version>
         <mapstruct.version>1.5.2.Final</mapstruct.version>
         <unitils-core.version>3.4.6</unitils-core.version>
         <!-- Plugin versions -->
         <gitflow-maven-plugin.version>1.18.0</gitflow-maven-plugin.version>
-        <boat-maven-plugin.version>0.16.0</boat-maven-plugin.version>
-  
+        <boat-maven-plugin.version>0.16.1</boat-maven-plugin.version>
         <!-- Sonar -->
         <sonar.projectKey>${SONAR_PROJECT_KEY}</sonar.projectKey>
         <sonar.organization>${SONAR_ORGANIZATION}</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-
         <open-api-specs-dir>${project.build.directory}/specs</open-api-specs-dir>
         <action-service-api.directory>${open-api-specs-dir}/action</action-service-api.directory>
         <communications-outbound-integration-api.directory>${open-api-specs-dir}/identity</communications-outbound-integration-api.directory>
         <communications-outbound-integration-api.base-package>com.backbase.outbound.integration.communications.rest.spec.v1</communications-outbound-integration-api.base-package>
-
         <SIG_SECRET_KEY>JWTSecretKeyDontUseInProduction!</SIG_SECRET_KEY>
+        <docker.distroless.image>gcr.io/distroless/java11-debian11@sha256:7c9506a8ef3e916d5391fe8ae95b6f215067a938e0bdfca7986d1fc03bc340dd</docker.distroless.image>
     </properties>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -57,7 +49,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
     <dependencies>
         <dependency>
             <groupId>com.backbase.buildingblocks</groupId>
@@ -137,7 +128,6 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -161,7 +151,6 @@
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -196,7 +185,6 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>com.backbase.oss</groupId>
                 <artifactId>boat-maven-plugin</artifactId>
@@ -278,7 +266,6 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>com.amashchenko.maven.plugin</groupId>
                 <artifactId>gitflow-maven-plugin</artifactId>
