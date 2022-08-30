@@ -1,6 +1,8 @@
 # Changelog
 
-## [Unreleased]
+## [0.1.0-beta] - 2022-08-30
+
+-   Moved to new repo
 
 ## [0.13] - 2022-08-12
 
