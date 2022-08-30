@@ -176,7 +176,7 @@ pipeline {
                     withMaven(maven: MVN_VERSION, jdk: JDK_VERSION) {
                         sh '''
                          echo "Deploying release with version ${PROJECT_VERSION}"
-                         ci/scripts/deploy-artifacts.sh
+                         .sdlc/scripts/deploy-artifacts.sh
                         '''
                     }
                 }
