@@ -181,7 +181,7 @@ pipeline {
                     }
                 }
 
-                dir("${env.WORKSPACE}/${ARTIFACT_NAME}-service") {
+                dir("${env.WORKSPACE}/ses-email-integration-service") {
                     mvnBuild('mvn package -Dmaven.test.skip.exec=true -P docker-image -Ddocker.repo.project=staging -Djib.to.tags=${PROJECT_VERSION} -Djib.to.auth.username=${HARBOR_CREDS_USR} -Djib.to.auth.password=${HARBOR_CREDS_PSW}')
                 }
 
