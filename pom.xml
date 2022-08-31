@@ -2,41 +2,29 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.backbase.buildingblocks</groupId>
-        <version>14.2.0</version>
+        <version>15.0.1</version>
         <artifactId>service-sdk-starter-core</artifactId>
         <relativePath/>
     </parent>
-    <groupId>com.backbase.productled</groupId>
-    <artifactId>ses-email-connector</artifactId>
-    <version>0.13.0</version>
+    <groupId>com.backbase.communication</groupId>
+    <artifactId>ses-email-integration-service</artifactId>
+    <version>0.1.0-beta-SNAPSHOT</version>
     <packaging>war</packaging>
-    <name>Backbase :: ses-email-connector</name>
+    <name>ses-email-integration-service</name>
     <properties>
-        <java.version>11</java.version>
-        <!--	Jib properties	-->
-        <docker.repo.url>${DEVOPS_CICD_ECR_BASE_URL}</docker.repo.url>
-        <docker.image.name>${docker.repo.url}/${project.artifactId}</docker.image.name>
-        <jib.to.image>${docker.image.name}:${backbase-bom.version}-${project.version}</jib.to.image>
-        <docker.distroless.war.latest.skip>true</docker.distroless.war.latest.skip>
-      
-        <!--	Dependency versions	-->
+        <java.version>17</java.version>
+
         <backbase-bom.version>2022.08.3-LTS</backbase-bom.version>
-        <twilio.version>8.34.0</twilio.version>
         <mapstruct.version>1.5.2.Final</mapstruct.version>
         <unitils-core.version>3.4.6</unitils-core.version>
-        <!-- Plugin versions -->
-        <gitflow-maven-plugin.version>1.18.0</gitflow-maven-plugin.version>
+        <build-helper-maven-plugin.version>3.2.0</build-helper-maven-plugin.version>
         <boat-maven-plugin.version>0.16.1</boat-maven-plugin.version>
-        <!-- Sonar -->
-        <sonar.projectKey>${SONAR_PROJECT_KEY}</sonar.projectKey>
-        <sonar.organization>${SONAR_ORGANIZATION}</sonar.organization>
-        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+
         <open-api-specs-dir>${project.build.directory}/specs</open-api-specs-dir>
         <action-service-api.directory>${open-api-specs-dir}/action</action-service-api.directory>
         <communications-outbound-integration-api.directory>${open-api-specs-dir}/identity</communications-outbound-integration-api.directory>
         <communications-outbound-integration-api.base-package>com.backbase.outbound.integration.communications.rest.spec.v1</communications-outbound-integration-api.base-package>
         <SIG_SECRET_KEY>JWTSecretKeyDontUseInProduction!</SIG_SECRET_KEY>
-        <docker.distroless.image>gcr.io/distroless/java11-debian11@sha256:7c9506a8ef3e916d5391fe8ae95b6f215067a938e0bdfca7986d1fc03bc340dd</docker.distroless.image>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -267,36 +255,9 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>com.amashchenko.maven.plugin</groupId>
-                <artifactId>gitflow-maven-plugin</artifactId>
-                <version>${gitflow-maven-plugin.version}</version>
-                <configuration>
-                    <installProject>false</installProject>
-                    <verbose>false</verbose>
-                    <gitFlowConfig>
-                        <productionBranch>master</productionBranch>
-                        <developmentBranch>develop</developmentBranch>
-                        <featureBranchPrefix>feature/</featureBranchPrefix>
-                        <releaseBranchPrefix>release/</releaseBranchPrefix>
-                        <hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
-                        <versionTagPrefix>v</versionTagPrefix>
-                        <origin>origin</origin>
-                    </gitFlowConfig>
-                    <commitMessages>
-                        <!-- since 1.2.1, see Customizing commit messages -->
-                        <releaseStartMessage>Update versions for release @{version}</releaseStartMessage>
-                        <releaseFinishMessage>Update for next development version
-                            @{version}
-                        </releaseFinishMessage>
-                        <releaseVersionUpdateMessage>Update for next development version
-                            @{version}
-                        </releaseVersionUpdateMessage>
-                    </commitMessages>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
+                <version>${build-helper-maven-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>test</id>
