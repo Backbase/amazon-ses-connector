@@ -118,7 +118,6 @@ pipeline {
                                     bash common-ci-scripts/securityScan.sh \
                                         --projectType maven \
                                         --projectName ses-email-integration-service \
-                                        --sourcePath ses-email-integration-service \
                                         --scanArtifacts target/ses-email-integration-service-${pom.version}.war
                                 """
                             }
@@ -137,7 +136,6 @@ pipeline {
                                     bash common-ci-scripts/securityScan.sh \
                                         --projectType maven \
                                         --projectName ses-email-integration-service \
-                                        --sourcePath ses-email-integration-service \
                                         --version ${RELEASE_POM_VERSION} \
                                         --scanArtifacts target/ses-email-integration-service-${pom.version}.war
                                 """
