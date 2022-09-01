@@ -16,7 +16,7 @@ mvn -s settings.xml -B -e build-helper:parse-version deploy:deploy-file -Dupdate
   -DgroupId="com.backbase.communication" \
   -DartifactId="${ARTIFACT_NAME}" \
   -DpomFile="${ARTIFACT_NAME}/.flattened-pom.xml" \
-  -Dfile="${ARTIFACT_NAME}/target/${ARTIFACT_NAME}-${PROJECT_VERSION}.war"
+  -Dfile="target/${ARTIFACT_NAME}-${PROJECT_VERSION}.war"
 
 echo "Releasing ${ARTIFACT_NAME} exec jar to artifactory"
 echo -------------------------------------------------------
@@ -27,6 +27,6 @@ mvn -s settings.xml -B -e build-helper:parse-version deploy:deploy-file -Dupdate
   -DartifactId="${ARTIFACT_NAME}" \
   -Dversion=${PROJECT_VERSION} \
   -DgeneratePom=false \
-  -Dfile="${ARTIFACT_NAME}/target/${ARTIFACT_NAME}-${PROJECT_VERSION}-exec.jar"
+  -Dfile="target/${ARTIFACT_NAME}-${PROJECT_VERSION}-exec.jar"
 
 

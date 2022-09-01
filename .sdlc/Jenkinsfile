@@ -37,7 +37,7 @@ pipeline {
     }
 
     parameters {
-
+        booleanParam(name: 'RUN_QUALITY_SCAN', defaultValue: true, description: 'Run sonarqube if required.')
     }
 
     environment {
@@ -97,6 +97,9 @@ pipeline {
         }
 
         stage('Static Quality Analysis with Sonar') {
+            when {
+                expression { params.RUN_QUALITY_SCAN == true }
+            }
             steps {
                 runMavenSonarScan_v2("${PROJECT_KEY}:${pom.artifactId}")
             }
@@ -115,8 +118,7 @@ pipeline {
                                     bash common-ci-scripts/securityScan.sh \
                                         --projectType maven \
                                         --projectName ses-email-integration-service \
-                                        --sourcePath ses-email-integration-service \
-                                        --scanArtifacts ses-email-integration-service/target/ses-email-integration-service-${pom.version}.war
+                                        --scanArtifacts target/ses-email-integration-service-${pom.version}.war
                                 """
                             }
                         }
@@ -134,9 +136,8 @@ pipeline {
                                     bash common-ci-scripts/securityScan.sh \
                                         --projectType maven \
                                         --projectName ses-email-integration-service \
-                                        --sourcePath ses-email-integration-service \
                                         --version ${RELEASE_POM_VERSION} \
-                                        --scanArtifacts ses-email-integration-service/target/ses-email-integration-service-${pom.version}.war
+                                        --scanArtifacts target/ses-email-integration-service-${pom.version}.war
                                 """
                             }
                         }
@@ -150,9 +151,7 @@ pipeline {
                 expression { IMAGE_EXISTS == false }
             }
             steps {
-                dir("${env.WORKSPACE}/ses-email-integration-service") {
-                    mvnBuild('mvn package --no-transfer-progress -Dmaven.test.skip.exec=true -P docker-image -Ddocker.repo.project=${HARBOR_REPO_DEVELOPMENT} -Djib.to.tags=${GIT_COMMIT} -Djib.to.auth.username=${HARBOR_CREDS_USR} -Djib.to.auth.password=${HARBOR_CREDS_PSW}')
-                }
+                 mvnBuild('mvn package --no-transfer-progress -Dmaven.test.skip.exec=true -P docker-image -Ddocker.repo.project=${HARBOR_REPO_DEVELOPMENT} -Djib.to.tags=${GIT_COMMIT} -Djib.to.auth.username=${HARBOR_CREDS_USR} -Djib.to.auth.password=${HARBOR_CREDS_PSW} -f pom.xml')
             }
         }
 
@@ -181,9 +180,7 @@ pipeline {
                     }
                 }
 
-                dir("${env.WORKSPACE}/ses-email-integration-service") {
-                    mvnBuild('mvn package -Dmaven.test.skip.exec=true -P docker-image -Ddocker.repo.project=staging -Djib.to.tags=${PROJECT_VERSION} -Djib.to.auth.username=${HARBOR_CREDS_USR} -Djib.to.auth.password=${HARBOR_CREDS_PSW}')
-                }
+                mvnBuild('mvn package -Dmaven.test.skip.exec=true -P docker-image -Ddocker.repo.project=staging -Djib.to.tags=${PROJECT_VERSION} -Djib.to.auth.username=${HARBOR_CREDS_USR} -Djib.to.auth.password=${HARBOR_CREDS_PSW} -f pom.xml')
 
                 node ('aws-static-jdk11') {
                     withMaven(maven: MVN_VERSION, jdk: JDK_VERSION) {
