@@ -5,7 +5,7 @@ mvn -s settings.xml -B -q -U versions:set -DnewVersion=${PROJECT_VERSION}
 
 echo "Rebuilding artifacts"
 echo --------------------------------------------------------
-mvn -s settings.xml -B install -Dskip.unit.tests=true -Dskip.integration.tests=true
+mvn -s settings.xml -B clean install -Dskip.unit.tests=true -Dskip.integration.tests=true
 
 echo "Releasing ${ARTIFACT_NAME} war to artifactory"
 echo -------------------------------------------------------
