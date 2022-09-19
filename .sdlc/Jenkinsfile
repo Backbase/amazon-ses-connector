@@ -60,9 +60,10 @@ pipeline {
                 script {
                     ciSCMCheckout()
                     checkoutCommonCiScripts()
-                    pom = readMavenPom(file: 'pom.xml')
+                    servicePom = readMavenPom(file: 'ses-email-integration-service/pom.xml')
+                    parentPom = readMavenPom(file: 'pom.xml')
 
-                    RELEASE_POM_VERSION = pom.version.replace("-SNAPSHOT", "")
+                    RELEASE_POM_VERSION = parentPom.version.replace("-SNAPSHOT", "")
                     TARGET_BRANCH = "${env.CHANGE_BRANCH ?: env.BRANCH_NAME}"
                     DO_RELEASE = TARGET_BRANCH.startsWith("release/")
                     SERVICE_NAME = "ses-email-integration-service"
@@ -101,7 +102,7 @@ pipeline {
                 expression { params.RUN_QUALITY_SCAN == true }
             }
             steps {
-                runMavenSonarScan_v2("${PROJECT_KEY}:${pom.artifactId}")
+                runMavenSonarScan_v2("${PROJECT_KEY}:${servicePom.artifactId}")
             }
         }
 
@@ -118,7 +119,7 @@ pipeline {
                                     bash common-ci-scripts/securityScan.sh \
                                         --projectType maven \
                                         --projectName ses-email-integration-service \
-                                        --scanArtifacts target/ses-email-integration-service-${pom.version}.war
+                                        --scanArtifacts ses-email-integration-service/target/ses-email-integration-service-${parentPom.version}.war
                                 """
                             }
                         }
@@ -137,7 +138,7 @@ pipeline {
                                         --projectType maven \
                                         --projectName ses-email-integration-service \
                                         --version ${RELEASE_POM_VERSION} \
-                                        --scanArtifacts target/ses-email-integration-service-${pom.version}.war
+                                        --scanArtifacts ses-email-integration-service/target/ses-email-integration-service-${parentPom.version}.war
                                 """
                             }
                         }
@@ -151,7 +152,7 @@ pipeline {
                 expression { IMAGE_EXISTS == false }
             }
             steps {
-                 mvnBuild('mvn clean package --no-transfer-progress -Dmaven.test.skip.exec=true -P docker-image -Ddocker.repo.project=${HARBOR_REPO_DEVELOPMENT} -Djib.to.tags=${GIT_COMMIT} -Djib.to.auth.username=${HARBOR_CREDS_USR} -Djib.to.auth.password=${HARBOR_CREDS_PSW} -f pom.xml')
+                 mvnBuild('mvn clean package --no-transfer-progress -Dmaven.test.skip.exec=true -P docker-image -Ddocker.repo.project=${HARBOR_REPO_DEVELOPMENT} -Djib.to.tags=${GIT_COMMIT} -Djib.to.auth.username=${HARBOR_CREDS_USR} -Djib.to.auth.password=${HARBOR_CREDS_PSW} -f ses-email-integration-service/pom.xml')
             }
         }
 
@@ -180,7 +181,7 @@ pipeline {
                     }
                 }
 
-                mvnBuild('mvn clean package -Dmaven.test.skip.exec=true -P docker-image -Ddocker.repo.project=staging -Djib.to.tags=${PROJECT_VERSION} -Djib.to.auth.username=${HARBOR_CREDS_USR} -Djib.to.auth.password=${HARBOR_CREDS_PSW} -f pom.xml')
+                mvnBuild('mvn clean package -Dmaven.test.skip.exec=true -P docker-image -Ddocker.repo.project=staging -Djib.to.tags=${PROJECT_VERSION} -Djib.to.auth.username=${HARBOR_CREDS_USR} -Djib.to.auth.password=${HARBOR_CREDS_PSW} -f ses-email-integration-service/pom.xml')
 
                 node ('aws-static-jdk11') {
                     withMaven(maven: MVN_VERSION, jdk: JDK_VERSION) {
