@@ -16,7 +16,7 @@ mvn -s settings.xml -B -e build-helper:parse-version deploy:deploy-file -Dupdate
   -Dversion=${PROJECT_VERSION} \
   -DgroupId="com.backbase.communication" \
   -DartifactId="${ARTIFACT_NAME}" \
-  -Dfile="target/${ARTIFACT_NAME}-${PROJECT_VERSION}.war"
+  -Dfile="ses-email-integration-service/target/${ARTIFACT_NAME}-${PROJECT_VERSION}.war"
 
 echo "Releasing ${ARTIFACT_NAME} exec jar to artifactory"
 echo -------------------------------------------------------
@@ -27,7 +27,7 @@ mvn -s settings.xml -B -e build-helper:parse-version deploy:deploy-file -Dupdate
   -DartifactId="${ARTIFACT_NAME}" \
   -Dversion=${PROJECT_VERSION} \
   -DgeneratePom=false \
-  -Dfile="target/${ARTIFACT_NAME}-${PROJECT_VERSION}-exec.jar"
+  -Dfile="ses-email-integration-service/target/${ARTIFACT_NAME}-${PROJECT_VERSION}-exec.jar"
 
 echo "Releasing ${ARTIFACT_NAME} meta json to artifactory"
 echo -------------------------------------------------------
@@ -39,4 +39,4 @@ mvn -s settings.xml -B -e build-helper:parse-version deploy:deploy-file -Dupdate
   -Dversion=${PROJECT_VERSION} \
   -DgeneratePom=false \
   -Dclassifier=meta \
-  -Dfile="target/${ARTIFACT_NAME}-${PROJECT_VERSION}-meta.json"
+  -Dfile="ses-email-integration-service/target/${ARTIFACT_NAME}-${PROJECT_VERSION}-meta.json"
