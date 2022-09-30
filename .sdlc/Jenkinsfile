@@ -153,8 +153,8 @@ pipeline {
             }
             steps {
                  mvnBuild('mvn clean package --no-transfer-progress -Dmaven.test.skip.exec=true -P docker-image -Ddocker.repo.project=${HARBOR_REPO_DEVELOPMENT} -Djib.to.tags=${GIT_COMMIT} -Djib.to.auth.username=${HARBOR_CREDS_USR} -Djib.to.auth.password=${HARBOR_CREDS_PSW} -f ses-email-integration-service/pom.xml')
+                 buildPushImage_v2("${SERVICE_NAME}-system-test", "${GIT_COMMIT}", [DOCKERFILE_NAME: "ci/docker/system-tests/Dockerfile", PROJECT: "development"])
             }
-            buildPushImage_v2("${SERVICE_NAME}-system-test", "${GIT_COMMIT}", [DOCKERFILE_NAME: "ci/docker/system-tests/Dockerfile", PROJECT: "development"])
         }
 
         stage('Run system tests on parallel') {
