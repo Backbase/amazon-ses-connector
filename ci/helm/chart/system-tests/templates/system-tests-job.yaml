@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "system-tests.fullname" . }}
+  labels:
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+  namespace: "{{ .Release.Namespace }}"
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args: [{{ .Values.args }}]
+          env:
+            - name: GATEWAY_BASEURI
+              value: http://edge:8080
+            - name: REGISTRY_BASEURI
+              value: http://registry:8080
+            - name: COMMUNICATION_BASEURI
+              value: http://communication:{{ .Values.communication.port }}/communication
+            - name: SIG_SECRET_KEY
+              value: "{{ .Values.env.SIG_SECRET_KEY }}"
+          resources:
+            limits:
+              memory: 1024Mi
+            requests:
+              memory: 1024Mi

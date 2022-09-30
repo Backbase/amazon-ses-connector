@@ -1,0 +1,40 @@
+app:
+  name: registry
+  image:
+    repository: registry
+    registry: harbor.backbase.eu/internal
+    tagFrom: ips-registryVersion
+  resources:
+    memory:
+      xms: 1024
+      xmx: 1024
+    cpu:
+      minShares: 100
+      maxShares: 1000
+
+ingress:
+  enabled: false
+
+env:
+  "eureka.instance.hostname": localhost
+
+registry:
+  enabled: false
+  preferIpAddress: false
+  host: localhost
+  checkEnabled: false
+
+service:
+  enabled: true
+  nameOverride: registry
+
+livenessProbe:
+  enabled: true
+  path: /actuator/health
+
+readinessProbe:
+  enabled: true
+  path: /actuator/health
+
+database:
+  enabled: false

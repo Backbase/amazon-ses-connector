@@ -1,0 +1,58 @@
+releases:
+  - name: backbase-env
+    chart: internal/backbase-env
+    version: 0.16.3
+    labels:
+      tier: infrastructure
+      component: env
+    values:
+      - ../../values/backbase-env.yaml
+      - ../../values/database/mysql/env-values.yaml
+
+  - name: ips-registry
+    chart: backbase-charts/backbase-app
+    version: 0.23.13
+    labels:
+      tier: ips
+      component: registry
+    values:
+      - ../../values/global.yaml
+      - ../../values/ips/registry.yaml
+    set:
+      - name: global.ips-registryVersion
+        value: {{ env "IPS_REGISTRY_VERSION" | default "custom-m1-b1" | quote }}
+
+  - name: ips-bas-token-converter
+    chart: backbase-charts/backbase-app
+    version: 0.23.13
+    labels:
+      tier: ips
+      component: token-converter
+    values:
+      - ../../values/global.yaml
+      - ../../values/ips/token-converter.yaml
+    set:
+      - name: global.ips-tcVersion
+        value: {{ env "IPS_TC_VERSION" | default "2022.05" | quote }}
+
+  - name: greenmail
+    chart: ../../chart/greenmail
+    labels:
+      tier: server
+      component: greenmail
+
+  - name: ses-email-integration-service
+    chart: backbase-charts/backbase-app
+    version: 0.24.1
+    labels:
+      tier: cxs
+      component: communication
+    values:
+      - ../../values/global.yaml
+      - ../../values/ses-email-connector.yaml
+
+  - name: system-test-ses-email
+    chart: ../../chart/system-tests
+    labels:
+      tier: system-tests
+      component: ses-email-system-tests

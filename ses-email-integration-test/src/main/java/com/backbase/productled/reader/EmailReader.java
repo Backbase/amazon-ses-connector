@@ -1,0 +1,106 @@
+package com.backbase.productled.reader;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import javax.mail.*;
+import javax.mail.internet.ContentType;
+import javax.mail.internet.MimeMultipart;
+import java.io.IOException;
+import java.util.List;
+import java.util.Properties;
+
+@Component
+public class EmailReader {
+    @Value("${mail.pop3.host}")
+    private String host;
+
+    @Value("${mail.pop3.port}")
+    private String port;
+
+    @Value("${mail.store.protocol}")
+    private String protocol;
+
+    private Session session;
+    private Store store;
+    Folder inbox;
+
+    public List<Message> getEmails(String username, String password) throws MessagingException {
+        // 1. Setup properties for the mail session.
+        Properties props = new Properties();
+        props.put("mail.pop3.port", port);
+        props.put("mail.pop3.host", host);
+        props.put("mail.pop3.user", username);
+        props.put("mail.store.protocol", protocol);
+
+        // 2. Creates a javax.mail.Authenticator object.
+        Authenticator auth = new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(username, password);
+            }
+        };
+
+        session = Session.getDefaultInstance(props, auth);
+        System.out.println("session = " + session);
+
+        store = session.getStore(protocol);
+        System.out.println("store = " + store);
+        store.connect(host, username, password);
+
+        inbox = store.getFolder("INBOX");
+        inbox.open(Folder.READ_ONLY);
+
+        Message[] messages = inbox.getMessages();
+
+        return List.of(messages);
+    }
+
+    public void close() throws MessagingException {
+        inbox.close(false);
+        store.close();
+    }
+
+    public String getTextFromMessage(Message message) throws IOException, MessagingException {
+        String result = "";
+        if (message.isMimeType("text/plain")) {
+            result = message.getContent().toString();
+        } else if (message.isMimeType("multipart/*")) {
+            MimeMultipart mimeMultipart = (MimeMultipart) message.getContent();
+            result = getTextFromMimeMultipart(mimeMultipart);
+        }
+        return result;
+    }
+
+    private String getTextFromMimeMultipart(
+            MimeMultipart mimeMultipart) throws IOException, MessagingException {
+
+        int count = mimeMultipart.getCount();
+        if (count == 0)
+            throw new MessagingException("Multipart with no body parts not supported.");
+        boolean multipartAlt = new ContentType(mimeMultipart.getContentType()).match("multipart/alternative");
+        if (multipartAlt)
+            return getTextFromBodyPart(mimeMultipart.getBodyPart(count - 1));
+        String result = "";
+        for (int i = 0; i < count; i++) {
+            BodyPart bodyPart = mimeMultipart.getBodyPart(i);
+            result += getTextFromBodyPart(bodyPart);
+        }
+        return result;
+    }
+
+    private String getTextFromBodyPart(
+            BodyPart bodyPart) throws IOException, MessagingException {
+
+        String result = "";
+        if (bodyPart.isMimeType("text/plain")) {
+            result = (String) bodyPart.getContent();
+        } else if (bodyPart.isMimeType("text/html")) {
+            String html = (String) bodyPart.getContent();
+            result = html;
+        } else if (bodyPart.getContent() instanceof MimeMultipart){
+            result = getTextFromMimeMultipart((MimeMultipart)bodyPart.getContent());
+        }
+        return result;
+    }
+}

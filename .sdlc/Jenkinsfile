@@ -154,8 +154,33 @@ pipeline {
             steps {
                  mvnBuild('mvn clean package --no-transfer-progress -Dmaven.test.skip.exec=true -P docker-image -Ddocker.repo.project=${HARBOR_REPO_DEVELOPMENT} -Djib.to.tags=${GIT_COMMIT} -Djib.to.auth.username=${HARBOR_CREDS_USR} -Djib.to.auth.password=${HARBOR_CREDS_PSW} -f ses-email-integration-service/pom.xml')
             }
+            buildPushImage_v2("${SERVICE_NAME}-system-test", "${GIT_COMMIT}", [DOCKERFILE_NAME: "ci/docker/system-tests/Dockerfile", PROJECT: "development"])
         }
 
+        stage('Run system tests on parallel') {
+          parallel {
+
+            stage('Test On Tomcat on Java 17') {
+                when {
+                    expression {
+                        return params.TEST_TOMCAT == true && !params.RELEASE_BUILDINGBLOCK
+                    }
+                }
+                steps {
+                    script {
+                        kubernetes.waitForRunningContainers("${SERVICE_NAME}", 100, TOMCAT_NAMESPACE, "app.kubernetes.io/name")
+
+                        kubernetes.logContainersToFileSafe("${SERVICE_NAME}", "test_logs/ses-email-tomcat.log", TOMCAT_NAMESPACE, "app.kubernetes.io/name")
+
+                        kubernetes.waitForRunningContainers("system-tests", 100, TOMCAT_NAMESPACE, "job-name")
+                        kubernetes.logContainersToStdoutSafe('system-tests', TOMCAT_NAMESPACE, "job-name")
+
+                        kubernetes.waitJobForResult('system-tests', TOMCAT_NAMESPACE, "100s")
+                    }
+                }
+            }
+          }
+        }
 
         stage('Release artifacts') {
             when {
