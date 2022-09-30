@@ -8,6 +8,6 @@ COPY ci/docker/system-tests/scripts/run-tests.sh run-tests.sh
 
 RUN ["chmod", "+x", "run-tests.sh"]
 
-COPY ses-email-integration-test/target/es-email-integration-test-*-exec.jar app.jar
+COPY ses-email-integration-test/target/ses-email-integration-test-*-exec.jar app.jar
 
 ENTRYPOINT ["sh", "./run-tests.sh"]
