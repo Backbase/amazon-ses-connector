@@ -211,12 +211,13 @@ pipeline {
                 }
                 steps {
                     script {
+                        kubernetes.logContainersToStdoutSafe('system-tests', TOMCAT_NAMESPACE, "job-name")
                         kubernetes.waitForRunningContainers("${SERVICE_NAME}", 100, TOMCAT_NAMESPACE, "app.kubernetes.io/name")
 
                         kubernetes.logContainersToFileSafe("${SERVICE_NAME}", "test_logs/ses-email-tomcat.log", TOMCAT_NAMESPACE, "app.kubernetes.io/name")
 
                         kubernetes.waitForRunningContainers("system-tests", 100, TOMCAT_NAMESPACE, "job-name")
-                        kubernetes.logContainersToStdoutSafe('system-tests', TOMCAT_NAMESPACE, "job-name")
+//                         kubernetes.logContainersToStdoutSafe('system-tests', TOMCAT_NAMESPACE, "job-name")
 
                         kubernetes.waitJobForResult('system-tests', TOMCAT_NAMESPACE, "100s")
                     }
