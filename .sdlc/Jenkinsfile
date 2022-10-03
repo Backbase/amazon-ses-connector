@@ -38,6 +38,11 @@ pipeline {
 
     parameters {
         booleanParam(name: 'RUN_QUALITY_SCAN', defaultValue: true, description: 'Run sonarqube if required.')
+        booleanParam(name: 'TEST_TOMCAT', defaultValue: true, description: 'Run system tests in tomcat')
+
+        // TODO Move below parameters to new pipeline
+        booleanParam(name: 'RELEASE_BUILDINGBLOCK', defaultValue: false, description: 'Release communications buildingblock.')
+
     }
 
     environment {
