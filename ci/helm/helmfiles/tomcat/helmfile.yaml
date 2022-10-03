@@ -56,3 +56,6 @@ releases:
     labels:
       tier: system-tests
       component: ses-email-system-tests
+    set:
+      - name: image.tag
+        value: {{ env "SYSTEM_TEST_IMAGE_VERSION" | default "release" | quote }}
