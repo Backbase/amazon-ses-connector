@@ -51,3 +51,14 @@ env:
 service:
   enabled: true
   nameOverride: ses-email-integration-service
+
+livenessProbe:
+  enabled: true
+  path: /actuator/health
+
+readinessProbe:
+  enabled: true
+  path: /actuator/health
+
+registry:
+  enabled: false
