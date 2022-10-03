@@ -193,15 +193,6 @@ pipeline {
                     }
                 }
 
-                dir("${env.WORKSPACE}/ci/helm/helmfiles/multitenancy") {
-                    script {
-                        if (params.TEST_MULTI_TENANCY == true) {
-                            echo('Running multi-tenancy tests')
-                            MULTI_TENANCY_NAMESPACE = kubernetes.runHelmfile(CREATED_NAMESPACES)
-                        }
-                    }
-                }
-
                 script {
                     sleep 30
                 }
