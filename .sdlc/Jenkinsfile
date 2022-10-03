@@ -4,6 +4,8 @@
 def MVN_VERSION = 'maven 3.8.1'
 def JDK_VERSION = 'jdk-17'
 
+def CREATED_NAMESPACES = []
+
 def checkHarborImageExists(String image, String tag) {
     withEnv(["image=${image}", "tag=${tag}"]) {
         withCredentials([
@@ -162,6 +164,17 @@ pipeline {
             }
         }
 
+        stage('Create Namespace') {
+            steps {
+                getKubecluster()
+
+                script {
+                    CREATED_NAMESPACES << "${EKSNAMESPACE}"
+                }
+            }
+        }
+
+
         stage('Prepare system tests on Java 17') {
             when {
                 expression { !params.RELEASE_BUILDINGBLOCK }
@@ -266,13 +279,25 @@ pipeline {
             archiveArtifacts artifacts: 'test_logs/*', fingerprint: true, allowEmptyArchive: true
         }
         aborted {
-            slackSend(channel: "#${BUILD_SLACK_CHANNEL}", color: '#D3D3D3', message: " 🤫 Build for `${env.JOB_NAME}` has been aborted \n${env.RUN_DISPLAY_URL}")
+            slackSend(channel: "#${BUILD_SLACK_CHANNEL}", color: '#D3D3D3', message: "🤫 Build for `${env.JOB_NAME}` has been aborted \n${env.RUN_DISPLAY_URL}")
+            script {
+                kubernetes.deleteNamespaces(CREATED_NAMESPACES)
+            }
         }
         failure {
-            slackSend(channel: "#${BUILD_SLACK_CHANNEL}", color: '#FF0000', message: " 👎 @here Build for `${env.JOB_NAME}` has failed \n${env.RUN_DISPLAY_URL}")
+            slackSend(channel: "#${BUILD_SLACK_CHANNEL}", color: '#FF0000', message: "👎 @here Build for `${env.JOB_NAME}` has failed \n${env.RUN_DISPLAY_URL}")
+            script {
+                timeout(time: 1, unit: 'HOURS') {
+                    input("Delete namespaces?")
+                }
+                kubernetes.deleteNamespaces(CREATED_NAMESPACES)
+            }
         }
         success {
-            slackSend(channel: "#${BUILD_SLACK_CHANNEL}", color: '#00FF00', message: " 👍 Build for `${env.JOB_NAME}` has been successful \n${env.RUN_DISPLAY_URL}")
+            slackSend(channel: "#${BUILD_SLACK_CHANNEL}", color: '#00FF00', message: "👍 Build for `${env.JOB_NAME}` has been successful \n${env.RUN_DISPLAY_URL}")
+            script {
+                kubernetes.deleteNamespaces(CREATED_NAMESPACES)
+            }
         }
     }
 }
