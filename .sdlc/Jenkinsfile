@@ -162,6 +162,40 @@ pipeline {
             }
         }
 
+        stage('Prepare system tests on Java 17') {
+            when {
+                expression { !params.RELEASE_BUILDINGBLOCK }
+            }
+            environment {
+                COMMUNICATION_IMAGE_VERSION = "${GIT_COMMIT}"
+                SYSTEM_TEST_IMAGE_VERSION = "${GIT_COMMIT}"
+            }
+            steps {
+                dir("${env.WORKSPACE}/ci/helm/helmfiles/tomcat") {
+                    script {
+                        if (params.TEST_TOMCAT == true) {
+                            echo('Running Tomcat')
+                            TOMCAT_NAMESPACE = kubernetes.runHelmfile(CREATED_NAMESPACES)
+                        }
+                    }
+                }
+
+                dir("${env.WORKSPACE}/ci/helm/helmfiles/multitenancy") {
+                    script {
+                        if (params.TEST_MULTI_TENANCY == true) {
+                            echo('Running multi-tenancy tests')
+                            MULTI_TENANCY_NAMESPACE = kubernetes.runHelmfile(CREATED_NAMESPACES)
+                        }
+                    }
+                }
+
+                script {
+                    sleep 30
+                }
+            }
+        }
+
+
         stage('Run system tests on parallel') {
           parallel {
 
