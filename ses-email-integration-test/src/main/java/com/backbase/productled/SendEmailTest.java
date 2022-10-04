@@ -29,7 +29,9 @@ public class SendEmailTest {
 
         String toAddress = message.getPayload().getRecipients().get(0).getTo().get(0);
         List<javax.mail.Message> emails = emailReader.getEmails(toAddress, toAddress);
+        assertThat(emails).hasSize(1);
         for (javax.mail.Message email : emails) {
+            System.out.println("email = " + email);
             assertThat(email.getFrom()).extracting(address -> address.toString().replace("\"","")).containsExactly(message.getPayload().getRecipients().get(0).getFrom());
             assertThat(email.getRecipients(javax.mail.Message.RecipientType.TO)[0].toString()).isNotEqualTo(message.getPayload().getRecipients().get(0).getTo().get(0));
             assertThat(email.getSubject()).isEqualTo(message.getPayload().getContent().get(0).getTitle());
