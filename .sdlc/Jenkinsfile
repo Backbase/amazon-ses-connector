@@ -189,6 +189,7 @@ pipeline {
                         if (params.TEST_TOMCAT == true) {
                             echo('Running Tomcat')
                             TOMCAT_NAMESPACE = kubernetes.runHelmfile(CREATED_NAMESPACES)
+                            kubernetes.logContainersToStdoutSafe('system-tests', TOMCAT_NAMESPACE, "job-name")
                         }
                     }
                 }
