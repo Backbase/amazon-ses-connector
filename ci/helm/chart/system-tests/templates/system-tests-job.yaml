@@ -17,10 +17,32 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args: [{{ .Values.args }}]
           env:
-          {{- range $key, $val := .Values.env }}
-            - name: {{ $key }}
-              value: {{ $val | quote }}
-          {{- end }}
+            - name: GATEWAY_BASEURI
+              value: http://edge:8080
+            - name: REGISTRY_BASEURI
+              value: http://registry:8080
+            - name: COMMUNICATION_BASEURI
+              value: http://communication:{{ .Values.communication.port }}/communication
+            - name: SIG_SECRET_KEY
+              value: "{{ .Values.env.SIG_SECRET_KEY }}"
+            - name: MAIL_POP3_PORT
+              value: "3110"
+            - name: MAIL_POP3_HOST
+              value: "greenmail"
+            - name: MAIL_STORE_PROTOCOL
+              value: "pop3"
+            - name: SPRING_ACTIVEMQ_BROKER-URL
+              value: "tcp://activemq:61616?jms.useAsyncSend=true&jms.optimizeAcknowledge=true"
+            - name: SPRING_ACTIVEMQ_USER
+              value: "admin"
+            - name: SPRING_ACTIVEMQ_PASSWORD
+              value: "admin"
+            - name: SPRING_CLOUD_STREAM_DEFAULT_CONTENT-TYPE
+              value: "application/json"
+            - name: SPRING_CLOUD_STREAM_DEFAULT-BINDER
+              value: "activemq"
+            - name: SPRING_CLOUD_STREAM_BINDINGS_EMAIL-MEDIUM-PRIORITY_DESTINATION
+              value: "email-medium-priority"
           resources:
             limits:
               memory: 1024Mi
