@@ -212,12 +212,10 @@ pipeline {
                 steps {
                     script {
                         kubernetes.logContainersToStdoutSafe('system-tests', TOMCAT_NAMESPACE, "job-name")
+                        kubernetes.logContainersToStdoutSafe('greenmail', TOMCAT_NAMESPACE, "job-name")
+                        kubernetes.logContainersToStdoutSafe('ses-email', TOMCAT_NAMESPACE, "job-name")
 
                         kubernetes.waitForRunningContainers("system-tests", 100, TOMCAT_NAMESPACE, "job-name")
-
-                        kubernetes.logContainersToStdoutSafe('system-tests', TOMCAT_NAMESPACE, "job-name")
-
-                        kubernetes.logContainersToStdoutSafe('greenmail', TOMCAT_NAMESPACE, "job-name")
 
                         kubernetes.waitJobForResult('system-tests', TOMCAT_NAMESPACE, "30s")
                     }
