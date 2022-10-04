@@ -1,7 +1,7 @@
 greenmail:
   replicaCount: 1
   image:
-    repository: greenmail/standalone
+    repository: hub.docker.com/greenmail/standalone
     pullPolicy: IfNotPresent
     tag: "1.6.10"
 
