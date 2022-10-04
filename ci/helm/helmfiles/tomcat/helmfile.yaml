@@ -35,12 +35,6 @@ releases:
       - name: global.ips-tcVersion
         value: {{ env "IPS_TC_VERSION" | default "2022.05" | quote }}
 
-  - name: greenmail
-    chart: ../../chart/greenmail
-    labels:
-      tier: server
-      component: greenmail
-
   - name: ses-email-integration-service
     chart: backbase-charts/backbase-app
     version: 0.24.1
@@ -59,3 +53,12 @@ releases:
     set:
       - name: image.tag
         value: {{ env "SYSTEM_TEST_IMAGE_VERSION" | default "release" | quote }}
+
+  - name: greenmail
+    chart: ../../chart/greenmail
+    labels:
+      tier: system-tests
+      component: greenmail
+    set:
+      - name: image.tag
+        value: 1.6.10
