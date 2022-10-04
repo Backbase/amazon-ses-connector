@@ -14,12 +14,12 @@ greenmail:
   service:
     type: LoadBalancer
     port:
-      smtp: 25
-      smtps: 465
-      imap: 143
-      imaps: 993
-      pop3: 110
-      pop3s: 995
+      smtp: 3025
+      smtps: 3465
+      imap: 3143
+      imaps: 3993
+      pop3: 3110
+      pop3s: 3995
       http: 8080
   
   ingress:
