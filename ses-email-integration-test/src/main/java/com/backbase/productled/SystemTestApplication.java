@@ -9,9 +9,13 @@ import java.io.IOException;
 
 @SpringBootApplication
 public class SystemTestApplication {
-    public static void main(String[] args) throws MessagingException, IOException, InterruptedException {
+    public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(SystemTestApplication.class);
-        context.getBean(SendEmailTest.class).sendEmailTest();
+        try {
+            context.getBean(SendEmailTest.class).sendEmailTest();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         context.close();
     }
 }
