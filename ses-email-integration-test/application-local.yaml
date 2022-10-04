@@ -1,5 +1,6 @@
 spring:
   activemq:
+    broker-url: tcp://localhost:61616?jms.useAsyncSend=true&jms.optimizeAcknowledge=true
     user: admin
     password: admin
   cloud:
@@ -10,6 +11,13 @@ spring:
       bindings:
         email-medium-priority:
           destination: email-medium-priority
+
+mail:
+  pop3:
+    port: 3110
+    host: localhost
+  store:
+    protocol: pop3
 
 backbase:
   communication:
