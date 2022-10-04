@@ -13,7 +13,9 @@ app:
       maxShares: 1000
 env:
   "JAVA_TOOL_OPTIONS": "-XX:MaxRAMPercentage=60.0 -XX:+UseContainerSupport -Dlogging.level.root=Info -Dlogging.level.com.backbase=DEBUG -Dspring.cloud.stream.function.definition=commLowPriority;commMediumPriority;commHighPriority;commTracking"
-  spring_profiles_active: "systemtest"
+  spring.activemq.broker-url: tcp://activemq:61616
+  spring.activemq.username: admin
+  spring.activemq.password: admin
   "management.endpoint.beans.enabled": "true"
   "management.endpoints.web.exposure.include": info,health,beans
   logging.level.com.backbase: "DEBUG"
