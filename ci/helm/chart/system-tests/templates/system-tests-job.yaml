@@ -17,14 +17,10 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args: [{{ .Values.args }}]
           env:
-            - name: GATEWAY_BASEURI
-              value: http://edge:8080
-            - name: REGISTRY_BASEURI
-              value: http://registry:8080
-            - name: COMMUNICATION_BASEURI
-              value: http://communication:{{ .Values.communication.port }}/communication
-            - name: SIG_SECRET_KEY
-              value: "{{ .Values.env.SIG_SECRET_KEY }}"
+          {{- range $key, $val := .Values.env }}
+            - name: {{ $key }}
+              value: {{ $val | quote }}
+          {{- end }}
           resources:
             limits:
               memory: 1024Mi
