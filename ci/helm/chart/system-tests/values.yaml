@@ -33,12 +33,12 @@ env:
   "MAIL_POP3_PORT": 3110
   "MAIL_POP3_HOST": greenmail
   "MAIL_STORE_PROTOCOL": pop3
-  "spring.activemq.broker-url": tcp://activemq:61616?jms.useAsyncSend=true&jms.optimizeAcknowledge=true
-  "spring.activemq.user": admin
-  "spring.activemq.password": admin
-  "spring.cloud.stream.default.content-type": application/json
-  "spring.cloud.stream.default-binder": activemq
-  "spring.cloud.stream.bindings.email-medium-priority.destination": email-medium-priority
+  "SPRING_ACTIVEMQ_BROKER-URL": tcp://activemq:61616?jms.useAsyncSend=true&jms.optimizeAcknowledge=true
+  "SPRING_ACTIVEMQ_USER": admin
+  "SPRING_ACTIVEMQ_PASSWORD": admin
+  "SPRING_CLOUD_STREAM_DEFAULT_CONTENT-TYPE": application/json
+  "SPRING_CLOUD_STREAM_DEFAULT-BINDER": activemq
+  "SPRING_CLOUD_STREAM_BINDINGS_EMAIL-MEDIUM-PRIORITY_DESTINATION": email-medium-priority
 
 
 nodeSelector: {}
