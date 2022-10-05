@@ -12,7 +12,7 @@ app:
       minShares: 100
       maxShares: 1000
 env:
-  "JAVA_TOOL_OPTIONS": "-XX:MaxRAMPercentage=60.0 -XX:+UseContainerSupport -Dlogging.level.root=Info -Dlogging.level.com.backbase=DEBUG -Dspring.cloud.stream.function.definition=commLowPriority;commMediumPriority;commHighPriority;commTracking"
+  "JAVA_TOOL_OPTIONS": "-XX:MaxRAMPercentage=60.0 -XX:+UseContainerSupport -Dlogging.level.root=DEBUG -Dlogging.level.com.backbase=DEBUG -Dspring.cloud.stream.function.definition=commLowPriority;commMediumPriority;commHighPriority;commTracking"
   spring.activemq.broker-url: tcp://activemq:61616
   spring.activemq.username: admin
   spring.activemq.password: admin
@@ -48,6 +48,9 @@ env:
   spring.mail.properties.mail.smtp.port: 3025
   spring.mail.properties.mail.transport.protocol: smtp
   spring.mail.properties.mail.smtp.auth: false
+  spring.mail.properties.mail.debug: true
+  spring.mail.debug: true
+  mail.debug: true
   spring.mail.properties.mail.smtp.starttls.enable: false
   backbase.mail.from-address: backbase@backbase.com
   backbase.mail.from-name: Backbase
