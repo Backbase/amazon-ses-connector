@@ -91,6 +91,7 @@ pipeline {
             }
         }
 
+/*
         stage('Build project and unit tests') {
             when {
                 expression { IMAGE_EXISTS == false }
@@ -153,6 +154,7 @@ pipeline {
                 }
             }
         }
+ */
 
         stage('Build and push docker images') {
             when {
@@ -214,8 +216,6 @@ pipeline {
                 }
                 steps {
                     script {
-                        kubectl get pods
-                        kubectl describe pods
                         kubernetes.logContainersToStdoutSafe('system-tests', TOMCAT_NAMESPACE, "job-name")
                         kubernetes.logContainersToStdoutSafe('greenmail', TOMCAT_NAMESPACE)
                         kubernetes.logContainersToStdoutSafe('ses-email-integration-service', TOMCAT_NAMESPACE)
