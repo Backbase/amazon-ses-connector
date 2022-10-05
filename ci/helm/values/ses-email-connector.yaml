@@ -13,49 +13,49 @@ app:
       maxShares: 1000
 env:
   "JAVA_TOOL_OPTIONS": "-XX:MaxRAMPercentage=60.0 -XX:+UseContainerSupport -Dlogging.level.root=Info -Dlogging.level.com.backbase=DEBUG -Dspring.cloud.stream.function.definition=commLowPriority;commMediumPriority;commHighPriority;commTracking"
-  spring.activemq.broker-url: tcp://activemq:61616
-  spring.activemq.username: admin
-  spring.activemq.password: admin
+  spring.activemq.broker-url: "tcp://activemq:61616"
+  spring.activemq.username: "admin"
+  spring.activemq.password: "admin"
   "management.endpoint.beans.enabled": "true"
-  "management.endpoints.web.exposure.include": info,health,beans
+  "management.endpoints.web.exposure.include": "info,health,beans"
   logging.level.com.backbase: "DEBUG"
   logging.level.com.backbase.buildingblocks.commns: "DEBUG"
-  backbase.email.workers: 10
-  spring.cloud.stream.default.group: email
-  spring.cloud.stream.default.content-type: application/json
-  spring.cloud.stream.default.consumer.exchangeDurable: true
-  spring.cloud.stream.default.consumer.concurrency: 1
-  spring.cloud.stream.default.consumer.prefetch: 1000
-  spring.cloud.stream.default.consumer.autoCommitOnError: false
-  spring.cloud.stream.default.consumer.max-attempts: 5
-  spring.cloud.stream.default.consumer.backOffInitialInterval: 2000
-  spring.cloud.stream.default.consumer.backOffMaxInterval: 60000
-  spring.cloud.stream.default.consumer.backOffMutliplier: 2.0
-  spring.cloud.stream.default.consumer.default-retryable: true
-  spring.cloud.stream.default-binder: activemq
-  spring.cloud.stream.function.definition: commLowPriority;commMediumPriority;commHighPriority;commTracking
-  spring.cloud.stream.bindings.commLowPriority-in-0.destination: email-low-priority
-  spring.cloud.stream.bindings.commMediumPriority-in-0.destination: email-medium-priority
-  spring.cloud.stream.bindings.commHighPriority-in-0.destination: email-high-priority
-  spring.cloud.stream.bindings.commTracking-out-0.destination: tracking-callback
-  backbase.multi-tenancy.enabled: true
-  backbase.multi-tenancy.tenants.0.id: tenant1
-  backbase.multi-tenancy.tenants.1.id: tenant2
-  spring.mail.username: backbase
-  spring.mail.password: backbase
-  spring.mail.host: greenmail
-  spring.mail.port: 3025
-  spring.mail.properties.mail.smtp.port: 3025
-  spring.mail.properties.mail.transport.protocol: smtp
-  spring.mail.properties.mail.smtp.auth: true
-  spring.mail.properties.mail.debug: true
-  SPRING_MAIL_PROPERTIES_MAIL_DEBUG: true
-  spring.mail.debug: true
-  SPRING_MAIL_DEBUG: true
-  mail.debug: true
-  spring.mail.properties.mail.smtp.starttls.enable: true
-  backbase.mail.from-address: backbase@backbase.com
-  backbase.mail.from-name: Backbase
+  backbase.email.workers: "10"
+  spring.cloud.stream.default.group: "email"
+  spring.cloud.stream.default.content-type: "application/json"
+  spring.cloud.stream.default.consumer.exchangeDurable: "true"
+  spring.cloud.stream.default.consumer.concurrency: "1"
+  spring.cloud.stream.default.consumer.prefetch: "1000"
+  spring.cloud.stream.default.consumer.autoCommitOnError: "false"
+  spring.cloud.stream.default.consumer.max-attempts: "5"
+  spring.cloud.stream.default.consumer.backOffInitialInterval: "2000"
+  spring.cloud.stream.default.consumer.backOffMaxInterval: "60000"
+  spring.cloud.stream.default.consumer.backOffMutliplier: "2.0"
+  spring.cloud.stream.default.consumer.default-retryable: "true"
+  spring.cloud.stream.default-binder: "activemq"
+  spring.cloud.stream.function.definition: "commLowPriority;commMediumPriority;commHighPriority;commTracking"
+  spring.cloud.stream.bindings.commLowPriority-in-0.destination: "email-low-priority"
+  spring.cloud.stream.bindings.commMediumPriority-in-0.destination: "email-medium-priority"
+  spring.cloud.stream.bindings.commHighPriority-in-0.destination: "email-high-priority"
+  spring.cloud.stream.bindings.commTracking-out-0.destination: "tracking-callback"
+  backbase.multi-tenancy.enabled: "true"
+  backbase.multi-tenancy.tenants.0.id: "tenant1"
+  backbase.multi-tenancy.tenants.1.id: "tenant2"
+  spring.mail.username: "backbase"
+  spring.mail.password: "backbase"
+  spring.mail.host: "greenmail"
+  spring.mail.port: "3025"
+  spring.mail.properties.mail.smtp.port: "3025"
+  spring.mail.properties.mail.transport.protocol: "smtp"
+  spring.mail.properties.mail.smtp.auth: "true"
+  spring.mail.properties.mail.debug: "true"
+  SPRING_MAIL_PROPERTIES_MAIL_DEBUG: "true"
+  spring.mail.debug: "true"
+  SPRING_MAIL_DEBUG: "true"
+  mail.debug: "true"
+  spring.mail.properties.mail.smtp.starttls.enable: "true"
+  backbase.mail.from-address: "backbase@backbase.com"
+  backbase.mail.from-name: "Backbase"
 
 service:
   enabled: true
