@@ -11,12 +11,6 @@ spring:
       bindings:
         email-medium-priority:
           destination: email-medium-priority
-mail:
-  pop3:
-    host: localhost
-    port: 110
-  store:
-    protocol: pop3
 backbase:
   communication:
     channels:
