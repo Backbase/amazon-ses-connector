@@ -44,7 +44,7 @@ env:
   spring.mail.username: backbase
   spring.mail.password: backbase
   spring.mail.host: greenmail
-  spring.mail.port: 25
+  spring.mail.port: 3025
   spring.mail.properties.mail.transport.protocol: smtp
   spring.mail.properties.mail.smtp.auth: false
   spring.mail.properties.mail.smtp.starttls.enable: false
