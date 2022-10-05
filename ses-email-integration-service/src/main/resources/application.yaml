@@ -3,7 +3,7 @@ server:
 
 spring:
   mail:
-    port:
+    port: 3025
     host:
     username:
     password:
