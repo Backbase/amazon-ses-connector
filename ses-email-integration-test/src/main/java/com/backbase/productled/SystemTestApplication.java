@@ -25,8 +25,7 @@ public class SystemTestApplication {
             e.printStackTrace();
             exitCode = 1;
         }
-        System.exit(SpringApplication.exit(context));
-        context.close();
+        System.exit(exitCode);
     }
 
 }
