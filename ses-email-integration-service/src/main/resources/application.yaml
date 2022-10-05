@@ -1,14 +1,4 @@
-spring:
-  mail:
-    properties:
-      mail:
-        debug: true
-        transport:
-          protocol: smtp
-        smtp:
-          auth: true
-          starttls:
-            enable: true
+
 
 server:
   port: 8080

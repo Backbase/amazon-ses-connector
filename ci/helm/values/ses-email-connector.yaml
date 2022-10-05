@@ -47,11 +47,13 @@ env:
   spring.mail.port: 3025
   spring.mail.properties.mail.smtp.port: 3025
   spring.mail.properties.mail.transport.protocol: smtp
-  spring.mail.properties.mail.smtp.auth: false
+  spring.mail.properties.mail.smtp.auth: true
   spring.mail.properties.mail.debug: true
+  SPRING_MAIL_PROPERTIES_MAIL_DEBUG: true
   spring.mail.debug: true
+  SPRING_MAIL_DEBUG: true
   mail.debug: true
-  spring.mail.properties.mail.smtp.starttls.enable: false
+  spring.mail.properties.mail.smtp.starttls.enable: true
   backbase.mail.from-address: backbase@backbase.com
   backbase.mail.from-name: Backbase
 
