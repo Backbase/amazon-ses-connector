@@ -216,6 +216,10 @@ pipeline {
                 }
                 steps {
                     script {
+                        sh """
+                        kubectl get pods
+                        kubectl describe pods
+                        """
                         kubernetes.logContainersToStdoutSafe('system-tests', TOMCAT_NAMESPACE, "job-name")
                         kubernetes.logContainersToStdoutSafe('greenmail', TOMCAT_NAMESPACE)
                         kubernetes.logContainersToStdoutSafe('ses-email-integration-service', TOMCAT_NAMESPACE)
