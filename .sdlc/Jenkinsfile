@@ -218,11 +218,15 @@ pipeline {
                     script {
                         sh """
                         kubectl get pods
-                        kubectl describe pods
+
+                        kubectl logs -l name=ses-email-integration-service
+                        kubectl logs -l name=greenmail
+                        kubectl logs -l name=greenmail
+
                         """
-                        kubernetes.logContainersToStdoutSafe('system-tests', TOMCAT_NAMESPACE, "job-name")
-                        kubernetes.logContainersToStdoutSafe('greenmail', TOMCAT_NAMESPACE)
-                        kubernetes.logContainersToStdoutSafe('ses-email-integration-service', TOMCAT_NAMESPACE)
+//                         kubernetes.logContainersToStdoutSafe('system-tests', TOMCAT_NAMESPACE, "job-name")
+//                         kubernetes.logContainersToStdoutSafe('greenmail', TOMCAT_NAMESPACE)
+//                         kubernetes.logContainersToStdoutSafe('ses-email-integration-service', TOMCAT_NAMESPACE)
 
                         kubernetes.waitForRunningContainers("system-tests", 100, TOMCAT_NAMESPACE, "job-name")
 
