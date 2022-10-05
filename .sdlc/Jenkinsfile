@@ -192,8 +192,6 @@ pipeline {
                         if (params.TEST_TOMCAT == true) {
                             echo('Running Tomcat')
                             TOMCAT_NAMESPACE = kubernetes.runHelmfile(CREATED_NAMESPACES)
-                            kubernetes.logContainersToStdoutSafe('greenmail', TOMCAT_NAMESPACE)
-                            kubernetes.logContainersToStdoutSafe('ses-email-integration-service', TOMCAT_NAMESPACE)
                         }
                     }
                 }
@@ -220,15 +218,9 @@ pipeline {
                         echo '---------------------'
                         kubectl get pods
                         echo '---------------------'
-                        kubectl logs -l app.kubernetes.io/name=ips-registry
-                        kubectl logs -l app.kubernetes.io/name=registry
+                        kubectl logs -l app.kubernetes.io/name=ses-email-integration-service --max-log-requests=50
                         echo '---------------------'
-                        kubectl logs -l app.kubernetes.io/name=ips-bas-token-converter
-                        kubectl logs -l app.kubernetes.io/name=bas-token-converter
-                        echo '---------------------'
-                        kubectl logs -l app.kubernetes.io/name=ses-email-integration-service
-                        echo '---------------------'
-                        kubectl logs -l job-name=system-tests
+                        kubectl logs -l job-name=system-tests --max-log-requests=50
                         echo '---------------------'
 
                         """
@@ -236,6 +228,7 @@ pipeline {
 //                         kubernetes.logContainersToStdoutSafe('greenmail', TOMCAT_NAMESPACE)
 //                         kubernetes.logContainersToStdoutSafe('ses-email-integration-service', TOMCAT_NAMESPACE)
 
+                        kubernetes.logContainersToStdoutSafe('system-tests', TOMCAT_NAMESPACE, "job-name")
                         kubernetes.waitForRunningContainers("system-tests", 100, TOMCAT_NAMESPACE, "job-name")
 
                         kubernetes.waitJobForResult('system-tests', TOMCAT_NAMESPACE, "30s")
