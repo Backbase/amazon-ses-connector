@@ -3,7 +3,6 @@ server:
 
 spring:
   mail:
-    port:
     host:
     username:
     password:
