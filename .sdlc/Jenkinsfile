@@ -228,9 +228,9 @@ pipeline {
 //                         kubernetes.logContainersToStdoutSafe('greenmail', TOMCAT_NAMESPACE)
 //                         kubernetes.logContainersToStdoutSafe('ses-email-integration-service', TOMCAT_NAMESPACE)
 
-                        kubernetes.logContainersToStdoutSafe('ses-email-integration-service', TOMCAT_NAMESPACE, "app.kubernetes.io/name")
-//                         kubernetes.logContainersToStdoutSafe('system-tests', TOMCAT_NAMESPACE, "job-name")
-                        kubernetes.waitForRunningContainers("system-tests", 100, TOMCAT_NAMESPACE, "job-name")
+//                         kubernetes.logContainersToStdoutSafe('ses-email-integration-service', TOMCAT_NAMESPACE, "app.kubernetes.io/name")
+                        kubernetes.logContainersToStdoutSafe('system-tests', TOMCAT_NAMESPACE, "job-name")
+                        kubernetes.waitForRunningContainers("system-tests", 5, TOMCAT_NAMESPACE, "job-name",true)
 
                         kubernetes.waitJobForResult('system-tests', TOMCAT_NAMESPACE, "30s")
                     }
