@@ -182,6 +182,7 @@ pipeline {
             environment {
                 COMMUNICATION_IMAGE_VERSION = "${GIT_COMMIT}"
                 SYSTEM_TEST_IMAGE_VERSION = "${GIT_COMMIT}"
+                SES_EMAIL_VERSION = "${GIT_COMMIT}"
             }
             steps {
                 dir("${env.WORKSPACE}/ci/helm/helmfiles/tomcat") {
@@ -215,7 +216,7 @@ pipeline {
                     script {
 //                         kubernetes.logContainersToStdoutSafe('system-tests', TOMCAT_NAMESPACE, "job-name")
                         kubernetes.logContainersToStdoutSafe('greenmail', TOMCAT_NAMESPACE)
-                        kubernetes.logContainersToStdoutSafe('ses-email', TOMCAT_NAMESPACE)
+                        kubernetes.logContainersToStdoutSafe('ses-email-integration-service', TOMCAT_NAMESPACE)
 
                         kubernetes.waitForRunningContainers("system-tests", 100, TOMCAT_NAMESPACE, "job-name")
 

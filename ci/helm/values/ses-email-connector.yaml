@@ -1,6 +1,6 @@
 # Basic
 app:
-  name: ses-email
+  name: ses-email-integration-service
   image:
     registry: harbor.backbase.eu/development
     repository: ses-email-integration-service
