@@ -104,7 +104,6 @@ pipeline {
             }
         }
 
-/*
         stage('Static Quality Analysis with Sonar') {
             when {
                 expression { params.RUN_QUALITY_SCAN == true }
@@ -154,7 +153,7 @@ pipeline {
                 }
             }
         }
- */
+
 
         stage('Build and push docker images') {
             when {
@@ -214,22 +213,6 @@ pipeline {
                 }
                 steps {
                     script {
-                        sh """
-                        echo '---------------------'
-                        kubectl get pods
-                        echo '---------------------'
-                        kubectl describe pods -l app.kubernetes.io/name=ses-email-integration-service
-                        echo '---------------------'
-                        kubectl logs --max-log-requests=50 -l app.kubernetes.io/name=ses-email-integration-service --max-log-requests=50
-                        echo '---------------------'
-                        kubectl logs --max-log-requests=50 -l job-name=system-tests --max-log-requests=50
-                        echo '---------------------'
-
-                        """
-//                         kubernetes.logContainersToStdoutSafe('system-tests', TOMCAT_NAMESPACE, "job-name")
-
-//                         kubernetes.logContainersToStdoutSafe('ses-email-integration-service', TOMCAT_NAMESPACE, "app.kubernetes.io/name")
-//                         kubernetes.logContainersToStdoutSafe('greenmail', TOMCAT_NAMESPACE, "app.kubernetes.io/name")
 
                         kubernetes.waitForRunningContainers("system-tests", 5, TOMCAT_NAMESPACE, "job-name",true)
 

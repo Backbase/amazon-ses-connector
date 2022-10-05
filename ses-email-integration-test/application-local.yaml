@@ -1,6 +1,6 @@
 spring:
   activemq:
-#    broker-url: tcp://localhost:61616?jms.useAsyncSend=true&jms.optimizeAcknowledge=true
+    broker-url: tcp://localhost:61616?jms.useAsyncSend=true&jms.optimizeAcknowledge=true
     user: admin
     password: admin
   cloud:

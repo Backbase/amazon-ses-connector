@@ -17,14 +17,6 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args: [{{ .Values.args }}]
           env:
-            - name: GATEWAY_BASEURI
-              value: http://edge:8080
-            - name: REGISTRY_BASEURI
-              value: http://registry:8080
-            - name: COMMUNICATION_BASEURI
-              value: http://communication:{{ .Values.communication.port }}/communication
-            - name: SIG_SECRET_KEY
-              value: "{{ .Values.env.SIG_SECRET_KEY }}"
             - name: MAIL_POP3_PORT
               value: "3110"
             - name: MAIL_POP3_HOST
