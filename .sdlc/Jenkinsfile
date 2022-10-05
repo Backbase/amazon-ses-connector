@@ -199,7 +199,7 @@ pipeline {
                 }
 
                 script {
-                    sleep 30
+                    sleep 100
                 }
             }
         }
@@ -220,9 +220,11 @@ pipeline {
                         echo '---------------------'
                         kubectl get pods
                         echo '---------------------'
-                        kubectl logs -l app.kubernetes.io/name=activemq
+                        kubectl logs -l app.kubernetes.io/name=ips-registry
+                        kubectl logs -l app.kubernetes.io/name=registry
                         echo '---------------------'
-                        kubectl logs -l app.kubernetes.io/name=greenmail
+                        kubectl logs -l app.kubernetes.io/name=ips-bas-token-converter
+                        kubectl logs -l app.kubernetes.io/name=bas-token-converter
                         echo '---------------------'
                         kubectl logs -l app.kubernetes.io/name=ses-email-integration-service
                         echo '---------------------'
