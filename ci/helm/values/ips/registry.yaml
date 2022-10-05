@@ -2,7 +2,6 @@ app:
   name: registry
   image:
     repository: registry
-    registry: harbor.backbase.eu/internal
     tagFrom: ips-registryVersion
   resources:
     memory:
