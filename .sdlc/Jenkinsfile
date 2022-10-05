@@ -217,17 +217,17 @@ pipeline {
                 steps {
                     script {
                         sh """
-                        echo('---------------------')
+                        echo '---------------------'
                         kubectl get pods
-                        echo('---------------------')
+                        echo '---------------------'
                         kubectl logs -l app.kubernetes.io/name=activemq
-                        echo('---------------------')
+                        echo '---------------------'
                         kubectl logs -l app.kubernetes.io/name=greenmail
-                        echo('---------------------')
+                        echo '---------------------'
                         kubectl logs -l app.kubernetes.io/name=ses-email-integration-service
-                        echo('---------------------')
+                        echo '---------------------'
                         kubectl logs -l job-name=system-tests
-                        echo('---------------------')
+                        echo '---------------------'
 
                         """
 //                         kubernetes.logContainersToStdoutSafe('system-tests', TOMCAT_NAMESPACE, "job-name")
