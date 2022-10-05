@@ -20,7 +20,7 @@ releases:
       - ../../values/ips/registry.yaml
     set:
       - name: global.ips-registryVersion
-        value: {{ env "IPS_REGISTRY_VERSION" | default "custom-m1-b1" | quote }}
+        value: {{ env "IPS_REGISTRY_VERSION" | default "2022.05" | quote }}
 
   - name: ips-bas-token-converter
     chart: backbase-charts/backbase-app
