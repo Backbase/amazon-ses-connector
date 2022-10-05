@@ -1,20 +1,6 @@
 server:
   port: 8080
 
-spring:
-  mail:
-    host:
-    username:
-    password:
-    properties:
-      mail:
-        debug: true
-        transport:
-          protocol: smtp
-        smtp:
-          auth: true
-          starttls:
-            enable: true
 
 # API Registry client configuration
 eureka:
