@@ -44,6 +44,9 @@ releases:
     values:
       - ../../values/global.yaml
       - ../../values/ses-email-connector.yaml
+    set:
+      - name: global.ses-email-version
+        value: {{ env "SES_EMAIL_VERSION" | default "latest" | quote }}
 
   - name: system-test-ses-email
     chart: ../../chart/system-tests

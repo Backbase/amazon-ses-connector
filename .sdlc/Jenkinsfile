@@ -189,6 +189,8 @@ pipeline {
                         if (params.TEST_TOMCAT == true) {
                             echo('Running Tomcat')
                             TOMCAT_NAMESPACE = kubernetes.runHelmfile(CREATED_NAMESPACES)
+                            kubernetes.logContainersToStdoutSafe('greenmail', TOMCAT_NAMESPACE)
+                            kubernetes.logContainersToStdoutSafe('ses-email-integration-service', TOMCAT_NAMESPACE)
                         }
                     }
                 }
