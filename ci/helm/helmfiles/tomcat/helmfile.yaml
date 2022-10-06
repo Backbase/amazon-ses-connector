@@ -60,7 +60,7 @@ releases:
   - name: greenmail
     chart: ../../chart/greenmail
     labels:
-      tier: infrastructure-tests
+      tier: ips
       component: greenmail
     set:
       - name: image.tag
