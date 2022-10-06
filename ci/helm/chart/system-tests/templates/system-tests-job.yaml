@@ -20,23 +20,23 @@ spec:
             - name: SIG_SECRET_KEY
               value: "{{ .Values.env.SIG_SECRET_KEY }}"
             - name: MAIL_POP3_PORT
-              value: "3110"
+              value: "{{ .Values.env.MAIL_POP3_PORT }}"
             - name: MAIL_POP3_HOST
-              value: "greenmail"
+              value: "{{ .Values.env.MAIL_POP3_HOST }}"
             - name: MAIL_STORE_PROTOCOL
-              value: "pop3"
+              value: "{{ .Values.env.MAIL_STORE_PROTOCOL }}"
             - name: SPRING_ACTIVEMQ_BROKER-URL
-              value: "tcp://activemq:61616?jms.useAsyncSend=true&jms.optimizeAcknowledge=true"
+              value: "{{ .Values.env.SPRING_ACTIVEMQ_BROKER_URL }}"
             - name: SPRING_ACTIVEMQ_USER
-              value: "admin"
+              value: "{{ .Values.env.SPRING_ACTIVEMQ_USER }}"
             - name: SPRING_ACTIVEMQ_PASSWORD
-              value: "admin"
+              value: "{{ .Values.env.SPRING_ACTIVEMQ_PASSWORD }}"
             - name: SPRING_CLOUD_STREAM_DEFAULT_CONTENT-TYPE
-              value: "application/json"
+              value: "{{ .Values.env.SPRING_CLOUD_STREAM_DEFAULT_CONTENT_TYPE }}"
             - name: SPRING_CLOUD_STREAM_DEFAULT-BINDER
-              value: "activemq"
+              value: "{{ .Values.env.SPRING_CLOUD_STREAM_DEFAULT_BINDER }}"
             - name: SPRING_CLOUD_STREAM_BINDINGS_EMAIL-MEDIUM-PRIORITY_DESTINATION
-              value: "email-medium-priority"
+              value: "{{ .Values.env.SPRING_CLOUD_STREAM_BINDINGS_EMAIL_MEDIUM_PRIORITY_DESTINATION }}"
           resources:
             limits:
               memory: 1024Mi
