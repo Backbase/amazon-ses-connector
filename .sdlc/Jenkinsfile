@@ -227,6 +227,7 @@ pipeline {
 
                         kubernetes.waitForRunningContainers("system-tests", 5, TOMCAT_NAMESPACE, "job-name",true)
 
+                        kubernetes.logContainersToStdoutSafe('system-tests', TOMCAT_NAMESPACE, "job-name")
                          sh """
                          echo '---------------------'
                          kubectl get pods
