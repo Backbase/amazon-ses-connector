@@ -38,11 +38,8 @@ env:
   spring.cloud.stream.bindings.commMediumPriority-in-0.destination: "email-medium-priority"
   spring.cloud.stream.bindings.commHighPriority-in-0.destination: "email-high-priority"
   spring.cloud.stream.bindings.commTracking-out-0.destination: "tracking-callback"
-  backbase.multi-tenancy.enabled: "true"
-  backbase.multi-tenancy.tenants.0.id: "tenant1"
-  backbase.multi-tenancy.tenants.1.id: "tenant2"
-  spring.mail.username: "backbase"
-  spring.mail.password: "backbase"
+  spring.mail.username: "test"
+  spring.mail.password: "test"
   spring.mail.host: "greenmail"
   spring.mail.port: "3025"
   spring.mail.properties.mail.smtp.port: "3025"
@@ -51,8 +48,8 @@ env:
   spring.mail.properties.mail.debug: "true"
   spring.mail.debug: "true"
   spring.mail.properties.mail.smtp.starttls.enable: "true"
-  backbase.mail.from-address: "backbase@backbase.com"
-  backbase.mail.from-name: "Backbase"
+  backbase.mail.from-address: "test@backbase.com"
+  backbase.mail.from-name: "test-backbase"
 
 service:
   enabled: true

@@ -108,5 +108,3 @@ releases:
         value: {{ env "COMMUNICATION_PORT" | default "8080" | quote }}
       - name: image.tag
         value: {{ env "SYSTEM_TEST_IMAGE_VERSION" | default "release" | quote }}
-      - name: args
-        value: "multi-tenancy"

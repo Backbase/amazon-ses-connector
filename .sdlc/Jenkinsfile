@@ -42,9 +42,6 @@ pipeline {
         booleanParam(name: 'RUN_QUALITY_SCAN', defaultValue: true, description: 'Run sonarqube if required.')
         booleanParam(name: 'TEST_TOMCAT', defaultValue: true, description: 'Run system tests in tomcat')
 
-        // TODO Move below parameters to new pipeline
-        booleanParam(name: 'RELEASE_BUILDINGBLOCK', defaultValue: false, description: 'Release communications buildingblock.')
-
     }
 
     environment {
@@ -177,11 +174,7 @@ pipeline {
 
 
         stage('Prepare system tests on Java 17') {
-            when {
-                expression { !params.RELEASE_BUILDINGBLOCK }
-            }
-            environment {
-                COMMUNICATION_IMAGE_VERSION = "${GIT_COMMIT}"
+             environment {
                 SYSTEM_TEST_IMAGE_VERSION = "${GIT_COMMIT}"
                 SES_EMAIL_VERSION = "${GIT_COMMIT}"
             }
@@ -203,58 +196,20 @@ pipeline {
 
 
         stage('Run system tests on parallel') {
-          parallel {
-
             stage('Test On Tomcat on Java 17') {
                 when {
                     expression {
-                        return params.TEST_TOMCAT == true && !params.RELEASE_BUILDINGBLOCK
+                        return params.TEST_TOMCAT == true
                     }
                 }
                 steps {
                     script {
-
-                        sh """
-                        echo '---------------------'
-                        kubectl get pods
-                        echo '---------------------'
-                        kubectl logs --max-log-requests=50 -l app.kubernetes.io/name=ses-email-integration-service --max-log-requests=50
-                        echo '---------------------'
-                        kubectl logs --max-log-requests=50 -l job-name=system-tests --max-log-requests=50
-                        echo '---------------------'
-                        kubectl get pods -l job-name=system-tests
-                        """
-
                         kubernetes.waitForRunningContainers("system-tests", 5, TOMCAT_NAMESPACE, "job-name",true)
-
                         kubernetes.logContainersToStdoutSafe('system-tests', TOMCAT_NAMESPACE, "job-name")
-                         sh """
-                         echo '---------------------'
-                         kubectl get pods
-                         echo '---------------------'
-                         kubectl logs --max-log-requests=50 -l app.kubernetes.io/name=ses-email-integration-service --max-log-requests=50
-                         echo '---------------------'
-                         kubectl logs --max-log-requests=50 -l job-name=system-tests --max-log-requests=50
-                         echo '---------------------'
-                         kubectl get pods -l job-name=system-tests
-                         """
-
                         kubernetes.waitJobForResult('system-tests', TOMCAT_NAMESPACE, "100s")
-
-                        sh """
-                        echo '---------------------'
-                        kubectl get pods
-                        echo '---------------------'
-                        kubectl logs --max-log-requests=50 -l app.kubernetes.io/name=ses-email-integration-service --max-log-requests=50
-                        echo '---------------------'
-                        kubectl logs --max-log-requests=50 -l job-name=system-tests --max-log-requests=50
-                        echo '---------------------'
-                        kubectl get pods -l job-name=system-tests
-                        """
                     }
                 }
             }
-          }
         }
 
         stage('Release artifacts') {
