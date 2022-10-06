@@ -222,11 +222,12 @@ pipeline {
                         echo '---------------------'
                         kubectl logs --max-log-requests=50 -l job-name=system-tests --max-log-requests=50
                         echo '---------------------'
+                        kubectl get pods -l job-name=system-tests
                         """
 
                         kubernetes.waitForRunningContainers("system-tests", 5, TOMCAT_NAMESPACE, "job-name",true)
 
-                        kubernetes.waitJobForResult('system-tests', TOMCAT_NAMESPACE, "30s")
+                        kubernetes.waitJobForResult('system-tests', TOMCAT_NAMESPACE, "100s")
                     }
                 }
             }
