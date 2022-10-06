@@ -195,19 +195,17 @@ pipeline {
         }
 
 
-        stage('Run system tests on parallel') {
-            stage('Test On Tomcat on Java 17') {
-                when {
-                    expression {
-                        return params.TEST_TOMCAT == true
-                    }
+        stage('Test On Tomcat on Java 17') {
+            when {
+                expression {
+                    return params.TEST_TOMCAT == true
                 }
-                steps {
-                    script {
-                        kubernetes.waitForRunningContainers("system-tests", 5, TOMCAT_NAMESPACE, "job-name",true)
-                        kubernetes.logContainersToStdoutSafe('system-tests', TOMCAT_NAMESPACE, "job-name")
-                        kubernetes.waitJobForResult('system-tests', TOMCAT_NAMESPACE, "100s")
-                    }
+            }
+            steps {
+                script {
+                    kubernetes.waitForRunningContainers("system-tests", 5, TOMCAT_NAMESPACE, "job-name",true)
+                    kubernetes.logContainersToStdoutSafe('system-tests', TOMCAT_NAMESPACE, "job-name")
+                    kubernetes.waitJobForResult('system-tests', TOMCAT_NAMESPACE, "100s")
                 }
             }
         }
