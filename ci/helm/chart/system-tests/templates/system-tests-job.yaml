@@ -17,6 +17,8 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args: [{{ .Values.args }}]
           env:
+            - name: SIG_SECRET_KEY
+              value: "{{ .Values.env.SIG_SECRET_KEY }}"
             - name: MAIL_POP3_PORT
               value: "3110"
             - name: MAIL_POP3_HOST

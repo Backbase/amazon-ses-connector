@@ -29,6 +29,7 @@ resources: {}
   #   memory: 128Mi
 
 env:
+  SIG_SECRET_KEY: JWTSecretKeyDontUseInProductest!
   "MAIL_POP3_PORT": 3110
   "MAIL_POP3_HOST": greenmail
   "MAIL_STORE_PROTOCOL": pop3
