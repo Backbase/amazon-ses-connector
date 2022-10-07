@@ -1,5 +1,6 @@
 package com.backbase.productled.reader;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Properties;
 
 @Component
+@Slf4j
 public class EmailReader {
     @Value("${mail.pop3.host}")
     private String host;
@@ -21,7 +23,6 @@ public class EmailReader {
     @Value("${mail.store.protocol}")
     private String protocol;
 
-    private Session session;
     private Store store;
     Folder inbox;
 
@@ -41,11 +42,11 @@ public class EmailReader {
             }
         };
 
-        session = Session.getDefaultInstance(props, auth);
-        System.out.println("session = " + session);
+        Session session = Session.getDefaultInstance(props, auth);
+        log.debug("session = " + session);
 
         store = session.getStore(protocol);
-        System.out.println("store = " + store);
+        log.debug("store = " + store);
         store.connect(host, username, password);
 
         inbox = store.getFolder("INBOX");
@@ -81,12 +82,12 @@ public class EmailReader {
         boolean multipartAlt = new ContentType(mimeMultipart.getContentType()).match("multipart/alternative");
         if (multipartAlt)
             return getTextFromBodyPart(mimeMultipart.getBodyPart(count - 1));
-        String result = "";
+        StringBuilder result = new StringBuilder();
         for (int i = 0; i < count; i++) {
             BodyPart bodyPart = mimeMultipart.getBodyPart(i);
-            result += getTextFromBodyPart(bodyPart);
+            result.append(getTextFromBodyPart(bodyPart));
         }
-        return result;
+        return result.toString();
     }
 
     private String getTextFromBodyPart(
@@ -96,8 +97,7 @@ public class EmailReader {
         if (bodyPart.isMimeType("text/plain")) {
             result = (String) bodyPart.getContent();
         } else if (bodyPart.isMimeType("text/html")) {
-            String html = (String) bodyPart.getContent();
-            result = html;
+            result = (String) bodyPart.getContent();
         } else if (bodyPart.getContent() instanceof MimeMultipart){
             result = getTextFromMimeMultipart((MimeMultipart)bodyPart.getContent());
         }
