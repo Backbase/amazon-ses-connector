@@ -60,7 +60,6 @@ public class SendEmailTest {
         String expectedSubject = message.getPayload().getContent().get(0).getTitle();
         if (!email.getSubject().equals(expectedSubject))
             throw new ValidationException(MessageFormat.format("Invalid email subject. Expect {0} but is {1}", expectedSubject, email.getSubject()));
-
     }
 
     private void checkToAddress(javax.mail.Message email, Message message) throws Exception {
