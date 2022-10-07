@@ -40,7 +40,7 @@ pipeline {
 
     parameters {
         booleanParam(name: 'RUN_QUALITY_SCAN', defaultValue: true, description: 'Run sonarqube if required.')
-        booleanParam(name: 'TEST_TOMCAT', defaultValue: true, description: 'Run system tests in tomcat')
+        booleanParam(name: 'RUN_SYSTEM_TESTS', defaultValue: true, description: 'Run system tests')
 
     }
 
@@ -179,11 +179,11 @@ pipeline {
                 SES_EMAIL_VERSION = "${GIT_COMMIT}"
             }
             steps {
-                dir("${env.WORKSPACE}/ci/helm/helmfiles/tomcat") {
+                dir("${env.WORKSPACE}/ci/helm/helmfiles") {
                     script {
-                        if (params.TEST_TOMCAT == true) {
-                            echo('Running Tomcat')
-                            TOMCAT_NAMESPACE = kubernetes.runHelmfile(CREATED_NAMESPACES)
+                        if (params.RUN_SYSTEM_TESTS == true) {
+                            echo('Running system tests')
+                            TEST_NAMESPACE = kubernetes.runHelmfile(CREATED_NAMESPACES)
                         }
                     }
                 }
@@ -195,17 +195,17 @@ pipeline {
         }
 
 
-        stage('Test On Tomcat on Java 17') {
+        stage('Test on Java 17') {
             when {
                 expression {
-                    return params.TEST_TOMCAT == true
+                    return params.RUN_SYSTEM_TESTS == true
                 }
             }
             steps {
                 script {
-                    kubernetes.waitForRunningContainers("system-tests", 5, TOMCAT_NAMESPACE, "job-name",true)
-                    kubernetes.logContainersToStdoutSafe('system-tests', TOMCAT_NAMESPACE, "job-name")
-                    kubernetes.waitJobForResult('system-tests', TOMCAT_NAMESPACE, "100s")
+                    kubernetes.waitForRunningContainers("system-tests", 5, TEST_NAMESPACE, "job-name",true)
+                    kubernetes.logContainersToStdoutSafe('system-tests', TEST_NAMESPACE, "job-name")
+                    kubernetes.waitJobForResult('system-tests', TEST_NAMESPACE, "100s")
                 }
             }
         }
