@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import javax.validation.ValidationException;
 import java.text.MessageFormat;
 import java.util.List;
 
@@ -36,9 +37,9 @@ public class SendEmailTest {
         emailReader.close();
     }
 
-    private void checkEmailCount(List<javax.mail.Message> emails) throws Exception {
+    private void checkEmailCount(List<javax.mail.Message> emails) throws ValidationException {
         if (emails.size() != 1)
-            throw new Exception(MessageFormat.format("Invalid number of emails. expect 1 but is {0}.", emails.size()));
+            throw new ValidationException(MessageFormat.format("Invalid number of emails. expect 1 but is {0}.", emails.size()));
     }
 
     private void checkReceivedEmail(javax.mail.Message email, Message message) throws Exception {
@@ -52,13 +53,13 @@ public class SendEmailTest {
         String expectedBody = message.getPayload().getContent().get(0).getBody();
         String realBody = emailReader.getTextFromMessage(email);
         if (!realBody.equals(expectedBody))
-            throw new Exception(MessageFormat.format("Invalid email body. Expect \"{0}\" but is \"{1}\"", expectedBody, realBody));
+            throw new ValidationException(MessageFormat.format("Invalid email body. Expect \"{0}\" but is \"{1}\"", expectedBody, realBody));
     }
 
     private void checkSubject(javax.mail.Message email, Message message) throws Exception {
         String expectedSubject = message.getPayload().getContent().get(0).getTitle();
         if (!email.getSubject().equals(expectedSubject))
-            throw new Exception(MessageFormat.format("Invalid email subject. Expect {0} but is {1}", expectedSubject, email.getSubject()));
+            throw new ValidationException(MessageFormat.format("Invalid email subject. Expect {0} but is {1}", expectedSubject, email.getSubject()));
 
     }
 
@@ -66,14 +67,14 @@ public class SendEmailTest {
         String realTo = email.getRecipients(javax.mail.Message.RecipientType.TO)[0].toString();
         String expectedTo = message.getPayload().getRecipients().get(0).getTo().get(0);
         if (!realTo.equals(expectedTo))
-            throw new Exception(MessageFormat.format("Invalid to address. Expect {0} but is {1}", expectedTo, realTo));
+            throw new ValidationException(MessageFormat.format("Invalid to address. Expect {0} but is {1}", expectedTo, realTo));
     }
 
     private void checkEmailFrom(javax.mail.Message email, Message message) throws Exception {
         String expectedFrom = message.getPayload().getRecipients().get(0).getFrom();
         String receivedFrom = email.getFrom()[0].toString().replace("\"", "");
         if (!receivedFrom.equals(expectedFrom))
-            throw new Exception(MessageFormat.format("Invalid from address. Expect {0} but is {1}", expectedFrom, receivedFrom));
+            throw new ValidationException(MessageFormat.format("Invalid from address. Expect {0} but is {1}", expectedFrom, receivedFrom));
     }
 
 
