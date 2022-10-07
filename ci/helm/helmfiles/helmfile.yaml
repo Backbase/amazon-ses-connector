@@ -6,8 +6,8 @@ releases:
       tier: infrastructure
       component: env
     values:
-      - ../../values/backbase-env.yaml
-      - ../../values/database/mysql/env-values.yaml
+      - ../values/backbase-env.yaml
+      - ../values/database/mysql/env-values.yaml
 
   - name: ips-registry
     chart: backbase-charts/backbase-app
@@ -16,8 +16,8 @@ releases:
       tier: ips
       component: registry
     values:
-      - ../../values/global.yaml
-      - ../../values/ips/registry.yaml
+      - ../values/global.yaml
+      - ../values/ips/registry.yaml
     set:
       - name: global.ips-registryVersion
         value: {{ env "IPS_REGISTRY_VERSION" | default "2022.05" | quote }}
@@ -29,8 +29,8 @@ releases:
       tier: ips
       component: token-converter
     values:
-      - ../../values/global.yaml
-      - ../../values/ips/token-converter.yaml
+      - ../values/global.yaml
+      - ../values/ips/token-converter.yaml
     set:
       - name: global.ips-tcVersion
         value: {{ env "IPS_TC_VERSION" | default "2022.05" | quote }}
@@ -42,14 +42,14 @@ releases:
       tier: cxs
       component: communication
     values:
-      - ../../values/global.yaml
-      - ../../values/ses-email-connector.yaml
+      - ../values/global.yaml
+      - ../values/ses-email-connector.yaml
     set:
       - name: global.ses-email-version
         value: {{ env "SES_EMAIL_VERSION" | default "latest" | quote }}
 
   - name: system-test-ses-email
-    chart: ../../chart/system-tests
+    chart: ../chart/system-tests
     labels:
       tier: system-tests
       component: ses-email-system-tests
@@ -58,7 +58,7 @@ releases:
         value: {{ env "SYSTEM_TEST_IMAGE_VERSION" | default "release" | quote }}
 
   - name: greenmail
-    chart: ../../chart/greenmail
+    chart: ../chart/greenmail
     labels:
       tier: ips
       component: greenmail
