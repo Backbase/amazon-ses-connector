@@ -16,6 +16,9 @@ class SendableTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    static {
+        System.setProperty("SIG_SECRET_KEY", "JWTSecretKeyDontUseInProduction!");
+    }
     @Test
     void testEmailV1Deserialization() throws JsonProcessingException {
         String jsonString = """
