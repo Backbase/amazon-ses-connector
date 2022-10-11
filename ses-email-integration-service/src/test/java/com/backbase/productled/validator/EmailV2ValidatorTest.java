@@ -5,16 +5,14 @@ import com.backbase.productled.model.EmailV2;
 import com.backbase.productled.testutils.EmailV2Factory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SpringBootTest
-@RunWith(SpringRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 public class EmailV2ValidatorTest {
     private final EmailV2Validator emailV2Validator = new EmailV2Validator();
 
