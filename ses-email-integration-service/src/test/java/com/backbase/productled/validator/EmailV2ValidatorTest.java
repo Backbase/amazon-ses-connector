@@ -4,15 +4,17 @@ import com.backbase.buildingblocks.presentation.errors.BadRequestException;
 import com.backbase.productled.model.EmailV2;
 import com.backbase.productled.testutils.EmailV2Factory;
 import org.junit.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@ExtendWith(SpringExtension.class)
+@SpringBootTest
+@RunWith(SpringRunner.class)
 public class EmailV2ValidatorTest {
     private final EmailV2Validator emailV2Validator = new EmailV2Validator();
 
