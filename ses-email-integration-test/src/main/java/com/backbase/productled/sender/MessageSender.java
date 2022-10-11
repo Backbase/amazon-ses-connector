@@ -1,11 +1,11 @@
 package com.backbase.productled.sender;
 
 import com.backbase.buildingblocks.presentation.errors.BadRequestException;
+import com.backbase.productled.model.Message;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.Range;
 import org.springframework.cloud.stream.function.StreamBridge;
-import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 import com.backbase.productled.config.MessageChannelProperties;
@@ -38,7 +38,7 @@ public class MessageSender {
      * @param message Message
      * @throws BadRequestException if no suitable binding has been configured for the channel and priority
      */
-    public void sendMessage(com.backbase.productled.model.Message message) {
+    public void sendMessage(Message message) {
 
         log.debug("Sending message[{}] to broker", message);
 
@@ -72,7 +72,7 @@ public class MessageSender {
         streamBridge.send(channelBinding, createMessage(message));
     }
 
-    private Message<?> createMessage(com.backbase.productled.model.Message message) {
+    private org.springframework.messaging.Message<?> createMessage(Message message) {
         return MessageBuilder
             .withPayload(message.getPayload())
             .setHeader(EXPIRES_AT_HEADER, message.getExpiresAt())
