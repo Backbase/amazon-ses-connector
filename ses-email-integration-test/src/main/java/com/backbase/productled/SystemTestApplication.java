@@ -21,7 +21,8 @@ public class SystemTestApplication {
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(SystemTestApplication.class);
         try {
-            context.getBean(SendEmailTest.class).sendEmailTest();
+            context.getBean(SendEmailTest.class).sendEmailV1Test();
+            context.getBean(SendEmailTest.class).sendEmailV2Test();
             exitCode = 0;
         }catch (InterruptedException e) {
             log.warn("Interrupted!", e);
