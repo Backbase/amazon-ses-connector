@@ -2,19 +2,21 @@ package com.backbase.productled.validator;
 
 import com.backbase.buildingblocks.presentation.errors.BadRequestException;
 import com.backbase.buildingblocks.presentation.errors.Error;
-import com.backbase.productled.testutils.BatchResponseFactory;
+import com.backbase.productled.testutils.EmailV1Factory;
 import com.backbase.productled.util.ErrorCodes;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
+
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertEquals;
 
 
 @RunWith(MockitoJUnitRunner.class)
-public class BatchResponseValidatorTest {
+public class EmailV1ValidatorTest {
 
     static final List<Error> ERROR_LIST_O1 = List.of(new Error()
             .withKey(ErrorCodes.ERR_01.getErrorCode())
@@ -29,13 +31,13 @@ public class BatchResponseValidatorTest {
             .withMessage(ErrorCodes.ERR_03.getErrorMessage())
             .withContext(Map.of("contentId", "1")));
 
-    BatchResponseValidator batchResponseValidator;
+    EmailV1Validator emailV1Validator;
 
     @Test
     public void expect_BadRequestException_whenRecipientIs_Empty() {
-        batchResponseValidator = new BatchResponseValidator();
+        emailV1Validator = new EmailV1Validator();
         try{
-            batchResponseValidator.validateBatchResponse(BatchResponseFactory.emptyRecipientBatchResponse());
+            emailV1Validator.validate(EmailV1Factory.emptyRecipientEmailV1());
         }catch(BadRequestException e){
             assertEquals(e.getMessage(), ErrorCodes.ERR_01.getErrorMessage());
             assertEquals(1, e.getErrors().size());
@@ -45,9 +47,9 @@ public class BatchResponseValidatorTest {
 
     @Test
     public void expect_BadRequestException_whenContentIs_Empty() {
-        batchResponseValidator = new BatchResponseValidator();
+        emailV1Validator = new EmailV1Validator();
         try{
-            batchResponseValidator.validateBatchResponse(BatchResponseFactory.emptyContentBatchResponse());
+            emailV1Validator.validate(EmailV1Factory.emptyContentEmailV1());
         }catch(BadRequestException e){
             assertEquals(e.getMessage(), ErrorCodes.ERR_02.getErrorMessage());
             assertEquals(1, e.getErrors().size());
@@ -57,9 +59,9 @@ public class BatchResponseValidatorTest {
 
     @Test
     public void expect_BadRequestException_whenContentId_does_not_match() {
-        batchResponseValidator = new BatchResponseValidator();
+        emailV1Validator = new EmailV1Validator();
         try{
-            batchResponseValidator.validateBatchResponse(BatchResponseFactory.mismatchedContentIdBatchResponse());
+            emailV1Validator.validate(EmailV1Factory.mismatchedContentIdEmailV1());
         }catch(BadRequestException e){
             assertEquals(e.getMessage(), ErrorCodes.ERR_03.getErrorMessage());
             assertEquals(1, e.getErrors().size());
