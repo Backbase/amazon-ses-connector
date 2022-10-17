@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 @Slf4j
 public class MessageChannelPropertiesConverter implements Converter<String, Range<Integer>> {
 
-    Pattern pattern = Pattern.compile("^[0-9]+(-[0-9]+)?$");
+    Pattern pattern = Pattern.compile("^\\d+(-\\d+)?$");
 
     @Override
     public Range<Integer> convert(String range) {

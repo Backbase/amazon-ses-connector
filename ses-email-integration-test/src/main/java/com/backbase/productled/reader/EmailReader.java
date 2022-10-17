@@ -98,8 +98,8 @@ public class EmailReader {
             result = (String) bodyPart.getContent();
         } else if (bodyPart.isMimeType("text/html")) {
             result = (String) bodyPart.getContent();
-        } else if (bodyPart.getContent() instanceof MimeMultipart){
-            result = getTextFromMimeMultipart((MimeMultipart)bodyPart.getContent());
+        } else if (bodyPart.getContent() instanceof MimeMultipart mimeMultipart){
+            result = getTextFromMimeMultipart(mimeMultipart);
         }
         return result;
     }

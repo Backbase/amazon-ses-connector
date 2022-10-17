@@ -9,13 +9,13 @@ import org.springframework.context.ApplicationContext;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest
-public class ApplicationTest {
+class ApplicationTest {
 
     @Autowired
     private ApplicationContext context;
 
     @Test
-    public void contextLoads() {
+    void contextLoads() {
         assertThat(context).isNotNull();
     }
 }
