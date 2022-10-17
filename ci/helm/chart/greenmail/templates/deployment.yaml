@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "greenmail.fullname" . }}
+  labels:
+    {{- include "greenmail.labels" . | nindent 4 }}
+spec:
+{{- if not .Values.greenmail.autoscaling.enabled }}
+  replicas: {{ .Values.greenmail.replicaCount }}
+{{- end }}
+  selector:
+    matchLabels:
+      {{- include "greenmail.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+    {{- with .Values.greenmail.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        {{- include "greenmail.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.greenmail.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.greenmail.podSecurityContext | nindent 8 }}
+
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.greenmail.securityContext | nindent 12 }}
+          image: "{{ .Values.greenmail.image.repository }}:{{ .Values.greenmail.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.greenmail.image.pullPolicy }}
+          env:
+            - name: JAVA_OPTIONS
+              value: {{ .Values.greenmail.javaOptions | quote }}
+            - name: GREENMAIL_OPTS
+              value: {{ .Values.greenmail.greenmailOptions | quote }}
+          ports:
+            - name: smtp
+              containerPort: 3025
+              protocol: TCP
+            - name: smtps
+              containerPort: 3465
+              protocol: TCP
+            - name: imap
+              containerPort: 3143
+              protocol: TCP
+            - name: imaps
+              containerPort: 3993
+              protocol: TCP
+            - name: pop3
+              containerPort: 3110
+              protocol: TCP
+            - name: pop3s
+              containerPort: 3995
+              protocol: TCP
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          # livenessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          # readinessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          resources:
+            {{- toYaml .Values.greenmail.resources | nindent 12 }}
+      {{- with .Values.greenmail.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.greenmail.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.greenmail.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

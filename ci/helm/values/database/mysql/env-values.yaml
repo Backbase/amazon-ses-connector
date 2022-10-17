@@ -1,0 +1,5 @@
+mysql:
+  enabled: false
+  fullnameOverride: mysql
+  mysqlRootPassword: backbase321!
+  mysqlPassword: b4ckb4s3

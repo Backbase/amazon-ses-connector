@@ -1,0 +1,6 @@
+apiVersion: v2
+appVersion: 1.6.5
+description: Green mail helm chart
+home: https://greenmail-mail-test.github.io/greenmail/
+name: greenmail
+version: 0.1.0

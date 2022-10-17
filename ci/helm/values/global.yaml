@@ -1,0 +1,45 @@
+global:
+  ips-registryVersion: 2022.05
+  ips-edgeVersion: 2022.05
+  ips-tcVersion: 2022.05
+  ips-authVersion: 2022.03-no-production
+  ses-email-version: latest
+  communication-version: latest
+
+  activemq:
+    enabled: true
+    host: activemq
+    username: admin
+    existingSecret: activemq
+    checkEnabled: true
+    checkInitContainerImage: docker-proxy.backbase.eu/dockerhub/library/busybox
+
+  registry:
+    enabled: true
+    host: registry
+    preferIpAddress: true
+    checkEnabled: true
+    checkInitContainerImage: docker-proxy.backbase.eu/dockerhub/byrnedo/alpine-curl
+
+  ips-bas-token-converter:
+    checkInitContainerImage: docker-proxy.backbase.eu/dockerhub/library/busybox
+
+  jwt:
+    enabled: true
+    SIG_SECRET_KEY_fromSecret: true
+    EXTERNAL_SIG_SECRET_KEY_fromSecret: true
+    EXTERNAL_ENC_SECRET_KEY_fromSecret: true
+    USERCTX_KEY_fromSecret: true
+    existingSecret: cx-env-jwt
+
+  app:
+    image:
+      registry: harbor.backbase.eu/stable
+
+  javaOpts:
+    base:
+      - "-XX:+UseG1GC"
+      - "-XX:MaxRAMFraction=2"
+      - "-Dlogging.level.root=INFO"
+      - "-Dlogging.level.com.backbase=DEBUG"
+      - "-Djava.security.egd=file:///dev/urandom"

@@ -17,10 +17,10 @@
 
     <modules>
         <module>ses-email-integration-service</module>
+        <module>ses-email-integration-test</module>
     </modules>
 
     <properties>
-
     </properties>
 
     <dependencyManagement>

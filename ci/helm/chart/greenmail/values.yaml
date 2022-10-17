@@ -1,0 +1,46 @@
+greenmail:
+  replicaCount: 1
+  image:
+    repository: docker-proxy.backbase.eu/dockerhub/greenmail/standalone
+    pullPolicy: IfNotPresent
+    tag: "1.6.10"
+
+  imagePullSecrets: []
+  nameOverride: ""
+  fullnameOverride: ""
+  podAnnotations: {}
+  podSecurityContext: {}
+  securityContext: {}
+  service:
+    type: LoadBalancer
+    port:
+      smtp: 3025
+      smtps: 3465
+      imap: 3143
+      imaps: 3993
+      pop3: 3110
+      pop3s: 3995
+      http: 8080
+  
+  ingress:
+    enabled: false
+
+  resources:
+    limits:
+      cpu: "700m"
+      memory: "512Mi"
+    requests:
+      cpu: "500m"
+      memory: "400Mi"
+
+  javaOptions: -Djava.net.preferIPv4Stack=true -XX:MaxRAMPercentage=85.0
+  greenmailOptions: -Dgreenmail.setup.test.all -Dgreenmail.hostname=0.0.0.0 -Dgreenmail.auth.disabled -Dgreenmail.verbose -Dgreenmail.startup.timeout=3000
+
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 80
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}

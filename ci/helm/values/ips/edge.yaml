@@ -1,0 +1,62 @@
+app:
+  name: edge
+  image:
+    repository: edge
+    tagFrom: ips-edgeVersion
+  resources:
+    memory:
+      xms: 1024
+      xmx: 1024
+    cpu:
+      minShares: 100
+      maxShares: 1000
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+  hosts:
+    - host: edge.cx-env.backbase.test
+      paths: [/]
+
+livenessProbe:
+  enabled: true
+  path: /actuator/health/liveness
+
+readinessProbe:
+  enabled: true
+  path: /actuator/health/readiness
+
+service:
+  enabled: true
+  nameOverride: edge
+
+database:
+  enabled: false
+
+registry:
+  checkEnabled: false
+
+configurationFiles:
+  /config/application.yml: |-
+    spring:
+      cloud:
+        gateway:
+          discovery:
+            locator:
+              lowerCaseServiceId: true
+              enabled: true
+              predicates:
+                - name: Path
+                  args:
+                    pattern: "'/api/'+serviceId.toLowerCase()+'/**'"
+              filters:
+                - name: RewritePath
+                  args:
+                    regexp: "'/api/' + serviceId.toLowerCase() + '/(?<remaining>.*)'"
+                    replacement: "{metadata.get('contextPath') != null ? metadata.get('contextPath') : ''} + '/${remaining}'"
+    gateway:
+      actuator:
+        user: admin
+        password: admin

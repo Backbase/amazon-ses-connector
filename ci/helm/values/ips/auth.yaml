@@ -1,0 +1,26 @@
+app:
+  name: authentication-dev
+  resources:
+    memory:
+      xms: 1024
+      xmx: 1024
+    cpu:
+      minShares: 100
+      maxShares: 1000
+  image:
+    repository: authentication-dev
+    tagFrom: ips-authVersion
+
+livenessProbe:
+  enabled: true
+  path: /production-support/health
+
+readinessProbe:
+  enabled: true
+  path: /production-support/health
+
+database:
+  enabled: false
+
+registry:
+  checkEnabled: true
