@@ -15,7 +15,7 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <boat-plugin.version>0.14.2</boat-plugin.version>
+        <boat-plugin.version>0.16.5</boat-plugin.version>
         <mapstruct.version>1.5.2.Final</mapstruct.version>
         <open-api-specs-dir>${project.build.directory}/specs</open-api-specs-dir>
         <action-service-api.directory>${open-api-specs-dir}/action</action-service-api.directory>
