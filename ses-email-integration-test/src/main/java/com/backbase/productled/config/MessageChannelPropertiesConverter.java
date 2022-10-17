@@ -28,7 +28,6 @@ public class MessageChannelPropertiesConverter implements Converter<String, Rang
             log.error(String.format("Range '%s' does not match x[-y], check application properties", range));
             throw new IllegalArgumentException(String.format("Range %s does not match x[-y]", range));
         }
-
         if (range.contains("-")) {
             String[] data = range.split("-");
             return Range.between(Integer.parseInt(data[0]), Integer.parseInt(data[1]));
