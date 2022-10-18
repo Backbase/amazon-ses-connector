@@ -23,6 +23,9 @@
         <communications-outbound-integration-api.base-package>com.backbase.outbound.integration.communications.rest.spec.v1</communications-outbound-integration-api.base-package>
         <boat-maven-plugin.version>0.16.1</boat-maven-plugin.version>
         <backbase-bom.version>2022.08.3-LTS</backbase-bom.version>
+        <communication.version>2.1.0-b7</communication.version>
+        <communications-events.directory>${open-api-specs-dir}/communication-spec</communications-events.directory>
+        <communications-event.base-package>com.backbase.communication.spec.v1</communications-event.base-package>
     </properties>
 
     <dependencyManagement>
@@ -132,7 +135,15 @@
                                     <outputDirectory>${open-api-specs-dir}</outputDirectory>
                                     <overWrite>true</overWrite>
                                 </artifactItem>
-                            </artifactItems>
+                                <artifactItem>
+                                    <groupId>com.backbase.communication</groupId>
+                                    <artifactId>communication</artifactId>
+                                    <classifier>events</classifier>
+                                    <type>zip</type>
+                                    <version>${communication.version}</version>
+                                    <outputDirectory>${open-api-specs-dir}/communication-spec</outputDirectory>
+                                    <overWrite>true</overWrite>
+                                </artifactItem>                            </artifactItems>
                         </configuration>
                     </execution>
                 </executions>
@@ -214,6 +225,27 @@
                                 </modelPackage>
                                 <sourceFolder>/</sourceFolder>
                             </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.backbase.codegen</groupId>
+                <artifactId>jsonschema-events-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>communication-events</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>events-generation</goal>
+                        </goals>
+                        <configuration>
+                            <outputFile>target/generated-sources/</outputFile>
+                            <inputFile>${communications-events.directory}/v1</inputFile>
+                            <packageName>communication</packageName>
+                            <packageVersion>1</packageVersion>
+                            <azureSubscriberCheck>false</azureSubscriberCheck>
+                            <useJavaTime>true</useJavaTime>
                         </configuration>
                     </execution>
                 </executions>

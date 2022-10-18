@@ -1,6 +1,6 @@
 package com.backbase.productled.util;
 
-import com.backbase.email.integration.rest.spec.v2.email.EmailPostRequestBody;
+import com.backbase.communication.event.spec.v1.EmailChannelEvent;
 import com.backbase.outbound.integration.communications.rest.spec.v1.model.Content;
 import com.backbase.productled.model.Message;
 
@@ -11,7 +11,7 @@ import java.util.UUID;
 
 public class TestMessageBuilder {
     public Message<com.backbase.outbound.integration.communications.rest.spec.v1.model.BatchResponse> createMessageV1() {
-        Message message = new Message();
+        Message<com.backbase.outbound.integration.communications.rest.spec.v1.model.BatchResponse> message = new Message<>();
         message.setPriority(1);
         message.setTrackingId(UUID.randomUUID());
         message.setTag("tag");
@@ -34,20 +34,20 @@ public class TestMessageBuilder {
         return message;
     }
 
-    public Message<EmailPostRequestBody> createMessageV2() {
-        Message<EmailPostRequestBody> message = new Message();
+    public Message<EmailChannelEvent> createMessageV2() {
+        Message<EmailChannelEvent> message = new Message<>();
         message.setPriority(2);
         message.setTrackingId(UUID.randomUUID());
         message.setTag("tagV2");
         message.setExpiresAt(ZonedDateTime.now().plus(1, ChronoUnit.HOURS));
         message.setCallbackUrl("callbackUrl");
         message.setDeliveryChannel("email");
-        EmailPostRequestBody emailPostRequestBody = new EmailPostRequestBody();
-        emailPostRequestBody.setBody("bodyV2");
-        emailPostRequestBody.setSubject("titleV2");
-        emailPostRequestBody.setFrom("testV2@backbase.com");
-        emailPostRequestBody.setTo(List.of("senderV2@backbase.com"));
-        message.setPayload(emailPostRequestBody);
+        EmailChannelEvent emailChannelEvent = new EmailChannelEvent();
+        emailChannelEvent.setBody("bodyV2");
+        emailChannelEvent.setSubject("titleV2");
+        emailChannelEvent.setFrom("testV2@backbase.com");
+        emailChannelEvent.setTo(List.of("senderV2@backbase.com"));
+        message.setPayload(emailChannelEvent);
         return message;
     }
 }

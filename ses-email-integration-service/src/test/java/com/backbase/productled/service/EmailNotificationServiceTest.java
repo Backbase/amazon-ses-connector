@@ -1,12 +1,12 @@
 package com.backbase.productled.service;
 
+import com.backbase.email.integration.rest.spec.v2.email.EmailPostRequestBody;
 import com.backbase.outbound.integration.communications.rest.spec.v1.model.Content;
 import com.backbase.outbound.integration.communications.rest.spec.v1.model.Recipient;
 import com.backbase.productled.config.DefaultMailSenderProperties;
 import com.backbase.productled.mapper.EmailV1Mapper;
-import com.backbase.productled.model.EmailV2;
+import com.backbase.productled.testutils.EmailPostRequestBodyFactory;
 import com.backbase.productled.testutils.EmailV1Factory;
-import com.backbase.productled.testutils.EmailV2Factory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,29 +32,29 @@ public class EmailNotificationServiceTest {
     @Autowired
     DefaultMailSenderProperties defaultMailSenderProperties;
     @MockBean
-    EmailV1Mapper emailRequestMapper;
+    EmailV1Mapper emailV1Mapper;
 
     @Test
-    public void processRecipient(){
+    public void processRecipient() {
         final Recipient recipient = EmailV1Factory.emailV1().getRecipients().get(0);
         final Content content = EmailV1Factory.emailV1().getContent().get(0);
-        when(emailRequestMapper.toEmailV2(recipient, content)).thenReturn(EmailV2Factory.createRandomEmailV2());
-        emailNotificationService.sendEmail(recipient,
+        when(emailV1Mapper.toEmailPostRequestBody(recipient, content)).thenReturn(EmailPostRequestBodyFactory.createRandomEmail());
+        emailNotificationService.sendEmailV1(recipient,
                 content);
-        verify(emailRequestMapper, times(1)).toEmailV2(recipient, content);
+        verify(emailV1Mapper, times(1)).toEmailPostRequestBody(recipient, content);
     }
 
     @Test
-    public void processRecipient_withEncoded_body(){
+    public void processRecipient_withEncoded_body() {
         final Recipient recipient = EmailV1Factory.emailV1().getRecipients().get(0);
         final Content content = EmailV1Factory.emailV1().getContent().get(0);
 
-        final EmailV2 emailV2 = EmailV2Factory.createRandomEmailV2();
-        emailV2.setBody("This is your otp: 123456");
-        emailV2.setFrom(null);
-        when(emailRequestMapper.toEmailV2(recipient, content)).thenReturn(emailV2);
-        emailNotificationService.sendEmail(recipient,
+        final EmailPostRequestBody emailPostRequestBody = EmailPostRequestBodyFactory.createRandomEmail();
+        emailPostRequestBody.setBody("This is your otp: 123456");
+        emailPostRequestBody.setFrom(null);
+        when(emailV1Mapper.toEmailPostRequestBody(recipient, content)).thenReturn(emailPostRequestBody);
+        emailNotificationService.sendEmailV1(recipient,
                 content);
-        verify(emailRequestMapper, times(1)).toEmailV2(recipient, content);
+        verify(emailV1Mapper, times(1)).toEmailPostRequestBody(recipient, content);
     }
 }

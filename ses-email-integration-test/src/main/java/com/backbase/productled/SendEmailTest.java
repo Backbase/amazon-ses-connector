@@ -1,5 +1,6 @@
 package com.backbase.productled;
 
+import com.backbase.communication.event.spec.v1.EmailChannelEvent;
 import com.backbase.email.integration.rest.spec.v2.email.EmailPostRequestBody;
 import com.backbase.productled.model.Message;
 import com.backbase.productled.reader.EmailReader;
@@ -37,14 +38,14 @@ public class SendEmailTest {
             throw new ValidationException(MessageFormat.format("Invalid number of emails. expect 1 but is {0}.", emails.size()));
     }
 
-    private void checkReceivedEmail(javax.mail.Message email, Message message) throws Exception {
+    private void checkReceivedEmail(javax.mail.Message email, Message<?> message) throws Exception {
         checkEmailFrom(email, message);
         checkToAddress(email, message);
         checkSubject(email, message);
         checkEmailBody(email, message);
     }
 
-    private void checkEmailBody(javax.mail.Message email, Message message) throws Exception {
+    private void checkEmailBody(javax.mail.Message email, Message<?> message) throws Exception {
         String expectedBody = "";
         if (message.getPayload() instanceof com.backbase.outbound.integration.communications.rest.spec.v1.model.BatchResponse batchResponse)
             expectedBody = batchResponse.getContent().get(0).getBody();
@@ -56,7 +57,7 @@ public class SendEmailTest {
             throw new ValidationException(MessageFormat.format("Invalid email body. Expect \"{0}\" but is \"{1}\"", expectedBody, realBody));
     }
 
-    private void checkSubject(javax.mail.Message email, Message message) throws Exception {
+    private void checkSubject(javax.mail.Message email, Message<?> message) throws Exception {
         String expectedSubject = "";
         if (message.getPayload() instanceof com.backbase.outbound.integration.communications.rest.spec.v1.model.BatchResponse batchResponse)
             expectedSubject = batchResponse.getContent().get(0).getTitle();
@@ -67,7 +68,7 @@ public class SendEmailTest {
             throw new ValidationException(MessageFormat.format("Invalid email subject. Expect {0} but is {1}", expectedSubject, email.getSubject()));
     }
 
-    private void checkToAddress(javax.mail.Message email, Message message) throws Exception {
+    private void checkToAddress(javax.mail.Message email, Message<?> message) throws Exception {
         String expectedTo = "";
         if (message.getPayload() instanceof com.backbase.outbound.integration.communications.rest.spec.v1.model.BatchResponse batchResponse)
             expectedTo = batchResponse.getRecipients().get(0).getTo().get(0);
@@ -79,7 +80,7 @@ public class SendEmailTest {
             throw new ValidationException(MessageFormat.format("Invalid to address. Expect {0} but is {1}", expectedTo, realTo));
     }
 
-    private void checkEmailFrom(javax.mail.Message email, Message message) throws Exception {
+    private void checkEmailFrom(javax.mail.Message email, Message<?> message) throws Exception {
         String expectedFrom = "";
         if (message.getPayload() instanceof com.backbase.outbound.integration.communications.rest.spec.v1.model.BatchResponse batchResponse)
             expectedFrom = batchResponse.getRecipients().get(0).getFrom();
@@ -95,7 +96,7 @@ public class SendEmailTest {
 
     public void sendEmailV2Test() throws Exception {
         TestMessageBuilder testMessageBuilder = new TestMessageBuilder();
-        Message<EmailPostRequestBody> message = testMessageBuilder.createMessageV2();
+        Message<EmailChannelEvent> message = testMessageBuilder.createMessageV2();
         messageSender.sendMessage(message);
 
         Thread.sleep(5000);
@@ -104,7 +105,7 @@ public class SendEmailTest {
         retrieveAndCheckEmails(message, toAddress);
     }
 
-    private void retrieveAndCheckEmails(Message message, String toAddress) throws Exception {
+    private void retrieveAndCheckEmails(Message<?> message, String toAddress) throws Exception {
         List<javax.mail.Message> emails = emailReader.getEmails(toAddress, toAddress);
         checkEmailCount(emails);
         for (javax.mail.Message email : emails) {

@@ -22,6 +22,6 @@ public class EmailServiceV2 implements EmailService {
     public void handleEmail(Sendable sendable) {
         EmailV2 emailV2 = (EmailV2) sendable;
         emailV2Validator.validate(emailV2);
-        emailNotificationService.sendEmail(emailV2);
+        emailNotificationService.sendEmailV2(emailV2);
     }
 }

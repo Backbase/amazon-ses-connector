@@ -2,12 +2,14 @@ package com.backbase.productled.service;
 
 import com.backbase.buildingblocks.presentation.errors.InternalServerErrorException;
 import com.backbase.email.integration.rest.spec.v2.email.Attachment;
+import com.backbase.email.integration.rest.spec.v2.email.EmailPostRequestBody;
 import com.backbase.outbound.integration.communications.rest.spec.v1.model.Content;
 import com.backbase.outbound.integration.communications.rest.spec.v1.model.Error;
 import com.backbase.outbound.integration.communications.rest.spec.v1.model.Recipient;
 import com.backbase.outbound.integration.communications.rest.spec.v1.model.Status;
 import com.backbase.productled.config.DefaultMailSenderProperties;
 import com.backbase.productled.mapper.EmailV1Mapper;
+import com.backbase.productled.mapper.EmailV2Mapper;
 import com.backbase.productled.model.EmailV2;
 import com.backbase.productled.util.DeliveryCodes;
 import com.backbase.productled.util.EmailPriority;
@@ -38,9 +40,10 @@ public class EmailNotificationService {
     private static final boolean HTML = true;
     private final JavaMailSender javaMailSender;
     private final DefaultMailSenderProperties defaultMailSenderProperties;
-    private final EmailV1Mapper emailRequestMapper;
+    private final EmailV1Mapper emailV1Mapper;
+    private final EmailV2Mapper emailV2Mapper;
 
-    public Status sendEmail(Recipient recipient, Content content) {
+    public Status sendEmailV1(Recipient recipient, Content content) {
         var responseStatus = new Status().ref(recipient.getRef());
         Status deliveryStatus = null;
 
@@ -48,7 +51,7 @@ public class EmailNotificationService {
         log.debug("Delivering Email from: '{}' to targets: '{}'", recipient.getFrom(), recipient.getTo());
 
         try {
-            deliveryStatus = sendEmail(emailRequestMapper.toEmailV2(recipient, content));
+            deliveryStatus = sendEmail(emailV1Mapper.toEmailPostRequestBody(recipient, content));
             responseStatus.setStatus(deliveryStatus.getStatus());
             responseStatus.setError(deliveryStatus.getError());
         } catch (Exception e) {
@@ -61,39 +64,59 @@ public class EmailNotificationService {
         return deliveryStatus;
     }
 
+    public Status sendEmailV2(EmailV2 emailV2) {
+        var responseStatus = new Status();
+        Status deliveryStatus = null;
 
-    public Status sendEmail(EmailV2 emailV2) {
+        log.debug("Content data: '{}'", emailV2.getBody());
+        log.debug("Delivering Email from: '{}' to targets: '{}'", emailV2.getFrom(), emailV2.getTo());
 
-        log.debug("Email: '{}'", emailV2.toString());
+        try {
+            deliveryStatus = sendEmail(emailV2Mapper.toEmailPostRequestBody(emailV2));
+            responseStatus.setStatus(deliveryStatus.getStatus());
+            responseStatus.setError(deliveryStatus.getError());
+        } catch (Exception e) {
+            log.error("Communications call failed with error: {}", e.getMessage());
+            responseStatus.error(new Error().code(String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()))
+                            .message(e.getMessage()))
+                    .status(DeliveryCodes.FAILED);
+        }
+
+        return deliveryStatus;
+    }
+
+    public Status sendEmail(EmailPostRequestBody emailPostRequestBody) {
+
+        log.debug("Email: '{}'", emailPostRequestBody.toString());
 
         MimeMessage mimeMessage;
         try {
-            mimeMessage = convertToMimeMessage(emailV2);
+            mimeMessage = convertToMimeMessage(emailPostRequestBody);
             log.debug("Mime message subject: '{}' ", mimeMessage.getSubject());
         } catch (MessagingException | UnsupportedEncodingException e) {
-            log.error("Failed to convert request body to email '{}'", emailV2);
+            log.error("Failed to convert request body to email '{}'", emailPostRequestBody);
             throw new InternalServerErrorException(e);
         }
         javaMailSender.send(mimeMessage);
         return new Status().status(DeliveryCodes.SENT);
     }
 
-    private MimeMessage convertToMimeMessage(EmailV2 emailV2)
+    private MimeMessage convertToMimeMessage(EmailPostRequestBody emailPostRequestBody)
             throws MessagingException, UnsupportedEncodingException {
         final var mimeMailMessage = new MimeMailMessage(javaMailSender.createMimeMessage());
         final var mimeMessage = mimeMailMessage.getMimeMessage();
         final var messageHelper = new MimeMessageHelper(mimeMessage, MULTIPART_MODE);
 
-        setEmailAddresses(messageHelper::setTo, emailV2.getTo());
-        setEmailAddresses(messageHelper::setCc, emailV2.getCc());
-        setEmailAddresses(messageHelper::setBcc, emailV2.getBcc());
+        setEmailAddresses(messageHelper::setTo, emailPostRequestBody.getTo());
+        setEmailAddresses(messageHelper::setCc, emailPostRequestBody.getCc());
+        setEmailAddresses(messageHelper::setBcc, emailPostRequestBody.getBcc());
 
-        messageHelper.setText(emailV2.getBody(), HTML);
-        messageHelper.setPriority(EmailPriority.getPriority(emailV2.getImportant()));
-        messageHelper.setSubject(emailV2.getSubject());
-        setFromAddress(emailV2.getFrom(), messageHelper);
+        messageHelper.setText(emailPostRequestBody.getBody(), HTML);
+        messageHelper.setPriority(EmailPriority.getPriority(emailPostRequestBody.getImportant()));
+        messageHelper.setSubject(emailPostRequestBody.getSubject());
+        setFromAddress(emailPostRequestBody.getFrom(), messageHelper);
 
-        setAttachments(messageHelper, emailV2.getAttachments());
+        setAttachments(messageHelper, emailPostRequestBody.getAttachments());
 
         return mimeMessage;
     }

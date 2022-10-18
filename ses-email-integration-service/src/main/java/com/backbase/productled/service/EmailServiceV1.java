@@ -30,7 +30,7 @@ public class EmailServiceV1 implements EmailService {
         Map<String, com.backbase.outbound.integration.communications.rest.spec.v1.model.Content> contentMap = emailV1.getContent()
                 .stream()
                 .collect(Collectors.toMap(com.backbase.outbound.integration.communications.rest.spec.v1.model.Content::getContentId, Function.identity()));
-        emailV1.getRecipients().forEach(recipient -> emailNotificationService.sendEmail(recipient, contentMap.get(recipient.getContentId())));
+        emailV1.getRecipients().forEach(recipient -> emailNotificationService.sendEmailV1(recipient, contentMap.get(recipient.getContentId())));
 
     }
 }
