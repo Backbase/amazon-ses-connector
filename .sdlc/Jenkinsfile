@@ -157,7 +157,9 @@ pipeline {
                 expression { IMAGE_EXISTS == false }
             }
             steps {
-                 mvnBuild('mvn clean package --no-transfer-progress -Dmaven.test.skip.exec=true -P docker-image -Ddocker.repo.project=${HARBOR_REPO_DEVELOPMENT} -Djib.to.tags=${GIT_COMMIT} -Djib.to.auth.username=${HARBOR_CREDS_USR} -Djib.to.auth.password=${HARBOR_CREDS_PSW} -f ses-email-integration-service/pom.xml')
+                 withMaven(maven: MVN_VERSION, jdk: JDK_VERSION, mavenSettingsConfig: 'artifacts_bb_com_settings', options: [jacocoPublisher(disabled: true)]) {
+                  sh "mvn clean package --no-transfer-progress -Dmaven.test.skip.exec=true -P docker-image -Ddocker.repo.project=${HARBOR_REPO_DEVELOPMENT} -Djib.to.tags=${GIT_COMMIT} -Djib.to.auth.username=${HARBOR_CREDS_USR} -Djib.to.auth.password=${HARBOR_CREDS_PSW} -f ses-email-integration-service/pom.xml"
+                 }
                  buildPushImage_v2("${SERVICE_NAME}-system-test", "${GIT_COMMIT}", [DOCKERFILE_NAME: "ci/docker/system-tests/Dockerfile", PROJECT: "development"])
             }
         }
@@ -234,7 +236,9 @@ pipeline {
                     }
                 }
 
-                mvnBuild('mvn clean package -Dmaven.test.skip.exec=true -P docker-image -Ddocker.repo.project=staging -Djib.to.tags=${PROJECT_VERSION} -Djib.to.auth.username=${HARBOR_CREDS_USR} -Djib.to.auth.password=${HARBOR_CREDS_PSW} -f ses-email-integration-service/pom.xml')
+                withMaven(maven: MVN_VERSION, jdk: JDK_VERSION, mavenSettingsConfig: 'artifacts_bb_com_settings', options: [jacocoPublisher(disabled: true)]) {
+                  sh "mvn clean package -Dmaven.test.skip.exec=true -P docker-image -Ddocker.repo.project=staging -Djib.to.tags=${PROJECT_VERSION} -Djib.to.auth.username=${HARBOR_CREDS_USR} -Djib.to.auth.password=${HARBOR_CREDS_PSW} -f ses-email-integration-service/pom.xml"
+                }
 
                 node ('aws-static-jdk11') {
                     withMaven(maven: MVN_VERSION, jdk: JDK_VERSION) {

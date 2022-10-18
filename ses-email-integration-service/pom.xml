@@ -15,13 +15,12 @@
         <unitils-core.version>3.4.6</unitils-core.version>
         <build-helper-maven-plugin.version>3.2.0</build-helper-maven-plugin.version>
         <SIG_SECRET_KEY>JWTSecretKeyDontUseInProduction!</SIG_SECRET_KEY>
-        <boat-plugin.version>0.14.2</boat-plugin.version>
         <mapstruct.version>1.5.2.Final</mapstruct.version>
         <open-api-specs-dir>${project.build.directory}/specs</open-api-specs-dir>
         <action-service-api.directory>${open-api-specs-dir}/action</action-service-api.directory>
         <communications-outbound-integration-api.directory>${open-api-specs-dir}/identity</communications-outbound-integration-api.directory>
         <communications-outbound-integration-api.base-package>com.backbase.outbound.integration.communications.rest.spec.v1</communications-outbound-integration-api.base-package>
-        <boat-maven-plugin.version>0.16.1</boat-maven-plugin.version>
+        <boat-maven-plugin.version>0.16.5</boat-maven-plugin.version>
         <backbase-bom.version>2022.08.3-LTS</backbase-bom.version>
     </properties>
     <dependencyManagement>
