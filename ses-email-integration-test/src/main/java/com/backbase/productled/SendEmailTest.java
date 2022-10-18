@@ -107,6 +107,7 @@ public class SendEmailTest {
 
     private void retrieveAndCheckEmails(Message<?> message, String toAddress) throws Exception {
         List<javax.mail.Message> emails = emailReader.getEmails(toAddress, toAddress);
+        log.debug("received emails: {0}", emails);
         checkEmailCount(emails);
         for (javax.mail.Message email : emails) {
             log.info("email = " + email.toString());
