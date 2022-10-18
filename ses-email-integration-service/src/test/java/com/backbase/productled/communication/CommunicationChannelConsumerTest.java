@@ -33,12 +33,12 @@ public class CommunicationChannelConsumerTest {
     @Test
     public void acceptEmailV1Test() {
         communicationChannelConsumer.accept(EmailV1Factory.emailV1());
-        verify(emailNotificationService, times(1)).sendEmailV1(any(), any());
+        verify(emailNotificationService, times(1)).sendEmail(any());
     }
 
     @Test
     public void acceptEmailV2Test() {
         communicationChannelConsumer.accept(EmailV2Factory.createRandomEmailV2());
-        verify(emailNotificationService, times(1)).sendEmailV2(any());
+        verify(emailNotificationService, times(1)).sendEmail(any());
     }
 }

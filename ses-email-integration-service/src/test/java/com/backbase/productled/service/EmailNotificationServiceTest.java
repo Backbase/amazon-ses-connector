@@ -28,6 +28,8 @@ public class EmailNotificationServiceTest {
     @Autowired
     EmailNotificationService emailNotificationService;
     @Autowired
+    EmailServiceV1 emailServiceV1;
+    @Autowired
     JavaMailSender javaMailSender;
     @Autowired
     DefaultMailSenderProperties defaultMailSenderProperties;
@@ -39,8 +41,7 @@ public class EmailNotificationServiceTest {
         final Recipient recipient = EmailV1Factory.emailV1().getRecipients().get(0);
         final Content content = EmailV1Factory.emailV1().getContent().get(0);
         when(emailV1Mapper.toEmailPostRequestBody(recipient, content)).thenReturn(EmailPostRequestBodyFactory.createRandomEmail());
-        emailNotificationService.sendEmailV1(recipient,
-                content);
+        emailServiceV1.sendEmailV1(recipient, content);
         verify(emailV1Mapper, times(1)).toEmailPostRequestBody(recipient, content);
     }
 
@@ -53,8 +54,7 @@ public class EmailNotificationServiceTest {
         emailPostRequestBody.setBody("This is your otp: 123456");
         emailPostRequestBody.setFrom(null);
         when(emailV1Mapper.toEmailPostRequestBody(recipient, content)).thenReturn(emailPostRequestBody);
-        emailNotificationService.sendEmailV1(recipient,
-                content);
+        emailServiceV1.sendEmailV1(recipient, content);
         verify(emailV1Mapper, times(1)).toEmailPostRequestBody(recipient, content);
     }
 }

@@ -3,20 +3,13 @@ package com.backbase.productled.service;
 import com.backbase.buildingblocks.presentation.errors.InternalServerErrorException;
 import com.backbase.email.integration.rest.spec.v2.email.Attachment;
 import com.backbase.email.integration.rest.spec.v2.email.EmailPostRequestBody;
-import com.backbase.outbound.integration.communications.rest.spec.v1.model.Content;
-import com.backbase.outbound.integration.communications.rest.spec.v1.model.Error;
-import com.backbase.outbound.integration.communications.rest.spec.v1.model.Recipient;
 import com.backbase.outbound.integration.communications.rest.spec.v1.model.Status;
 import com.backbase.productled.config.DefaultMailSenderProperties;
-import com.backbase.productled.mapper.EmailV1Mapper;
-import com.backbase.productled.mapper.EmailV2Mapper;
-import com.backbase.productled.model.EmailV2;
 import com.backbase.productled.util.DeliveryCodes;
 import com.backbase.productled.util.EmailPriority;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
-import org.springframework.http.HttpStatus;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMailMessage;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -40,50 +33,6 @@ public class EmailNotificationService {
     private static final boolean HTML = true;
     private final JavaMailSender javaMailSender;
     private final DefaultMailSenderProperties defaultMailSenderProperties;
-    private final EmailV1Mapper emailV1Mapper;
-    private final EmailV2Mapper emailV2Mapper;
-
-    public Status sendEmailV1(Recipient recipient, Content content) {
-        var responseStatus = new Status().ref(recipient.getRef());
-        Status deliveryStatus = null;
-
-        log.debug("Content data: '{}'", content);
-        log.debug("Delivering Email from: '{}' to targets: '{}'", recipient.getFrom(), recipient.getTo());
-
-        try {
-            deliveryStatus = sendEmail(emailV1Mapper.toEmailPostRequestBody(recipient, content));
-            responseStatus.setStatus(deliveryStatus.getStatus());
-            responseStatus.setError(deliveryStatus.getError());
-        } catch (Exception e) {
-            log.error("Communications call failed with error: {}", e.getMessage());
-            responseStatus.error(new Error().code(String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()))
-                            .message(e.getMessage()))
-                    .status(DeliveryCodes.FAILED);
-        }
-
-        return deliveryStatus;
-    }
-
-    public Status sendEmailV2(EmailV2 emailV2) {
-        var responseStatus = new Status();
-        Status deliveryStatus = null;
-
-        log.debug("Content data: '{}'", emailV2.getBody());
-        log.debug("Delivering Email from: '{}' to targets: '{}'", emailV2.getFrom(), emailV2.getTo());
-
-        try {
-            deliveryStatus = sendEmail(emailV2Mapper.toEmailPostRequestBody(emailV2));
-            responseStatus.setStatus(deliveryStatus.getStatus());
-            responseStatus.setError(deliveryStatus.getError());
-        } catch (Exception e) {
-            log.error("Communications call failed with error: {}", e.getMessage());
-            responseStatus.error(new Error().code(String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()))
-                            .message(e.getMessage()))
-                    .status(DeliveryCodes.FAILED);
-        }
-
-        return deliveryStatus;
-    }
 
     public Status sendEmail(EmailPostRequestBody emailPostRequestBody) {
 
