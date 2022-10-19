@@ -184,12 +184,6 @@ pipeline {
                         if (params.RUN_SYSTEM_TESTS == true) {
                             echo('Running system tests')
                             TEST_NAMESPACE = kubernetes.runHelmfile(CREATED_NAMESPACES)
-                              sh """
-                                echo '---------------------'
-                                kubectl logs --max-log-requests=50 -l job-name=system-tests --max-log-requests=50
-                                echo '---------------------'
-
-                                """
                         }
                     }
                 }

@@ -42,14 +42,14 @@ public class EmailServiceV2 implements EmailService {
 
         try {
             deliveryStatus = emailNotificationService.sendEmail(emailV2Mapper.toEmail(emailV2));
-            responseStatus.setStatus(deliveryStatus.getStatus());
+            responseStatus.setState(deliveryStatus.getState());
             responseStatus.setError(deliveryStatus.getError());
         } catch (Exception e) {
             log.error("Communications call failed with error: {}", e.getMessage());
             responseStatus.setError(Error.builder()
                     .code(String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()))
                     .message(e.getMessage()).build());
-            responseStatus.setStatus(DeliveryCodes.FAILED);
+            responseStatus.setState(DeliveryCodes.FAILED);
         }
 
         return deliveryStatus;

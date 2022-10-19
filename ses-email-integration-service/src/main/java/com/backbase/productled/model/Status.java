@@ -7,11 +7,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Status {
     private String ref;
-    private String status;
+    private String state;
     private Error error;
 
-    public Status(String status) {
-        this.status = status;
+    public Status(String state) {
+        this.state = state;
     }
 }
 
