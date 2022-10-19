@@ -184,6 +184,12 @@ pipeline {
                         if (params.RUN_SYSTEM_TESTS == true) {
                             echo('Running system tests')
                             TEST_NAMESPACE = kubernetes.runHelmfile(CREATED_NAMESPACES)
+                              sh """
+                                echo '---------------------'
+                                kubectl logs --max-log-requests=50 -l job-name=system-tests --max-log-requests=50
+                                echo '---------------------'
+
+                                """
                         }
                     }
                 }
@@ -209,6 +215,7 @@ pipeline {
                     echo '---------------------'
 
                     """
+                    kubernetes.logContainersToStdoutSafe('system-tests', TEST_NAMESPACE, "job-name")
                     kubernetes.waitForRunningContainers("system-tests", 5, TEST_NAMESPACE, "job-name",true)
                     kubernetes.logContainersToStdoutSafe('system-tests', TEST_NAMESPACE, "job-name")
                     kubernetes.waitJobForResult('system-tests', TEST_NAMESPACE, "100s")
