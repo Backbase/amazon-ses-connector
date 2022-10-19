@@ -10,6 +10,7 @@ import com.backbase.productled.util.EmailPriority;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMailMessage;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -20,6 +21,7 @@ import javax.mail.internet.MimeMessage;
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import static java.util.Objects.nonNull;
@@ -59,7 +61,9 @@ public class EmailNotificationService {
         setEmailAddresses(messageHelper::setTo, email.getTo());
         setEmailAddresses(messageHelper::setCc, email.getCc());
         setEmailAddresses(messageHelper::setBcc, email.getBcc());
-        messageHelper.setReplyTo(email.getReplyTo());
+        if (StringUtils.isNotEmpty(email.getReplyTo())) {
+            messageHelper.setReplyTo(email.getReplyTo());
+        }
         messageHelper.setText(email.getBody(), HTML);
         messageHelper.setPriority(EmailPriority.getPriority(email.getImportant()));
         messageHelper.setSubject(email.getSubject());
