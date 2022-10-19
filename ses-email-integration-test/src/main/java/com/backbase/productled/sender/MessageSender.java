@@ -38,7 +38,7 @@ public class MessageSender {
      * @param message Message
      * @throws BadRequestException if no suitable binding has been configured for the channel and priority
      */
-    public void sendMessage(Message message) {
+    public void sendMessage(Message<?> message) {
 
         log.debug("Sending message[{}] to broker", message);
 
@@ -72,7 +72,7 @@ public class MessageSender {
         streamBridge.send(channelBinding, createMessage(message));
     }
 
-    private org.springframework.messaging.Message<?> createMessage(Message message) {
+    private org.springframework.messaging.Message<?> createMessage(Message<?> message) {
         return MessageBuilder
             .withPayload(message.getPayload())
             .setHeader(EXPIRES_AT_HEADER, message.getExpiresAt())

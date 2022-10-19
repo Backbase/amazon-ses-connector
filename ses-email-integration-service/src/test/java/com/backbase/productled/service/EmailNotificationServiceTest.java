@@ -1,11 +1,11 @@
 package com.backbase.productled.service;
 
-import com.backbase.email.integration.rest.spec.v2.email.EmailPostRequestBody;
 import com.backbase.outbound.integration.communications.rest.spec.v1.model.Content;
 import com.backbase.outbound.integration.communications.rest.spec.v1.model.Recipient;
 import com.backbase.productled.config.DefaultMailSenderProperties;
 import com.backbase.productled.mapper.EmailV1Mapper;
-import com.backbase.productled.testutils.EmailPostRequestBodyFactory;
+import com.backbase.productled.model.Email;
+import com.backbase.productled.testutils.EmailFactory;
 import com.backbase.productled.testutils.EmailV1Factory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,9 +40,9 @@ public class EmailNotificationServiceTest {
     public void processRecipient() {
         final Recipient recipient = EmailV1Factory.emailV1().getRecipients().get(0);
         final Content content = EmailV1Factory.emailV1().getContent().get(0);
-        when(emailV1Mapper.toEmailPostRequestBody(recipient, content)).thenReturn(EmailPostRequestBodyFactory.createRandomEmail());
+        when(emailV1Mapper.toEmail(recipient, content)).thenReturn(EmailFactory.createRandomEmail());
         emailServiceV1.sendEmailV1(recipient, content);
-        verify(emailV1Mapper, times(1)).toEmailPostRequestBody(recipient, content);
+        verify(emailV1Mapper, times(1)).toEmail(recipient, content);
     }
 
     @Test
@@ -50,11 +50,11 @@ public class EmailNotificationServiceTest {
         final Recipient recipient = EmailV1Factory.emailV1().getRecipients().get(0);
         final Content content = EmailV1Factory.emailV1().getContent().get(0);
 
-        final EmailPostRequestBody emailPostRequestBody = EmailPostRequestBodyFactory.createRandomEmail();
-        emailPostRequestBody.setBody("This is your otp: 123456");
-        emailPostRequestBody.setFrom(null);
-        when(emailV1Mapper.toEmailPostRequestBody(recipient, content)).thenReturn(emailPostRequestBody);
+        final Email email = EmailFactory.createRandomEmail();
+        email.setBody("This is your otp: 123456");
+        email.setFrom(null);
+        when(emailV1Mapper.toEmail(recipient, content)).thenReturn(email);
         emailServiceV1.sendEmailV1(recipient, content);
-        verify(emailV1Mapper, times(1)).toEmailPostRequestBody(recipient, content);
+        verify(emailV1Mapper, times(1)).toEmail(recipient, content);
     }
 }

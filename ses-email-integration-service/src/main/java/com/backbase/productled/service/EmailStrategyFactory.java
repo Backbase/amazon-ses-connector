@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -15,7 +15,7 @@ public class EmailStrategyFactory {
 
     @Autowired
     public EmailStrategyFactory(Set<EmailService> emailStrategies) {
-        emailStrategyMap = new HashMap<>();
+        emailStrategyMap = new EnumMap<>(EmailVersionEnum.class);
         emailStrategies.forEach(emailService -> emailStrategyMap.put(emailService.getVersion(), emailService));
     }
 

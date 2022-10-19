@@ -19,7 +19,7 @@ public class EmailV2Validator {
      */
     public void validate(EmailV2 emailV2) {
         // return BadRequest when list of recipients is empty
-        if (isEmptyReceipant(emailV2)) {
+        if (isEmptyRecipient(emailV2)) {
             throw new BadRequestException().withMessage(ErrorCodes.ERR_01.getErrorMessage())
                     .withErrors(List.of(new Error().withKey(ErrorCodes.ERR_01.getErrorCode())
                             .withMessage(ErrorCodes.ERR_01.getErrorMessage())));
@@ -27,12 +27,10 @@ public class EmailV2Validator {
 
     }
 
-    private boolean isEmptyReceipant(EmailV2 emailV2) {
+    private boolean isEmptyRecipient(EmailV2 emailV2) {
         if(emailV2.getTo().isEmpty() && emailV2.getCc().isEmpty() && emailV2.getBcc().isEmpty())
             return true;
-        if (emailV2.getFrom().isEmpty())
-            return true;
-        return false;
+        return emailV2.getFrom().isEmpty();
     }
 
 }

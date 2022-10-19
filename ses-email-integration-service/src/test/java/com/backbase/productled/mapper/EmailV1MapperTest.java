@@ -26,7 +26,7 @@ public class EmailV1MapperTest {
         final var content = new Content().body(body).title(title);
         final var recipient = new Recipient().to(emailList).from("admin@backbase.com");
 
-        final var emailV2 = mapper.toEmailPostRequestBody(recipient, content);
+        final var emailV2 = mapper.toEmail(recipient, content);
 
         assertEquals(body, emailV2.getBody());
         assertEquals(title, emailV2.getSubject());

@@ -3,7 +3,9 @@ package com.backbase.productled.service;
 import com.backbase.productled.mapper.EmailV2Mapper;
 import com.backbase.productled.model.EmailV2;
 import com.backbase.productled.model.EmailVersionEnum;
+import com.backbase.productled.model.Error;
 import com.backbase.productled.model.Sendable;
+import com.backbase.productled.model.Status;
 import com.backbase.productled.util.DeliveryCodes;
 import com.backbase.productled.validator.EmailV2Validator;
 import lombok.RequiredArgsConstructor;
@@ -31,22 +33,23 @@ public class EmailServiceV2 implements EmailService {
         sendEmailV2(emailV2);
     }
 
-    public com.backbase.outbound.integration.communications.rest.spec.v1.model.Status sendEmailV2(EmailV2 emailV2) {
-        var responseStatus = new com.backbase.outbound.integration.communications.rest.spec.v1.model.Status();
-        com.backbase.outbound.integration.communications.rest.spec.v1.model.Status deliveryStatus = null;
+    public Status sendEmailV2(EmailV2 emailV2) {
+        var responseStatus = new Status();
+        Status deliveryStatus = null;
 
         log.debug("Content data: '{}'", emailV2.getBody());
         log.debug("Delivering Email from: '{}' to targets: '{}'", emailV2.getFrom(), emailV2.getTo());
 
         try {
-            deliveryStatus = emailNotificationService.sendEmail(emailV2Mapper.toEmailPostRequestBody(emailV2));
+            deliveryStatus = emailNotificationService.sendEmail(emailV2Mapper.toEmail(emailV2));
             responseStatus.setStatus(deliveryStatus.getStatus());
             responseStatus.setError(deliveryStatus.getError());
         } catch (Exception e) {
             log.error("Communications call failed with error: {}", e.getMessage());
-            responseStatus.error(new com.backbase.outbound.integration.communications.rest.spec.v1.model.Error().code(String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()))
-                            .message(e.getMessage()))
-                    .status(DeliveryCodes.FAILED);
+            responseStatus.setError(Error.builder()
+                    .code(String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()))
+                    .message(e.getMessage()).build());
+            responseStatus.setStatus(DeliveryCodes.FAILED);
         }
 
         return deliveryStatus;

@@ -1,7 +1,6 @@
 package com.backbase.productled;
 
 import com.backbase.communication.event.spec.v1.EmailChannelEvent;
-import com.backbase.email.integration.rest.spec.v2.email.EmailPostRequestBody;
 import com.backbase.productled.model.Message;
 import com.backbase.productled.reader.EmailReader;
 import com.backbase.productled.sender.MessageSender;
@@ -49,8 +48,8 @@ public class SendEmailTest {
         String expectedBody = "";
         if (message.getPayload() instanceof com.backbase.outbound.integration.communications.rest.spec.v1.model.BatchResponse batchResponse)
             expectedBody = batchResponse.getContent().get(0).getBody();
-        else if (message.getPayload() instanceof EmailPostRequestBody emailPostRequestBody) {
-            expectedBody = emailPostRequestBody.getBody();
+        else if (message.getPayload() instanceof EmailChannelEvent emailChannelEvent) {
+            expectedBody = emailChannelEvent.getBody();
         }
         String realBody = emailReader.getTextFromMessage(email);
         if (!realBody.equals(expectedBody))
@@ -61,8 +60,8 @@ public class SendEmailTest {
         String expectedSubject = "";
         if (message.getPayload() instanceof com.backbase.outbound.integration.communications.rest.spec.v1.model.BatchResponse batchResponse)
             expectedSubject = batchResponse.getContent().get(0).getTitle();
-        else if (message.getPayload() instanceof EmailPostRequestBody emailPostRequestBody) {
-            expectedSubject = emailPostRequestBody.getSubject();
+        else if (message.getPayload() instanceof EmailChannelEvent emailChannelEvent) {
+            expectedSubject = emailChannelEvent.getSubject();
         }
         if (!email.getSubject().equals(expectedSubject))
             throw new ValidationException(MessageFormat.format("Invalid email subject. Expect {0} but is {1}", expectedSubject, email.getSubject()));
@@ -72,8 +71,8 @@ public class SendEmailTest {
         String expectedTo = "";
         if (message.getPayload() instanceof com.backbase.outbound.integration.communications.rest.spec.v1.model.BatchResponse batchResponse)
             expectedTo = batchResponse.getRecipients().get(0).getTo().get(0);
-        else if (message.getPayload() instanceof EmailPostRequestBody emailPostRequestBody) {
-            expectedTo = emailPostRequestBody.getTo().get(0);
+        else if (message.getPayload() instanceof EmailChannelEvent emailChannelEvent) {
+            expectedTo = emailChannelEvent.getTo().get(0);
         }
         String realTo = email.getRecipients(javax.mail.Message.RecipientType.TO)[0].toString();
         if (!realTo.equals(expectedTo))
@@ -84,8 +83,8 @@ public class SendEmailTest {
         String expectedFrom = "";
         if (message.getPayload() instanceof com.backbase.outbound.integration.communications.rest.spec.v1.model.BatchResponse batchResponse)
             expectedFrom = batchResponse.getRecipients().get(0).getFrom();
-        else if (message.getPayload() instanceof EmailPostRequestBody emailPostRequestBody) {
-            expectedFrom = emailPostRequestBody.getFrom();
+        else if (message.getPayload() instanceof EmailChannelEvent emailChannelEvent) {
+            expectedFrom = emailChannelEvent.getFrom();
         }
 
         String receivedFrom = email.getFrom()[0].toString().replace("\"", "");
@@ -108,7 +107,7 @@ public class SendEmailTest {
     private void retrieveAndCheckEmails(Message<?> message, String toAddress) throws Exception {
         List<javax.mail.Message> emails = emailReader.getEmails(toAddress, toAddress);
 
-        log.debug("received emails: {0}", emails);
+        log.debug("received emails: {}", emails);
         checkEmailCount(emails);
         for (javax.mail.Message email : emails) {
             log.info("email = " + email.toString());

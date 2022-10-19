@@ -1,10 +1,10 @@
 package com.backbase.productled.service;
 
 import com.backbase.buildingblocks.presentation.errors.InternalServerErrorException;
-import com.backbase.email.integration.rest.spec.v2.email.Attachment;
-import com.backbase.email.integration.rest.spec.v2.email.EmailPostRequestBody;
-import com.backbase.outbound.integration.communications.rest.spec.v1.model.Status;
 import com.backbase.productled.config.DefaultMailSenderProperties;
+import com.backbase.productled.model.Attachment;
+import com.backbase.productled.model.Email;
+import com.backbase.productled.model.Status;
 import com.backbase.productled.util.DeliveryCodes;
 import com.backbase.productled.util.EmailPriority;
 import lombok.RequiredArgsConstructor;
@@ -34,38 +34,38 @@ public class EmailNotificationService {
     private final JavaMailSender javaMailSender;
     private final DefaultMailSenderProperties defaultMailSenderProperties;
 
-    public Status sendEmail(EmailPostRequestBody emailPostRequestBody) {
+    public Status sendEmail(Email email) {
 
-        log.debug("Email: '{}'", emailPostRequestBody.toString());
+        log.debug("Email: '{}'", email.toString());
 
         MimeMessage mimeMessage;
         try {
-            mimeMessage = convertToMimeMessage(emailPostRequestBody);
+            mimeMessage = convertToMimeMessage(email);
             log.debug("Mime message subject: '{}' ", mimeMessage.getSubject());
         } catch (MessagingException | UnsupportedEncodingException e) {
-            log.error("Failed to convert request body to email '{}'", emailPostRequestBody);
+            log.error("Failed to convert request body to email '{}'", email);
             throw new InternalServerErrorException(e);
         }
         javaMailSender.send(mimeMessage);
-        return new Status().status(DeliveryCodes.SENT);
+        return new Status(DeliveryCodes.SENT);
     }
 
-    private MimeMessage convertToMimeMessage(EmailPostRequestBody emailPostRequestBody)
+    private MimeMessage convertToMimeMessage(Email email)
             throws MessagingException, UnsupportedEncodingException {
         final var mimeMailMessage = new MimeMailMessage(javaMailSender.createMimeMessage());
         final var mimeMessage = mimeMailMessage.getMimeMessage();
         final var messageHelper = new MimeMessageHelper(mimeMessage, MULTIPART_MODE);
 
-        setEmailAddresses(messageHelper::setTo, emailPostRequestBody.getTo());
-        setEmailAddresses(messageHelper::setCc, emailPostRequestBody.getCc());
-        setEmailAddresses(messageHelper::setBcc, emailPostRequestBody.getBcc());
+        setEmailAddresses(messageHelper::setTo, email.getTo());
+        setEmailAddresses(messageHelper::setCc, email.getCc());
+        setEmailAddresses(messageHelper::setBcc, email.getBcc());
+        messageHelper.setReplyTo(email.getReplyTo());
+        messageHelper.setText(email.getBody(), HTML);
+        messageHelper.setPriority(EmailPriority.getPriority(email.getImportant()));
+        messageHelper.setSubject(email.getSubject());
+        setFromAddress(email.getFrom(), messageHelper);
 
-        messageHelper.setText(emailPostRequestBody.getBody(), HTML);
-        messageHelper.setPriority(EmailPriority.getPriority(emailPostRequestBody.getImportant()));
-        messageHelper.setSubject(emailPostRequestBody.getSubject());
-        setFromAddress(emailPostRequestBody.getFrom(), messageHelper);
-
-        setAttachments(messageHelper, emailPostRequestBody.getAttachments());
+        setAttachments(messageHelper, email.getAttachments());
 
         return mimeMessage;
     }
