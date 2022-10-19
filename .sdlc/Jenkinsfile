@@ -205,15 +205,10 @@ pipeline {
                 script {
                   sh """
                     echo '---------------------'
-                    kubectl logs --max-log-requests=50 -l job-name=system-tests --max-log-requests=50
-                    echo '---------------------'
                     kubectl logs -l app.kubernetes.io/name=ses-email-integration-service
                     echo '---------------------'
                     """
-                    kubernetes.logContainersToStdoutSafe('ses-email-integration-service', TEST_NAMESPACE, "app.kubernetes.io/name")
-                    kubernetes.logContainersToStdoutSafe('system-tests', TEST_NAMESPACE, "job-name")
                     kubernetes.waitForRunningContainers("system-tests", 5, TEST_NAMESPACE, "job-name",true)
-                    kubernetes.logContainersToStdoutSafe('ses-email-integration-service', TOMCAT_NAMESPACE, "app.kubernetes.io/name")
                     kubernetes.logContainersToStdoutSafe('system-tests', TEST_NAMESPACE, "job-name")
                     kubernetes.waitJobForResult('system-tests', TEST_NAMESPACE, "100s")
                 }
