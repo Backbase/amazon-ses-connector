@@ -189,7 +189,7 @@ pipeline {
                 }
 
                 script {
-                    sleep 100
+                    sleep 30
                 }
             }
         }
