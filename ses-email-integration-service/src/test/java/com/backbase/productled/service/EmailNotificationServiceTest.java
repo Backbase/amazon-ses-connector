@@ -1,22 +1,20 @@
 package com.backbase.productled.service;
 
-import com.backbase.email.integration.rest.spec.v2.email.EmailPostRequestBody;
 import com.backbase.outbound.integration.communications.rest.spec.v1.model.Content;
 import com.backbase.outbound.integration.communications.rest.spec.v1.model.Recipient;
 import com.backbase.productled.config.DefaultMailSenderProperties;
-import com.backbase.productled.mapper.EmailPostRequestBodyMapper;
-import com.backbase.productled.testutils.BatchResponseFactory;
-import com.backbase.productled.testutils.EmailRequestFactory;
+import com.backbase.productled.mapper.EmailV1Mapper;
+import com.backbase.productled.model.Email;
+import com.backbase.productled.testutils.EmailFactory;
+import com.backbase.productled.testutils.EmailV1Factory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
@@ -30,33 +28,33 @@ public class EmailNotificationServiceTest {
     @Autowired
     EmailNotificationService emailNotificationService;
     @Autowired
+    EmailServiceV1 emailServiceV1;
+    @Autowired
     JavaMailSender javaMailSender;
     @Autowired
     DefaultMailSenderProperties defaultMailSenderProperties;
     @MockBean
-    EmailPostRequestBodyMapper emailRequestMapper;
+    EmailV1Mapper emailV1Mapper;
 
     @Test
-    public void processRecipient(){
-        final Recipient recipient = BatchResponseFactory.batchResponse().getRecipients().get(0);
-        final Content content = BatchResponseFactory.batchResponse().getContent().get(0);
-        when(emailRequestMapper.toEmailPostRequestBody(recipient, content)).thenReturn(EmailRequestFactory.createRandomEmailRequest());
-        emailNotificationService.processRecipient(recipient,
-                content);
-        verify(emailRequestMapper, times(1)).toEmailPostRequestBody(recipient, content);
+    public void processRecipient() {
+        final Recipient recipient = EmailV1Factory.emailV1().getRecipients().get(0);
+        final Content content = EmailV1Factory.emailV1().getContent().get(0);
+        when(emailV1Mapper.toEmail(recipient, content)).thenReturn(EmailFactory.createRandomEmail());
+        emailServiceV1.sendEmailV1(recipient, content);
+        verify(emailV1Mapper, times(1)).toEmail(recipient, content);
     }
 
     @Test
-    public void processRecipient_withEncoded_body(){
-        final Recipient recipient = BatchResponseFactory.batchResponse().getRecipients().get(0);
-        final Content content = BatchResponseFactory.batchResponse().getContent().get(0);
+    public void processRecipient_withEncoded_body() {
+        final Recipient recipient = EmailV1Factory.emailV1().getRecipients().get(0);
+        final Content content = EmailV1Factory.emailV1().getContent().get(0);
 
-        final EmailPostRequestBody emailRequest = EmailRequestFactory.createRandomEmailRequest();
-        emailRequest.setBody("This is your otp: 123456");
-        emailRequest.setFrom(null);
-        when(emailRequestMapper.toEmailPostRequestBody(recipient, content)).thenReturn(emailRequest);
-        emailNotificationService.processRecipient(recipient,
-                content);
-        verify(emailRequestMapper, times(1)).toEmailPostRequestBody(recipient, content);
+        final Email email = EmailFactory.createRandomEmail();
+        email.setBody("This is your otp: 123456");
+        email.setFrom(null);
+        when(emailV1Mapper.toEmail(recipient, content)).thenReturn(email);
+        emailServiceV1.sendEmailV1(recipient, content);
+        verify(emailV1Mapper, times(1)).toEmail(recipient, content);
     }
 }

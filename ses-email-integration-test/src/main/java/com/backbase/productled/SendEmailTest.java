@@ -1,5 +1,6 @@
 package com.backbase.productled;
 
+import com.backbase.communication.event.spec.v1.EmailChannelEvent;
 import com.backbase.productled.model.Message;
 import com.backbase.productled.reader.EmailReader;
 import com.backbase.productled.sender.MessageSender;
@@ -20,21 +21,15 @@ public class SendEmailTest {
 
     private final EmailReader emailReader;
 
-    public void sendEmailTest() throws Exception {
+    public void sendEmailV1Test() throws Exception {
         TestMessageBuilder testMessageBuilder = new TestMessageBuilder();
-        Message message = testMessageBuilder.createMessage();
+        Message<com.backbase.outbound.integration.communications.rest.spec.v1.model.BatchResponse> message = testMessageBuilder.createMessageV1();
         messageSender.sendMessage(message);
 
         Thread.sleep(5000);
 
         String toAddress = message.getPayload().getRecipients().get(0).getTo().get(0);
-        List<javax.mail.Message> emails = emailReader.getEmails(toAddress, toAddress);
-        checkEmailCount(emails);
-        for (javax.mail.Message email : emails) {
-            log.info("email = " + email.toString());
-            checkReceivedEmail(email, message);
-        }
-        emailReader.close();
+        retrieveAndCheckEmails(message, toAddress);
     }
 
     private void checkEmailCount(List<javax.mail.Message> emails) throws ValidationException {
@@ -42,39 +37,82 @@ public class SendEmailTest {
             throw new ValidationException(MessageFormat.format("Invalid number of emails. expect 1 but is {0}.", emails.size()));
     }
 
-    private void checkReceivedEmail(javax.mail.Message email, Message message) throws Exception {
+    private void checkReceivedEmail(javax.mail.Message email, Message<?> message) throws Exception {
         checkEmailFrom(email, message);
         checkToAddress(email, message);
         checkSubject(email, message);
         checkEmailBody(email, message);
     }
 
-    private void checkEmailBody(javax.mail.Message email, Message message) throws Exception {
-        String expectedBody = message.getPayload().getContent().get(0).getBody();
+    private void checkEmailBody(javax.mail.Message email, Message<?> message) throws Exception {
+        String expectedBody = "";
+        if (message.getPayload() instanceof com.backbase.outbound.integration.communications.rest.spec.v1.model.BatchResponse batchResponse)
+            expectedBody = batchResponse.getContent().get(0).getBody();
+        else if (message.getPayload() instanceof EmailChannelEvent emailChannelEvent) {
+            expectedBody = emailChannelEvent.getBody();
+        }
         String realBody = emailReader.getTextFromMessage(email);
         if (!realBody.equals(expectedBody))
             throw new ValidationException(MessageFormat.format("Invalid email body. Expect \"{0}\" but is \"{1}\"", expectedBody, realBody));
     }
 
-    private void checkSubject(javax.mail.Message email, Message message) throws Exception {
-        String expectedSubject = message.getPayload().getContent().get(0).getTitle();
+    private void checkSubject(javax.mail.Message email, Message<?> message) throws Exception {
+        String expectedSubject = "";
+        if (message.getPayload() instanceof com.backbase.outbound.integration.communications.rest.spec.v1.model.BatchResponse batchResponse)
+            expectedSubject = batchResponse.getContent().get(0).getTitle();
+        else if (message.getPayload() instanceof EmailChannelEvent emailChannelEvent) {
+            expectedSubject = emailChannelEvent.getSubject();
+        }
         if (!email.getSubject().equals(expectedSubject))
             throw new ValidationException(MessageFormat.format("Invalid email subject. Expect {0} but is {1}", expectedSubject, email.getSubject()));
     }
 
-    private void checkToAddress(javax.mail.Message email, Message message) throws Exception {
+    private void checkToAddress(javax.mail.Message email, Message<?> message) throws Exception {
+        String expectedTo = "";
+        if (message.getPayload() instanceof com.backbase.outbound.integration.communications.rest.spec.v1.model.BatchResponse batchResponse)
+            expectedTo = batchResponse.getRecipients().get(0).getTo().get(0);
+        else if (message.getPayload() instanceof EmailChannelEvent emailChannelEvent) {
+            expectedTo = emailChannelEvent.getTo().get(0);
+        }
         String realTo = email.getRecipients(javax.mail.Message.RecipientType.TO)[0].toString();
-        String expectedTo = message.getPayload().getRecipients().get(0).getTo().get(0);
         if (!realTo.equals(expectedTo))
             throw new ValidationException(MessageFormat.format("Invalid to address. Expect {0} but is {1}", expectedTo, realTo));
     }
 
-    private void checkEmailFrom(javax.mail.Message email, Message message) throws Exception {
-        String expectedFrom = message.getPayload().getRecipients().get(0).getFrom();
+    private void checkEmailFrom(javax.mail.Message email, Message<?> message) throws Exception {
+        String expectedFrom = "";
+        if (message.getPayload() instanceof com.backbase.outbound.integration.communications.rest.spec.v1.model.BatchResponse batchResponse)
+            expectedFrom = batchResponse.getRecipients().get(0).getFrom();
+        else if (message.getPayload() instanceof EmailChannelEvent emailChannelEvent) {
+            expectedFrom = emailChannelEvent.getFrom();
+        }
+
         String receivedFrom = email.getFrom()[0].toString().replace("\"", "");
         if (!receivedFrom.equals(expectedFrom))
             throw new ValidationException(MessageFormat.format("Invalid from address. Expect {0} but is {1}", expectedFrom, receivedFrom));
     }
 
 
+    public void sendEmailV2Test() throws Exception {
+        TestMessageBuilder testMessageBuilder = new TestMessageBuilder();
+        Message<EmailChannelEvent> message = testMessageBuilder.createMessageV2();
+        messageSender.sendMessage(message);
+
+        Thread.sleep(5000);
+
+        String toAddress = message.getPayload().getTo().get(0);
+        retrieveAndCheckEmails(message, toAddress);
+    }
+
+    private void retrieveAndCheckEmails(Message<?> message, String toAddress) throws Exception {
+        List<javax.mail.Message> emails = emailReader.getEmails(toAddress, toAddress);
+
+        log.debug("received emails: {}", emails);
+        checkEmailCount(emails);
+        for (javax.mail.Message email : emails) {
+            log.info("email = " + email.toString());
+            checkReceivedEmail(email, message);
+        }
+        emailReader.close();
+    }
 }

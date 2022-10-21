@@ -10,13 +10,13 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
-public class Message {
+public class Message<T> {
 
     private UUID trackingId;
     private String deliveryChannel;
     private Integer priority;
     private String tag;
-    private com.backbase.outbound.integration.communications.rest.spec.v1.model.BatchResponse payload;
+    private T payload;
     private ZonedDateTime expiresAt;
     private String callbackUrl;
 }

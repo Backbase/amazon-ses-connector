@@ -12,12 +12,16 @@
     <name>ses-email-integration-service</name>
     <properties>
         <java.version>17</java.version>
+
         <unitils-core.version>3.4.6</unitils-core.version>
         <build-helper-maven-plugin.version>3.2.0</build-helper-maven-plugin.version>
         <SIG_SECRET_KEY>JWTSecretKeyDontUseInProduction!</SIG_SECRET_KEY>
         <mapstruct.version>1.5.2.Final</mapstruct.version>
+        <communication.version>2.0.0-b18</communication.version>
         <open-api-specs-dir>${project.build.directory}/specs</open-api-specs-dir>
         <action-service-api.directory>${open-api-specs-dir}/action</action-service-api.directory>
+        <communications-events.directory>${open-api-specs-dir}/communication-spec</communications-events.directory>
+        <communications-event.base-package>com.backbase.communication.spec.v1</communications-event.base-package>
         <communications-outbound-integration-api.directory>${open-api-specs-dir}/identity</communications-outbound-integration-api.directory>
         <communications-outbound-integration-api.base-package>com.backbase.outbound.integration.communications.rest.spec.v1</communications-outbound-integration-api.base-package>
         <boat-maven-plugin.version>0.16.5</boat-maven-plugin.version>
@@ -126,6 +130,11 @@
                             <artifactId>lombok</artifactId>
                             <version>${lombok.version}</version>
                         </path>
+                        <dependency>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok-mapstruct-binding</artifactId>
+                            <version>0.2.0</version>
+                        </dependency>
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
@@ -143,19 +152,20 @@
                             <includes>**/*.yaml, **/*.json</includes>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>com.backbase.dbs.actions</groupId>
-                                    <artifactId>action-service</artifactId>
+                                    <groupId>com.backbase.identity</groupId>
+                                    <artifactId>communications-outbound-integration-api</artifactId>
                                     <classifier>api</classifier>
                                     <type>zip</type>
                                     <outputDirectory>${open-api-specs-dir}</outputDirectory>
                                     <overWrite>true</overWrite>
                                 </artifactItem>
                                 <artifactItem>
-                                    <groupId>com.backbase.identity</groupId>
-                                    <artifactId>communications-outbound-integration-api</artifactId>
-                                    <classifier>api</classifier>
+                                    <groupId>com.backbase.communication</groupId>
+                                    <artifactId>communication</artifactId>
+                                    <classifier>events</classifier>
                                     <type>zip</type>
-                                    <outputDirectory>${open-api-specs-dir}</outputDirectory>
+                                    <version>${communication.version}</version>
+                                    <outputDirectory>${open-api-specs-dir}/communication-spec</outputDirectory>
                                     <overWrite>true</overWrite>
                                 </artifactItem>
                             </artifactItems>
@@ -168,41 +178,6 @@
                 <artifactId>boat-maven-plugin</artifactId>
                 <version>${boat-maven-plugin.version}</version>
                 <executions>
-                    <execution>
-                        <id>generate-code-from-action-integration-api-client-v2</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <inputSpec>
-                                ${action-service-api.directory}/action-integration-email-outbound-api-v*.yaml
-                            </inputSpec>
-                            <output>${project.build.directory}/generated-sources</output>
-                            <generateSupportingFiles>true</generateSupportingFiles>
-                            <generatorName>spring</generatorName>
-                            <strictSpec>true</strictSpec>
-                            <generateApiTests>false</generateApiTests>
-                            <generateModelTests>false</generateModelTests>
-                            <configOptions>
-                                <library>spring-boot</library>
-                                <dateLibrary>java8</dateLibrary>
-                                <interfaceOnly>true</interfaceOnly>
-                                <addServletRequest>true</addServletRequest>
-                                <skipDefaultInterface>true</skipDefaultInterface>
-                                <useBeanValidation>true</useBeanValidation>
-                                <generateAliasAsModel>true</generateAliasAsModel>
-                                <useClassLevelBeanValidation>true</useClassLevelBeanValidation>
-                                <useTags>true</useTags>
-                                <java8>true</java8>
-                                <bigDecimalAsString>true</bigDecimalAsString>
-                                <useOptional>false</useOptional>
-                                <apiPackage>com.backbase.email.integration.rest.spec.serviceapi.v2.email</apiPackage>
-                                <modelPackage>com.backbase.email.integration.rest.spec.v2.email</modelPackage>
-                                <sourceFolder>/</sourceFolder>
-                            </configOptions>
-                        </configuration>
-                    </execution>
                     <execution>
                         <id>generate-code-from-communications-outbound-integration-api</id>
                         <phase>generate-sources</phase>
@@ -240,6 +215,27 @@
                                 </modelPackage>
                                 <sourceFolder>/</sourceFolder>
                             </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.backbase.codegen</groupId>
+                <artifactId>jsonschema-events-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>communication-events</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>events-generation</goal>
+                        </goals>
+                        <configuration>
+                            <outputFile>target/generated-sources/</outputFile>
+                            <inputFile>${communications-events.directory}/v1</inputFile>
+                            <packageName>communication</packageName>
+                            <packageVersion>1</packageVersion>
+                            <azureSubscriberCheck>false</azureSubscriberCheck>
+                            <useJavaTime>true</useJavaTime>
                         </configuration>
                     </execution>
                 </executions>

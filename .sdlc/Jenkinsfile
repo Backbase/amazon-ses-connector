@@ -191,7 +191,7 @@ pipeline {
                 }
 
                 script {
-                    sleep 100
+                    sleep 30
                 }
             }
         }
@@ -205,6 +205,13 @@ pipeline {
             }
             steps {
                 script {
+                  sh """
+                    echo '---------------------'
+                    kubectl logs --max-log-requests=50 -l job-name=system-tests --max-log-requests=50
+                    echo '---------------------'
+                    kubectl logs -l app.kubernetes.io/name=ses-email-integration-service
+                    echo '---------------------'
+                    """
                     kubernetes.waitForRunningContainers("system-tests", 5, TEST_NAMESPACE, "job-name",true)
                     kubernetes.logContainersToStdoutSafe('system-tests', TEST_NAMESPACE, "job-name")
                     kubernetes.waitJobForResult('system-tests', TEST_NAMESPACE, "100s")
