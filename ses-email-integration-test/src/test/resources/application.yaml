@@ -1,0 +1,40 @@
+spring:
+  activemq:
+    broker-url: tcp://localhost:61616?jms.useAsyncSend=true&jms.optimizeAcknowledge=true
+    user: admin
+    password: admin
+  cloud:
+    stream:
+      default:
+        content-type: application/json
+      default-binder: activemq
+      bindings:
+        email-medium-priority:
+          destination: email-medium-priority
+
+mail:
+  pop3:
+    port: 3110
+    host: localhost
+  store:
+    protocol: pop3
+
+backbase:
+  communication:
+    channels:
+      email:
+        "0": email-low-priority
+        "1-6": email-medium-priority
+        "7": email-high-priority
+
+eureka:
+  client:
+    enabled: false
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+logging:
+  level:
+    root: INFO
+    com:
+      backbase: DEBUG
