@@ -25,6 +25,6 @@ public interface EmailV1Mapper {
                 .stream()
                 //Strip channel prefix off the to address -> email:sara@test.com -> sara@test.com
                 .map(to -> to.replace("email:", ""))
-                .collect(Collectors.toList());
+                .toList();
     }
 }
