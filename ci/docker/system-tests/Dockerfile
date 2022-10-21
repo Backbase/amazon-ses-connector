@@ -10,6 +10,6 @@ COPY ci/docker/system-tests/scripts/run-tests.sh run-tests.sh
 RUN ["chmod", "+x", "check-health.sh"]
 RUN ["chmod", "+x", "run-tests.sh"]
 
-COPY ses-email-integration-test/target/ses-email-integration-test-*-fat-tests.jar app.jar
+COPY ses-email-integration-test/target/ses-email-integration-test-*-exec.jar app.jar
 
 ENTRYPOINT ["sh", "./run-tests.sh"]
