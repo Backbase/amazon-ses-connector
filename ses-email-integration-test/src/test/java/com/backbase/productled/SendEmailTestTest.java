@@ -42,6 +42,7 @@ class SendEmailTestTest {
     @Test
     void sendEmailV1Test() throws Exception {
         Mockito.when(emailReader.getEmails(any(), any())).then(invocationOnMock -> getMessageList());
+        Mockito.when(emailReader.getTextFromMessage(any())).thenReturn(getMessageBody());
         try {
             sendEmailTest.sendEmailV1Test();
         } catch (Exception e) {
@@ -49,6 +50,11 @@ class SendEmailTestTest {
         }
         verify(messageSender, times(1)).sendMessage(any());
         verify(emailReader, times(1)).getEmails(any(), any());
+    }
+
+    private String getMessageBody() {
+        TestMessageBuilder testMessageBuilder = new TestMessageBuilder();
+        return testMessageBuilder.createMessageV1().getPayload().getContent().get(0).getBody();
     }
 
     private List<Message> getMessageList() throws MessagingException {
