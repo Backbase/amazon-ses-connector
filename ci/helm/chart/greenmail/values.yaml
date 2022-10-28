@@ -12,7 +12,6 @@ greenmail:
   podSecurityContext: {}
   securityContext: {}
   service:
-    type: LoadBalancer
     port:
       smtp: 3025
       smtps: 3465
