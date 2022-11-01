@@ -12,7 +12,7 @@
 
     <groupId>com.backbase.communication</groupId>
     <artifactId>ses-email-integration</artifactId>
-    <version>0.1.0-beta-SNAPSHOT</version>
+    <version>0.2.0-beta-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
