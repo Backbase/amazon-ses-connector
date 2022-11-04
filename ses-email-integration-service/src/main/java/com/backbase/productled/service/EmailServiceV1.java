@@ -39,14 +39,14 @@ public class EmailServiceV1 implements EmailService {
     }
 
     public Status sendEmailV1(com.backbase.outbound.integration.communications.rest.spec.v1.model.Recipient recipient, com.backbase.outbound.integration.communications.rest.spec.v1.model.Content content) {
-        var responseStatus = new Status(recipient.getRef());
-        Status deliveryStatus = null;
+        var responseStatus = new Status();
+        responseStatus.setRef(recipient.getRef());
 
         log.debug("Content data: '{}'", content);
         log.debug("Delivering Email from: '{}' to targets: '{}'", recipient.getFrom(), recipient.getTo());
 
         try {
-            deliveryStatus = emailNotificationService.sendEmail(emailV1Mapper.toEmail(recipient, content));
+            Status deliveryStatus = emailNotificationService.sendEmail(emailV1Mapper.toEmail(recipient, content));
             responseStatus.setState(deliveryStatus.getState());
             responseStatus.setError(deliveryStatus.getError());
         } catch (Exception e) {
@@ -57,7 +57,7 @@ public class EmailServiceV1 implements EmailService {
             responseStatus.setState(DeliveryCodes.FAILED);
         }
 
-        return deliveryStatus;
+        return responseStatus;
     }
 
 }
