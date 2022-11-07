@@ -1,8 +1,8 @@
 package com.backbase.productled.service;
 
 import com.backbase.productled.mapper.EmailV1Mapper;
-import com.backbase.productled.model.*;
 import com.backbase.productled.model.Error;
+import com.backbase.productled.model.*;
 import com.backbase.productled.util.DeliveryCodes;
 import com.backbase.productled.validator.EmailV1Validator;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +46,7 @@ public class EmailServiceV1 implements EmailService {
         log.debug("Delivering Email from: '{}' to targets: '{}'", recipient.getFrom(), recipient.getTo());
 
         try {
-            Status deliveryStatus = emailNotificationService.sendEmail(emailV1Mapper.toEmail(recipient, content));
+            var deliveryStatus = emailNotificationService.sendEmail(emailV1Mapper.toEmail(recipient, content));
             responseStatus.setState(deliveryStatus.getState());
             responseStatus.setError(deliveryStatus.getError());
         } catch (Exception e) {
