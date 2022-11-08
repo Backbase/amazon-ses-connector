@@ -14,7 +14,7 @@
         <java.version>17</java.version>
 
         <unitils-core.version>3.4.6</unitils-core.version>
-        <build-helper-maven-plugin.version>3.2.0</build-helper-maven-plugin.version>
+        <build-helper-maven-plugin.version>3.3.0</build-helper-maven-plugin.version>
         <SIG_SECRET_KEY>JWTSecretKeyDontUseInProduction!</SIG_SECRET_KEY>
         <mapstruct.version>1.5.2.Final</mapstruct.version>
         <communication.version>2.0.0-b18</communication.version>
