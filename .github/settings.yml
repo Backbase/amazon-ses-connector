@@ -69,7 +69,7 @@ labels:
     description: New functionality.
 
   - name: ideal-for-contribution
-    description: Ideal for contribution
+    description: Ideal for contribution 👋
 
 # Milestones: define milestones for Issues and Pull Requests
 #milestones:
