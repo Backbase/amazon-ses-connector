@@ -7,3 +7,4 @@
 # This should make it easy to add new rules without breaking existing ones.
 
 * @ex0b1t @backbase/backend-leadership @backbase/message-delivery
+.github/settings.yml @backbase/backend-leadership

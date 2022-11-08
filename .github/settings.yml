@@ -68,9 +68,8 @@ labels:
     color: '#336699'
     description: New functionality.
 
-  - name: Ideal for contribution
-    # Provide a new name to rename an existing label
-    new_name: ideal-for-contribution
+  - name: ideal-for-contribution
+    description: Ideal for contribution
 
 # Milestones: define milestones for Issues and Pull Requests
 #milestones:
