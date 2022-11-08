@@ -14,6 +14,9 @@ updates:
     directory: "/"
     schedule:
       interval: weekly
+    ignore:
+      - dependency-name: "gitleaks/gitleaks-action"
+        versions: ["2.x"]
 
   # Maintain dependencies for docker
   - package-ecosystem: docker
