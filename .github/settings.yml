@@ -1,5 +1,17 @@
 repository:
   name: amazon-ses-connector
   description: "This service is used by the Message Delivery capability, and provides integration to Amazon SES for sending emails."
-  homepage: https://github.com/Backbase/amazon-ses-connector
+  homepage: https://github.com/backbase/amazon-ses-connector
   topics: backbase, message-delivery, communication, amazon, third-party
+  private: false
+  has_issues: true
+  has_projects: false
+  has_wiki: false
+  has_downloads: false
+  default_branch: main
+  allow_squash_merge: true
+  allow_merge_commit: false
+  allow_rebase_merge: true
+  delete_branch_on_merge: true
+  enable_automated_security_fixes: true
+  enable_vulnerability_alerts: true
