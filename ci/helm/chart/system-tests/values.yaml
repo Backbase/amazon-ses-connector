@@ -1,0 +1,50 @@
+# Default values for system-tests.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: harbor.backbase.eu/development/ses-email-integration-service-system-test
+  tag: b0
+  pullPolicy: IfNotPresent
+
+communication:
+  port: 8080
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: "system-tests"
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+env:
+  SIG_SECRET_KEY: "JWTSecretKeyDontUseInProductest!"
+  "MAIL_POP3_PORT": "3110"
+  "MAIL_POP3_HOST": "greenmail"
+  "MAIL_STORE_PROTOCOL": "pop3"
+  "SPRING_ACTIVEMQ_BROKER_URL": "tcp://activemq:61616?jms.useAsyncSend=true&jms.optimizeAcknowledge=true"
+  "SPRING_ACTIVEMQ_USER": "admin"
+  "SPRING_ACTIVEMQ_PASSWORD": "admin"
+  "SPRING_CLOUD_STREAM_DEFAULT_CONTENT_TYPE": "application/json"
+  "SPRING_CLOUD_STREAM_DEFAULT_BINDER": "activemq"
+  "SPRING_CLOUD_STREAM_BINDINGS_EMAIL_MEDIUM_PRIORITY_DESTINATION": "email-medium-priority"
+
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+args:

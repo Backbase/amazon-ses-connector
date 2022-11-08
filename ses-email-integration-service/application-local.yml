@@ -1,0 +1,68 @@
+server:
+  port: 8085
+
+eureka:
+  client:
+    enabled: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+logging:
+  level:
+    root: INFO
+    com:
+      backbase: DEBUG
+
+spring:
+  activemq:
+    broker-url: tcp://localhost:61616?jms.useAsyncSend=true&jms.optimizeAcknowledge=true
+    user: admin
+    password: admin
+  cloud:
+    stream:
+      default:
+        content-type: application/json
+        consumer.exchangeDurable: true
+        consumer.concurrency: 1
+        consumer.prefetch: 1000
+        consumer.autoCommitOnError: false
+        consumer.max-attempts: 5
+        consumer.backOffInitialInterval: 2000
+        consumer.backOffMaxInterval: 60000
+        consumer.backOffMutliplier: 2.0
+        consumer.default-retryable: true
+      default-binder: activemq
+      function.definition: commLowPriority;commMediumPriority;commHighPriority;commTracking
+      bindings:
+        commLowPriority-in-0:
+          destination: Backbase.communication.email-low-priority
+        commMediumPriority-in-0:
+          destination: Backbase.communication.email-medium-priority
+        commHighPriority-in-0:
+          destination: Backbase.communication.email-high-priority
+        commTracking-out-0:
+          destination: Backbase.communication.messages-tracking
+  mail:
+    port: 587
+    host: <AWS_SES_HOST>
+    username: <AWS_SES_ACCOUNT_NAME>
+    password: <AWS_SES_ACCOUNT_PASSWORD>
+    properties:
+      mail:
+        debug: true
+        transport:
+          protocol: smtp
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+backbase:
+  mail:
+    from-address: test@backbase.com
+    from-name: test@backbase.com
+
+management:
+  health:
+    mail:
+      enabled: false

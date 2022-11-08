@@ -1,0 +1,44 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "system-tests.fullname" . }}
+  labels:
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+  namespace: "{{ .Release.Namespace }}"
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args: [{{ .Values.args }}]
+          env:
+            - name: SIG_SECRET_KEY
+              value: "{{ .Values.env.SIG_SECRET_KEY }}"
+            - name: MAIL_POP3_PORT
+              value: "{{ .Values.env.MAIL_POP3_PORT }}"
+            - name: MAIL_POP3_HOST
+              value: "{{ .Values.env.MAIL_POP3_HOST }}"
+            - name: MAIL_STORE_PROTOCOL
+              value: "{{ .Values.env.MAIL_STORE_PROTOCOL }}"
+            - name: SPRING_ACTIVEMQ_BROKER-URL
+              value: "{{ .Values.env.SPRING_ACTIVEMQ_BROKER_URL }}"
+            - name: SPRING_ACTIVEMQ_USER
+              value: "{{ .Values.env.SPRING_ACTIVEMQ_USER }}"
+            - name: SPRING_ACTIVEMQ_PASSWORD
+              value: "{{ .Values.env.SPRING_ACTIVEMQ_PASSWORD }}"
+            - name: SPRING_CLOUD_STREAM_DEFAULT_CONTENT-TYPE
+              value: "{{ .Values.env.SPRING_CLOUD_STREAM_DEFAULT_CONTENT_TYPE }}"
+            - name: SPRING_CLOUD_STREAM_DEFAULT-BINDER
+              value: "{{ .Values.env.SPRING_CLOUD_STREAM_DEFAULT_BINDER }}"
+            - name: SPRING_CLOUD_STREAM_BINDINGS_EMAIL-MEDIUM-PRIORITY_DESTINATION
+              value: "{{ .Values.env.SPRING_CLOUD_STREAM_BINDINGS_EMAIL_MEDIUM_PRIORITY_DESTINATION }}"
+          resources:
+            limits:
+              memory: 1024Mi
+            requests:
+              memory: 1024Mi

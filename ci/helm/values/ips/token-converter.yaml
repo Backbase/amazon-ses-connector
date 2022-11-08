@@ -1,0 +1,27 @@
+app:
+  name: bas-token-converter
+  resources:
+    memory:
+      xms: 1024
+      xmx: 1024
+    cpu:
+      minShares: 100
+      maxShares: 1000
+  image:
+    repository: bb-authentication-token-converter-service
+    tagFrom: ips-tcVersion
+
+livenessProbe:
+  enabled: true
+readinessProbe:
+  enabled: true
+
+database:
+  enabled: false
+
+registry:
+  checkEnabled: false
+
+env:
+  "backbase.events.enabled": 'false'
+  "backbase.activemq.enabled": 'false'

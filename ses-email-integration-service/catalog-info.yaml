@@ -1,0 +1,37 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: ses-email-integration-service
+  description: This service is a bridge between communication-service and third party email providers
+  annotations:
+    backbase/public: 'true'
+    backbase/maint-component: 'Message Delivery'
+    backbase/maint-subcomponent: 'Communication'
+    backbase/build-job-link: 'https://jenkins.backbase.eu/job/Customer%20Engagement/job/MSG/job/ses-email-integration-service/'
+    sonarqube.org/project-key: 'MSG:ses-email-integration-service'
+    backbase/docs-link: 'https://community.backbase.com/documentation/foundation_services/latest/message_delivery/'
+    backbase/slack-channel-name: 's-message-delivery'
+    backbase/blackduck-link: 'https://backbase.blackducksoftware.com/api/projects/c0483571-868c-4794-b6e2-05f776a2f392'
+    backbase/blackduck-project-name: 'ses-email-integration-service'
+
+    backbase/rc-exec-jars-link: 'https://artifacts.backbase.com/ui/native/backbase-development-rc-releases/com/backbase/communication/ses-email-integration-service/'
+    backbase/rc-war-files-link: 'https://artifacts.backbase.com/ui/native/backbase-development-rc-releases/com/backbase/communication/ses-email-integration-service/'
+    backbase/rc-docker-images-link: 'https://harbor.backbase.eu/harbor/projects/8/repositories/ses-email-integration-service'
+    backbase/rc-helm-files-link: 'https://repo.backbase.com/ui/packages/helm:%2F%2Fses-email-integration-service'
+    backbase/rc-capability-bom-link: 'https://artifacts.backbase.com/ui/native/staging/com/backbase/message-delivery-bom'
+
+  tags:
+    - java
+    - spring
+    - helm
+    - activemq
+  links:
+    - url: https://backbase.atlassian.net/wiki/spaces/CE/pages/3824648287/Team+Herald
+      title: Confluence
+      icon: help
+spec:
+  type: service
+  lifecycle: beta
+  owner: herald
+  subcomponentOf: message-delivery-bom
+  providesApis: []

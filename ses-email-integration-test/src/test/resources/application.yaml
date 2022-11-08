@@ -1,0 +1,18 @@
+mail:
+  pop3:
+    port: 3110
+    host: localhost
+  store:
+    protocol: pop3
+
+eureka:
+  client:
+    enabled: false
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+logging:
+  level:
+    root: INFO
+    com:
+      backbase: DEBUG

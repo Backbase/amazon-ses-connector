@@ -1,0 +1,12 @@
+fullnameOverride: cx-env
+
+activemq:
+  enabled: true
+  fullnameOverride: activemq
+
+jwt:
+  enabled: true
+  internalSecretKey: "JWTSecretKeyDontUseInProductest!"
+  externalSecretKey: "JWTSecretKeyDontUseInProductest!"
+  externalEncSecretKey: "JWTEncKeyDontUseInProduction666!"
+  userctxKey: "JWTSecretKeyDontUseInProduction!"
