@@ -1,0 +1,3 @@
+spring:
+  application:
+    name: amazon-ses-connector
