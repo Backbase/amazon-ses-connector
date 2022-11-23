@@ -39,7 +39,7 @@ This connector was created using the following guide [Build a custom channel](ht
 ![Architecture](docs/amazon-ses-connector.svg)
 
 ## Usage
-This service is deployed like any other Backbase capability/service and ships with a Docker image and Helm chart.
+This service is deployed like any other Backbase capability/service and ships with a Docker image.
 
 The following properties **must** be set as they have no default:
 

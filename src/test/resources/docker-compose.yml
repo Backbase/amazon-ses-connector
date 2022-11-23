@@ -1,0 +1,25 @@
+services:
+  message-broker:
+    image: symptoma/activemq
+
+  communication:
+    image: repo.backbase.com/docker-releases/communication:2022.11
+    links:
+      - message-broker
+    environment:
+      - eureka.client.enabled=false
+      - spring.activemq.broker-url=tcp://message-broker:61616
+      - spring.activemq.user=admin
+      - spring.activemq.password=admin
+      - SIG_SECRET_KEY=JWTSecretKeyDontUseInProduction!
+      - EXTERNAL_SIG_SECRET_KEY=JWTSecretKeyDontUseInProduction!
+      - EXTERNAL_ENC_SECRET_KEY=JWTEncKeyDontUseInProduction666!
+      - logging.level.com.backbase=DEBUG
+      - logging.level.com.backbase.communication=DEBUG
+
+  greenmail:
+    image: "greenmail/standalone:1.6.10"
+    hostname: greenmail
+    environment:
+      - JAVA_OPTS=-Djava.net.preferIPv4Stack=true -XX:MaxRAMPercentage=85.0
+      - GREENMAIL_OPTS=-Dgreenmail.setup.test.all -Dgreenmail.hostname=0.0.0.0 -Dgreenmail.auth.disabled -Dgreenmail.verbose -Dgreenmail.startup.timeout=3000
