@@ -1,0 +1,76 @@
+server:
+  port: 8080
+
+spring:
+  mail:
+    port:
+    host:
+    username:
+    password:
+    properties:
+      mail:
+        debug: true
+        transport:
+          protocol: smtp
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  cloud:
+    stream:
+      default:
+        group: email
+        content-type: application/json
+        consumer.exchangeDurable: true
+        consumer.concurrency: 1
+        consumer.prefetch: 1000
+        consumer.autoCommitOnError: false
+        consumer.max-attempts: 5
+        consumer.backOffInitialInterval: 2000
+        consumer.backOffMaxInterval: 60000
+        consumer.backOffMutliplier: 2.0
+        consumer.default-retryable: true
+      default-binder: activemq
+      function:
+        definition: commLowPriority;commMediumPriority;commHighPriority;commTracking
+      bindings:
+        commLowPriority-in-0:
+          destination: Backbase.communication.email-low-priority
+        commMediumPriority-in-0:
+          destination: Backbase.communication.email-medium-priority
+        commHighPriority-in-0:
+          destination: Backbase.communication.email-high-priority
+        commTracking-out-0:
+          destination: Backbase.communication.messages-tracking
+  main:
+    banner-mode: off
+
+# API Registry client configuration
+eureka:
+  instance:
+    metadata-map:
+      public: true
+      role: live
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8080/registry/eureka/
+    enabled: false
+
+# Configure Internal JWT handler
+sso:
+  jwt:
+    internal:
+      signature:
+        key:
+          type: ENV
+          value: SIG_SECRET_KEY
+
+# Spring health monitoring
+management:
+  health:
+    jms:
+     enabled: false
+
+backbase:
+  email:
+    worker-count: 2

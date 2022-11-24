@@ -1,0 +1,25 @@
+logging:
+  level:
+    root: INFO
+    com:
+      backbase: DEBUG
+
+backbase:
+  mail:
+    from-name: admin
+    from-address: admin@test.com
+
+eureka.client.enabled: false
+
+spring:
+  mail:
+    username: "test"
+    password: "test"
+
+# Used for reading only
+mail:
+  pop3:
+    port: 3110
+    host: localhost
+  store:
+    protocol: pop3
