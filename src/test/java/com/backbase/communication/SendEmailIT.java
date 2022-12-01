@@ -26,6 +26,8 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.web.client.RestTemplate;
 import org.testcontainers.containers.DockerComposeContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
@@ -37,7 +39,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 @ActiveProfiles({"default", "it"})
 @SpringBootTest(classes = {SesEmailConnectorApplication.class})
-@ContextConfiguration(classes = SesEmailConnectorApplication.class, initializers = {SendEmailIT.Initializer.class})
 class SendEmailIT {
 
     private final RestTemplate template = new RestTemplate();
@@ -61,28 +62,18 @@ class SendEmailIT {
         .withExposedService("greenmail", 3110, Wait.forListeningPort())
         .withLocalCompose(true);
 
-    @BeforeAll
-    public static void envSetup() {
+    @DynamicPropertySource
+    static void registerPgProperties(DynamicPropertyRegistry registry) {
         System.setProperty("SIG_SECRET_KEY", "JWTSecretKeyDontUseInProduction!");
         System.setProperty("TESTCONTAINERS_RYUK_DISABLED", "true");
-    }
 
-    static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
-
-        public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
-            environment.start();
-
-            TestPropertyValues.of(
-                    "spring.activemq.broker-url=tcp://%s:%s"
-                        .formatted(environment.getServiceHost("message-broker", 61616),
-                            environment.getServicePort("message-broker", 61616)),
-                    "mail.pop3.host=%s".formatted(environment.getServiceHost("greenmail", 3110)),
-                    "spring.mail.host=%s".formatted(environment.getServiceHost("greenmail", 3025)),
-                    "mail.pop3.port=%s".formatted(environment.getServicePort("greenmail", 3110)),
-                    "spring.mail.port=%s".formatted(environment.getServicePort("greenmail", 3025)))
-                .applyTo(configurableApplicationContext.getEnvironment());
-
-        }
+        registry.add("spring.activemq.broker-url", () -> "tcp://%s:%s"
+            .formatted(environment.getServiceHost("message-broker", 61616),
+                environment.getServicePort("message-broker", 61616)));
+        registry.add("mail.pop3.host", () -> environment.getServiceHost("greenmail", 3110));
+        registry.add("spring.mail.host", () -> environment.getServiceHost("greenmail", 3025));
+        registry.add("mail.pop3.port", () -> environment.getServicePort("greenmail", 3110));
+        registry.add("spring.mail.port", () -> environment.getServicePort("greenmail", 3025));
     }
 
     @ParameterizedTest
