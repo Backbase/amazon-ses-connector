@@ -1,0 +1,45 @@
+fullnameOverride: amazon-ses-connector
+image:
+  registry: ghcr.io
+  repository: backbase/amazon-ses-connector
+  tag: 0.2.0
+activemq:
+  enabled: true
+env:
+  "spring.sleuth.function.enabled": "false"
+  "spring.mail.host":
+    value:
+      secretKeyRef:
+        name: email-env
+        key: host
+  "spring.mail.password":
+    value:
+      secretKeyRef:
+        name: email-env
+        key: password
+  "spring.mail.port":
+    value:
+      secretKeyRef:
+        name: email-env
+        key: port
+  "spring.mail.properties.mail.smtp.auth":
+    value:
+      secretKeyRef:
+        name: email-env
+        key: smtpAuth
+  "spring.mail.properties.mail.smtp.ssl.enable": "true"
+  "spring.mail.properties.mail.smtp.starttls.enable":
+    value:
+      secretKeyRef:
+        name: email-env
+        key: starttlsEnable
+  "spring.mail.properties.mail.transport.protocol":
+    value:
+      secretKeyRef:
+        name: email-env
+        key: protocol
+  "spring.mail.username":
+    value:
+      secretKeyRef:
+        name: email-env
+        key: username
