@@ -17,7 +17,7 @@
         <unitils-core.version>3.4.6</unitils-core.version>
         <build-helper-maven-plugin.version>3.2.0</build-helper-maven-plugin.version>
         <SIG_SECRET_KEY>JWTSecretKeyDontUseInProduction!</SIG_SECRET_KEY>
-        <mapstruct.version>1.5.2.Final</mapstruct.version>
+        <mapstruct.version>1.5.5.Final</mapstruct.version>
         <communication.version>2.1.0-b8</communication.version>
         <open-api-specs-dir>${project.build.directory}/specs</open-api-specs-dir>
         <action-service-api.directory>${open-api-specs-dir}/action</action-service-api.directory>
