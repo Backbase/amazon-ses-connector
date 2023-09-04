@@ -25,7 +25,7 @@
         <communications-event.base-package>com.backbase.communication.spec.v1</communications-event.base-package>
         <communications-outbound-integration-api.directory>${open-api-specs-dir}/identity</communications-outbound-integration-api.directory>
         <communications-outbound-integration-api.base-package>com.backbase.outbound.integration.communications.rest.spec.v1</communications-outbound-integration-api.base-package>
-        <boat-maven-plugin.version>0.16.5</boat-maven-plugin.version>
+        <boat-maven-plugin.version>0.17.13</boat-maven-plugin.version>
         <backbase-bom.version>2022.08.3-LTS</backbase-bom.version>
     </properties>
 
